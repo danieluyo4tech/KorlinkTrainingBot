@@ -1,72 +1,44 @@
 import os
 import json
 import datetime
+import urllib.request
+import urllib.parse
 from pathlib import Path
 
-from dotenv import load_dotenv
 from google import genai
 
 
 # ============================================================
-# KORLINK TRAINING UPDATE AI ENGINE
+# CONFIGURATION
 # ============================================================
 
-load_dotenv()
-
 API_KEY = os.getenv("GEMINI_API_KEY")
+TEXT_MODEL = os.getenv("GEMINI_MODEL")
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
 if not API_KEY:
-    raise RuntimeError(
-        "GEMINI_API_KEY is not configured."
-    )
+    raise RuntimeError("GEMINI_API_KEY is not configured.")
+
+if not TEXT_MODEL:
+    raise RuntimeError("GEMINI_MODEL is not configured.")
+
+if not TELEGRAM_BOT_TOKEN:
+    raise RuntimeError("TELEGRAM_BOT_TOKEN is not configured.")
+
+if not TELEGRAM_CHAT_ID:
+    raise RuntimeError("TELEGRAM_CHAT_ID is not configured.")
+
 
 client = genai.Client(api_key=API_KEY)
 
-# Gemini model
-TEXT_MODEL = os.getenv(
-    "GEMINI_MODEL",
-    "gemini-2.5-flash"
-)
-
-
-# ============================================================
-# FILE LOCATIONS
-# ============================================================
-
 BASE_DIR = Path(__file__).resolve().parent
+LOG_DIR = BASE_DIR / "logs"
 
-DATA_DIR = BASE_DIR / "data"
-DATA_DIR.mkdir(exist_ok=True)
+QUESTIONS_FILE = LOG_DIR / "questions.json"
+POSTS_FILE = LOG_DIR / "posts.json"
 
-QUESTIONS_FILE = DATA_DIR / "questions.json"
-POSTS_FILE = DATA_DIR / "posts.json"
-STATUS_FILE = DATA_DIR / "status.json"
-
-
-# ============================================================
-# TEST SETTINGS
-# ============================================================
-
-# While testing locally:
-#
-# TEST_MODE = True
-# TEST_DATE = "2026-08-17"
-#
-# When deployed to GitHub:
-#
-# TEST_MODE = False
-
-TEST_MODE = False
-
-TEST_DATE = "2026-08-17"
-
-
-def get_today():
-
-    if TEST_MODE:
-        return datetime.date.fromisoformat(TEST_DATE)
-
-    return datetime.date.today()
+LOG_DIR.mkdir(exist_ok=True)
 
 
 # ============================================================
@@ -74,28 +46,24 @@ def get_today():
 # ============================================================
 
 WEEKDAY_TRACKS = {
-
-    # MONDAY
     0: {
         "school": "School of Computing",
         "name": "Cybersecurity",
         "description": (
             "online safety, phishing, passwords, privacy, "
-            "scams, malware and practical cybersecurity"
+            "malware, scams and practical cybersecurity"
         ),
     },
 
-    # TUESDAY
     1: {
         "school": "School of Computing",
         "name": "Software Engineering",
         "description": (
             "websites, applications, coding, databases, "
-            "debugging, programming and software development"
+            "debugging and practical software development"
         ),
     },
 
-    # WEDNESDAY
     2: {
         "school": "School of Technology",
         "name": "Network Engineering",
@@ -105,40 +73,37 @@ WEEKDAY_TRACKS = {
         ),
     },
 
-    # THURSDAY
     3: {
         "school": "School of Technology",
         "name": "Smart Tech and Automation",
         "description": (
             "IoT, sensors, smart devices, automation, "
-            "controllers, robotics and practical automation"
+            "controllers and practical automation"
         ),
     },
 
-    # FRIDAY
     4: {
         "school": "School of Technology",
         "name": "Solar PV Design and Installation",
         "description": (
             "solar panels, batteries, inverters, "
             "charge controllers, solar system design "
-            "and practical installation"
+            "and installation"
         ),
     },
 }
 
 
 # ============================================================
-# JSON FUNCTIONS
+# JSON STORAGE
 # ============================================================
 
-def load_json(file_path, default):
+def load_json(file_path):
 
     if not file_path.exists():
-        return default
+        return []
 
     try:
-
         with open(
             file_path,
             "r",
@@ -149,7 +114,7 @@ def load_json(file_path, default):
 
     except Exception:
 
-        return default
+        return []
 
 
 def save_json(file_path, data):
@@ -169,22 +134,23 @@ def save_json(file_path, data):
 
 
 # ============================================================
-# QUESTION HISTORY
+# QUESTION STORAGE
 # ============================================================
 
 def load_questions():
 
     return load_json(
-        QUESTIONS_FILE,
-        []
+        QUESTIONS_FILE
     )
 
 
-def save_question(question):
+def save_question(question_data):
 
     questions = load_questions()
 
-    questions.append(question)
+    questions.append(
+        question_data
+    )
 
     save_json(
         QUESTIONS_FILE,
@@ -193,17 +159,18 @@ def save_question(question):
 
 
 # ============================================================
-# POST HISTORY
+# POST STORAGE
 # ============================================================
 
-def save_post(post):
+def save_post(post_data):
 
     posts = load_json(
-        POSTS_FILE,
-        []
+        POSTS_FILE
     )
 
-    posts.append(post)
+    posts.append(
+        post_data
+    )
 
     save_json(
         POSTS_FILE,
@@ -212,47 +179,63 @@ def save_post(post):
 
 
 # ============================================================
-# STATUS
+# TELEGRAM
 # ============================================================
 
-def load_status():
+def send_telegram_message(message):
 
-    return load_json(
-        STATUS_FILE,
-        {}
+    url = (
+        f"https://api.telegram.org/bot"
+        f"{TELEGRAM_BOT_TOKEN}/sendMessage"
     )
 
+    data = urllib.parse.urlencode({
+        "chat_id": TELEGRAM_CHAT_ID,
+        "text": message,
+        "parse_mode": "Markdown",
+    }).encode("utf-8")
 
-def save_status(status):
-
-    save_json(
-        STATUS_FILE,
-        status
+    request = urllib.request.Request(
+        url,
+        data=data,
+        method="POST"
     )
 
+    try:
+
+        with urllib.request.urlopen(
+            request,
+            timeout=30
+        ) as response:
+
+            result = json.loads(
+                response.read().decode("utf-8")
+            )
+
+        if result.get("ok"):
+
+            print(
+                "✅ Telegram message sent successfully."
+            )
+
+            return True
+
+        print("❌ Telegram API error:")
+        print(result)
+
+        return False
+
+    except Exception as error:
+
+        print(
+            f"❌ Telegram connection error: {error}"
+        )
+
+        return False
+
 
 # ============================================================
-# CLEAN GEMINI JSON
-# ============================================================
-
-def clean_json(text):
-
-    text = text.strip()
-
-    if text.startswith("```json"):
-        text = text[7:]
-
-    elif text.startswith("```"):
-        text = text[3:]
-
-    if text.endswith("```"):
-        text = text[:-3]
-
-    return text.strip()
-
-
-# ============================================================
-# GENERATE QUESTION
+# GENERATE WEEKDAY POLL
 # ============================================================
 
 def generate_poll(track):
@@ -261,71 +244,71 @@ def generate_poll(track):
 
     recent_questions = questions[-50:]
 
-    if recent_questions:
-
-        history = "\n".join(
-            f"- {q.get('question', '')}"
-            for q in recent_questions
-        )
-
-    else:
-
-        history = "No previous questions."
-
+    history = "\n".join(
+        f"- {item.get('question', '')}"
+        for item in recent_questions
+    )
 
     prompt = f"""
-You are the friendly instructor for
+You are the friendly practical instructor for
 Korlink Technologies Training Update.
 
-Create ONE beginner-friendly interactive
-technology poll.
+TODAY'S TRAINING TRACK:
 
-COURSE:
+School:
+{track['school']}
 
-{track['school']} → {track['name']}
+Course:
+{track['name']}
 
-TOPIC AREA:
-
+Focus:
 {track['description']}
+
+Create ONE interesting practical Telegram poll.
 
 The audience contains beginners.
 
-The question should feel like a friendly
-real-life situation, not an examination.
+The main goal is STUDENT INTERACTION.
 
-For example:
+Do NOT make it sound like an examination.
+
+Do NOT ask boring definition questions such as:
+
+"What is..."
+"Define..."
+"Which of the following defines..."
+
+Instead, create a realistic everyday situation.
+
+Examples:
 
 A student receives a suspicious message.
 
-Someone connects to Wi-Fi but has no Internet.
+Someone connects a laptop to Wi-Fi but has no Internet.
 
-Someone is building a simple website.
+Someone is building a simple school website.
 
-Someone wants a classroom light to turn on
-automatically.
+A classroom wants lights to turn on automatically.
 
-Someone is designing a small solar system.
-
-Do NOT make the question simply ask for a
-definition.
+A house has solar panels but the battery is not charging.
 
 RULES:
 
-1. Use simple everyday English.
-2. Keep the question short.
-3. Make it practical.
-4. Make it educational.
-5. Give exactly four options.
-6. Only one option is correct.
-7. Make all four options believable.
-8. Do not reveal the answer.
-9. Avoid unnecessary technical jargon.
-10. Vary the real-life scenarios.
-11. Do not repeat previous questions.
-12. Do not repeat the same underlying learning point.
-13. Make beginners comfortable participating.
-14. Make it suitable for a WhatsApp group.
-15. Do not make it sound like an examination.
+- Use simple everyday English.
+- Keep the question short.
+- Make it practical.
+- Make it technically correct.
+- Exactly four options.
+- Only one correct answer.
+- Do not reveal the answer.
+- Avoid unnecessary jargon.
+- Vary the scenarios.
+- Do not repeatedly use the same scenario.
+- Do not repeat previous questions.
+- Do not create a substantially similar question.
+- Make beginners comfortable answering.
+- Make the scenario realistic.
+- Encourage students to think before answering.
 
 PREVIOUS QUESTIONS:
 
@@ -343,7 +326,6 @@ Use exactly:
     "option_4": "...",
     "correct_option": 1,
     "simple_explanation": "...",
-    "practical_tip": "...",
     "bonus_challenge": "..."
 }}
 """
@@ -353,84 +335,65 @@ Use exactly:
         contents=prompt
     )
 
-    text = clean_json(
-        response.text
-    )
+    text = response.text.strip()
 
-    try:
+    if text.startswith("```"):
 
-        poll = json.loads(text)
-
-    except json.JSONDecodeError:
-
-        raise RuntimeError(
-            "Gemini returned invalid JSON:\n\n"
-            + response.text
+        text = text.replace(
+            "```json",
+            ""
         )
 
-    required = [
-        "question",
-        "option_1",
-        "option_2",
-        "option_3",
-        "option_4",
-        "correct_option",
-        "simple_explanation",
-        "practical_tip",
-        "bonus_challenge"
-    ]
+        text = text.replace(
+            "```",
+            ""
+        )
 
-    for field in required:
+        text = text.strip()
 
-        if field not in poll:
-
-            raise RuntimeError(
-                f"Missing field: {field}"
-            )
-
-    return poll
+    return json.loads(text)
 
 
 # ============================================================
-# DUPLICATE CHECK
+# DUPLICATE QUESTION CHECK
 # ============================================================
 
-def is_duplicate(question):
+def is_duplicate_question(new_question):
 
     questions = load_questions()
 
     if not questions:
         return False
 
-    previous = questions[-50:]
-
-    previous_text = "\n".join(
-        f"{i + 1}. {q.get('question', '')}"
-        for i, q in enumerate(previous)
+    previous = "\n".join(
+        f"- {item.get('question', '')}"
+        for item in questions[-50:]
     )
 
     prompt = f"""
-Check whether this new question is substantially
-similar to any previous question.
+Compare this new question with the previous questions.
 
 NEW QUESTION:
 
-{question}
+{new_question}
 
 PREVIOUS QUESTIONS:
 
-{previous_text}
+{previous}
 
-If it is essentially the same scenario or learning
-point, respond:
+Return ONLY one word:
 
 DUPLICATE
 
-Otherwise respond:
+or
 
 UNIQUE
 
-Return only one word.
+Consider the meaning and scenario,
+not just identical wording.
+
+If the question is substantially similar
+to an old question, return DUPLICATE.
 """
 
     response = client.models.generate_content(
@@ -440,107 +403,93 @@ Return only one word.
 
     result = response.text.strip().upper()
 
-    return result.startswith("DUPLICATE")
+    return "DUPLICATE" in result
 
 
 # ============================================================
-# UNIQUE QUESTION GENERATOR
+# MORNING POLL MESSAGE
 # ============================================================
 
-def generate_unique_poll(track):
+def format_poll(track, poll):
 
-    for attempt in range(1, 6):
+    return f"""☀️ *KORLINK DAILY TECH POLL*
 
-        print(
-            f"🧠 Generating question "
-            f"{attempt}/5..."
-        )
+🎓 *{track['name']}*
 
-        poll = generate_poll(track)
+👀 *Let's see who gets this!*
 
-        print(
-            f"👉 {poll['question']}"
-        )
+👉 *Question:*
 
-        if not is_duplicate(
-            poll["question"]
-        ):
-
-            print(
-                "✅ Question is unique."
-            )
-
-            return poll
-
-        print(
-            "⚠️ Similar question detected."
-        )
-
-    raise RuntimeError(
-        "Unable to generate a sufficiently "
-        "different question."
-    )
-
-
-# ============================================================
-# MORNING MESSAGE
-# ============================================================
-
-def format_morning_poll(
-    track,
-    poll
-):
-
-    return f"""☀️ *DAILY TECH POLL*
-
-🎓 *{poll['question']}*
+{poll['question']}
 
 1️⃣ {poll['option_1']}
 2️⃣ {poll['option_2']}
 3️⃣ {poll['option_3']}
 4️⃣ {poll['option_4']}
 
-👇 *Drop your answer number below.*
+👇 *Drop your answer number and why below.*
 
-💡 _Everyone can participate — beginners included!_
+💡 _Don't be afraid to get it wrong. The goal is to learn!_
 """
 
 
 # ============================================================
-# EVENING ANSWER
+# FIND TODAY'S QUESTION
 # ============================================================
 
-def format_evening_answer(
-    poll
-):
+def get_today_question():
 
-    correct_number = poll[
-        "correct_option"
-    ]
+    today = str(
+        datetime.date.today()
+    )
 
-    correct_text = poll[
-        f"option_{correct_number}"
-    ]
+    questions = load_questions()
 
-    return f"""🎯 *ANSWER TIME!*
+    for question in reversed(questions):
 
-The correct answer is:
+        if (
+            question.get("date") == today
+            and question.get("type") == "weekday_poll"
+        ):
 
-*{correct_number}️⃣ {correct_text}*
+            return question
 
-📚 *Why?*
+    return None
 
-{poll['simple_explanation']}
 
-💡 *Practical Tip:*
+# ============================================================
+# EVENING ANSWER MESSAGE
+# ============================================================
 
-{poll['practical_tip']}
+def format_answer(question):
 
-🔥 *Bonus Challenge:*
+    correct = question["correct_option"]
 
-{poll['bonus_challenge']}
+    option_key = f"option_{correct}"
 
-👏 Thanks to everyone who participated today!
+    correct_text = question[option_key]
+
+    return f"""🌙 *KORLINK ANSWER*
+
+🎓 *{question['track']}*
+
+❓ *Today's Question:*
+
+{question['question']}
+
+✅ *Correct Answer:*
+
+{correct}️⃣ {correct_text}
+
+🧠 *Why?*
+
+{question['explanation']}
+
+🚀 *BONUS CHALLENGE:*
+
+{question['bonus_challenge']}
+
+🔥 _Keep learning. Keep practicing. Keep building!_
 """
 
 
@@ -552,27 +501,34 @@ def generate_saturday():
 
     prompt = """
 Create a short motivational message for
-a technology training WhatsApp group.
+Korlink Technologies Training Update.
 
-Maximum 60 words.
+Maximum 70 words.
 
-Focus on consistency, learning, practice,
-building projects and career growth.
+Focus on:
+
+- consistency
+- learning
+- practice
+- building projects
+- career growth
 
 Use simple everyday English.
 
-Do not use a famous person's quotation.
+Do not use a famous quote.
 
-End with one short question encouraging
+Make it personal, warm and encouraging.
+
+End with ONE short question that encourages
 students to reply.
 
-Format:
+Use this format:
 
 🚀 *SATURDAY MOTIVATION*
 
-[message]
+[short message]
 
-💬 [question]
+💬 [short question]
 """
 
     response = client.models.generate_content(
@@ -590,30 +546,40 @@ Format:
 def generate_sunday():
 
     prompt = """
-Create a short Sunday inspirational message
-for a technology training WhatsApp group.
+Create a short Sunday inspirational message for
+Korlink Technologies Training Update.
 
-Maximum 70 words.
+Maximum 90 words.
 
-Use a Gospel principle or short Bible reference.
+The message should be inspired by a Gospel principle
+or short Bible reference.
 
-Connect it to learning, wisdom, discipline,
-purpose, using skills to help others and
-preparing for a new week.
+Connect it to:
+
+- learning
+- wisdom
+- discipline
+- purpose
+- using skills to help others
+- preparing for a new week
 
 Keep it warm and encouraging.
 
-Do not reproduce a long Bible passage.
+Do NOT reproduce a long Bible passage.
 
-End with one simple reflection question.
+Do NOT preach harshly.
 
-Format:
+End with ONE simple reflection question.
+
+Use this format:
 
 ✝️ *SUNDAY INSPIRATION*
 
-[message]
+[short message]
 
-💭 *Reflection:* [question]
+💭 *Reflection:*
+
+[one short question]
 """
 
     response = client.models.generate_content(
@@ -625,263 +591,211 @@ Format:
 
 
 # ============================================================
-# MORNING JOB
+# MORNING ENGINE
 # ============================================================
 
-def morning_job(today):
+def run_morning():
 
-    if today.weekday() > 4:
-        return None
+    today = datetime.date.today()
 
-    date_key = str(today)
+    weekday = today.weekday()
 
-    status = load_status()
-
-    if status.get(date_key, {}).get(
-        "morning_generated"
-    ):
-
-        print(
-            "ℹ️ Morning poll already generated."
-        )
-
-        return None
-
-    track = WEEKDAY_TRACKS[
-        today.weekday()
-    ]
-
-    print()
-    print("=" * 70)
-    print("☀️ MORNING POLL")
-    print("=" * 70)
+    track = WEEKDAY_TRACKS[weekday]
 
     print(
-        f"🎓 {track['school']} → "
-        f"{track['name']}"
+        f"🎓 Generating {track['name']} poll..."
     )
 
-    poll = generate_unique_poll(
-        track
-    )
+    poll = None
 
-    message = format_morning_poll(
+    for attempt in range(3):
+
+        print(
+            f"Attempt {attempt + 1}/3..."
+        )
+
+        candidate = generate_poll(
+            track
+        )
+
+        if not is_duplicate_question(
+            candidate["question"]
+        ):
+
+            poll = candidate
+
+            break
+
+        print(
+            "⚠️ Similar question detected."
+        )
+
+        print(
+            "🔄 Generating another question..."
+        )
+
+    if poll is None:
+
+        raise RuntimeError(
+            "Could not generate a unique question "
+            "after three attempts."
+        )
+
+    message = format_poll(
         track,
         poll
     )
 
-    question_record = {
-
-        "date": date_key,
-
+    record = {
+        "date": str(today),
+        "type": "weekday_poll",
         "school": track["school"],
-
         "track": track["name"],
-
         "question": poll["question"],
-
         "option_1": poll["option_1"],
-
         "option_2": poll["option_2"],
-
         "option_3": poll["option_3"],
-
         "option_4": poll["option_4"],
-
-        "correct_option":
-            poll["correct_option"],
-
-        "simple_explanation":
-            poll["simple_explanation"],
-
-        "practical_tip":
-            poll["practical_tip"],
-
-        "bonus_challenge":
-            poll["bonus_challenge"],
-
-        "morning_message":
-            message
+        "correct_option": poll["correct_option"],
+        "explanation": poll["simple_explanation"],
+        "bonus_challenge": poll["bonus_challenge"],
     }
 
-    save_question(
-        question_record
-    )
+    save_question(record)
 
     save_post({
-
-        "date": date_key,
-
-        "type": "morning_poll",
-
-        "message": message
+        "date": str(today),
+        "type": "weekday_poll",
+        "track": track["name"],
+        "message": message,
     })
-
-    status[date_key] = {
-
-        "morning_generated": True,
-
-        "evening_generated": False
-    }
-
-    save_status(status)
 
     print()
     print("=" * 70)
-    print("📱 MORNING MESSAGE")
+    print("📱 MORNING TELEGRAM MESSAGE")
     print("=" * 70)
 
     print(message)
 
     print()
-    print(
-        "✅ Morning poll generated."
-    )
+    print("📤 Sending to Telegram...")
 
-    return message
-
-
-# ============================================================
-# EVENING JOB
-# ============================================================
-
-def evening_job(today):
-
-    if today.weekday() > 4:
-        return None
-
-    date_key = str(today)
-
-    status = load_status()
-
-    if status.get(date_key, {}).get(
-        "evening_generated"
+    if not send_telegram_message(
+        message
     ):
 
-        print(
-            "ℹ️ Evening answer already generated."
+        raise RuntimeError(
+            "Telegram message could not be sent."
         )
 
-        return None
+    print()
+    print("✅ Morning poll completed.")
 
-    questions = load_questions()
 
-    today_questions = [
+# ============================================================
+# EVENING ENGINE
+# ============================================================
 
-        q for q in questions
+def run_evening():
 
-        if q.get("date") == date_key
-    ]
+    question = get_today_question()
 
-    if not today_questions:
+    if not question:
 
-        print(
-            "⚠️ No poll was found for today."
+        raise RuntimeError(
+            "No poll was found for today. "
+            "Make sure the 7:50 AM job ran successfully."
         )
 
-        return None
-
-    poll = today_questions[-1]
-
-    message = format_evening_answer(
-        poll
+    message = format_answer(
+        question
     )
 
     save_post({
-
-        "date": date_key,
-
-        "type": "evening_answer",
-
-        "message": message
+        "date": str(
+            datetime.date.today()
+        ),
+        "type": "weekday_answer",
+        "track": question["track"],
+        "message": message,
     })
-
-    status.setdefault(
-        date_key,
-        {}
-    )
-
-    status[date_key][
-        "evening_generated"
-    ] = True
-
-    save_status(status)
 
     print()
     print("=" * 70)
-    print("🎯 EVENING ANSWER")
+    print("📱 EVENING TELEGRAM MESSAGE")
     print("=" * 70)
 
     print(message)
 
     print()
-    print(
-        "✅ Evening answer generated."
-    )
+    print("📤 Sending to Telegram...")
 
-    return message
-
-
-# ============================================================
-# WEEKEND
-# ============================================================
-
-def weekend_job(today):
-
-    date_key = str(today)
-
-    status = load_status()
-
-    if status.get(date_key, {}).get(
-        "weekend_generated"
+    if not send_telegram_message(
+        message
     ):
 
-        print(
-            "ℹ️ Weekend content already generated."
+        raise RuntimeError(
+            "Telegram message could not be sent."
         )
 
-        return None
+    print()
+    print("✅ Evening answer completed.")
+
+
+# ============================================================
+# WEEKEND ENGINE
+# ============================================================
+
+def run_weekend():
+
+    today = datetime.date.today()
 
     if today.weekday() == 5:
 
+        print(
+            "🚀 Generating Saturday Motivation..."
+        )
+
         message = generate_saturday()
 
-        post_type = (
-            "saturday_motivation"
-        )
+        post_type = "saturday_motivation"
 
     else:
 
-        message = generate_sunday()
-
-        post_type = (
-            "sunday_inspiration"
+        print(
+            "✝️ Generating Sunday Inspiration..."
         )
 
+        message = generate_sunday()
+
+        post_type = "sunday_inspiration"
+
     save_post({
-
-        "date": date_key,
-
+        "date": str(today),
         "type": post_type,
-
-        "message": message
+        "message": message,
     })
-
-    status[date_key] = {
-
-        "weekend_generated": True
-    }
-
-    save_status(status)
 
     print()
     print("=" * 70)
-    print("📱 WEEKEND MESSAGE")
+    print("📱 WEEKEND TELEGRAM MESSAGE")
     print("=" * 70)
 
     print(message)
 
-    return message
+    print()
+    print("📤 Sending to Telegram...")
+
+    if not send_telegram_message(
+        message
+    ):
+
+        raise RuntimeError(
+            "Telegram message could not be sent."
+        )
+
+    print()
+    print("✅ Weekend message completed.")
 
 
 # ============================================================
@@ -890,26 +804,65 @@ def weekend_job(today):
 
 def main():
 
-    today = get_today()
+    mode = os.getenv(
+        "RUN_MODE",
+        "morning"
+    )
+
+    today = datetime.date.today()
 
     print()
+    print("=" * 70)
+    print("🚀 KORLINK TRAINING UPDATE AI")
+    print("=" * 70)
+
     print(
-        "🚀 KORLINK TRAINING UPDATE AI ENGINE"
+        f"📅 Today: "
+        f"{today.strftime('%A, %d %B %Y')}"
     )
 
     print(
-        f"📅 {today.strftime('%A, %d %B %Y')}"
+        f"🤖 Gemini model: {TEXT_MODEL}"
     )
 
-    if today.weekday() <= 4:
+    print(
+        f"⚙️ Run mode: {mode}"
+    )
 
-        morning_job(today)
+    print()
 
-        evening_job(today)
+    if mode == "morning":
+
+        if today.weekday() <= 4:
+            run_morning()
+        else:
+            print(
+                "⏭️ Morning poll is only for Monday-Friday."
+            )
+
+    elif mode == "evening":
+
+        if today.weekday() <= 4:
+            run_evening()
+        else:
+            print(
+                "⏭️ Evening answer is only for Monday-Friday."
+            )
+
+    elif mode == "weekend":
+
+        if today.weekday() >= 5:
+            run_weekend()
+        else:
+            print(
+                "⏭️ Weekend mode is only for Saturday/Sunday."
+            )
 
     else:
 
-        weekend_job(today)
+        raise RuntimeError(
+            f"Unknown RUN_MODE: {mode}"
+        )
 
 
 # ============================================================
@@ -917,4 +870,5 @@ def main():
 # ============================================================
 
 if __name__ == "__main__":
+
     main()
