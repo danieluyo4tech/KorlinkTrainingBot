@@ -21,5 +21,11 @@
         "type": "weekday_poll",
         "track": "Cybersecurity",
         "message": "☀️ *KORLINK DAILY TECH POLL*\n\n🎓 *Cybersecurity*\n\n👀 *Let's see who gets this!*\n\n👉 *Question:*\n\nYou suddenly receive a text message with a login security code for your email account, but you didn't try to log in. What should you do right away?\n\n1️⃣ Ignore it, because the hacker didn't get the code.\n2️⃣ Change your email password immediately.\n3️⃣ Reply 'STOP' to the text message.\n4️⃣ Forward the message to your friend to ask if it is real.\n\n👇 *Drop your answer number and thoughts below.*\n\n💡 _Don't be afraid to get it wrong. The goal is to learn!_\n"
+    },
+    {
+        "date": "2026-08-17",
+        "type": "weekday_answer",
+        "track": "Cybersecurity",
+        "message": "🌙 *KORLINK ANSWER*\n\n🎓 *Cybersecurity*\n\n❓ *Today's Question:*\n\nYou suddenly receive a text message with a login security code for your email account, but you didn't try to log in. What should you do right away?\n\n✅ *Correct Answer:*\n\n2️⃣ Change your email password immediately.\n\n🧠 *Why?*\n\nIf you get a login code without asking for it, someone already knows your password and is trying to sign in. Changing your password immediately keeps your account safe!\n\n🚀 *BONUS CHALLENGE:*\n\nCheck if your email provider lets you log out of all active devices with one click!\n\n🔥 _Keep learning. Keep practicing. Keep building!_\n"
     }
 ]
