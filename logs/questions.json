@@ -1,1 +1,16 @@
-
+[
+    {
+        "date": "2026-08-17",
+        "type": "weekday_poll",
+        "school": "School of Computing",
+        "track": "Cybersecurity",
+        "question": "You downloaded a PDF lecture note from an online link, but you notice the file name ends with '.pdf.exe'. What should you do?",
+        "option_1": "Open it quickly to check if the notes are inside.",
+        "option_2": "Delete it immediately without opening it.",
+        "option_3": "Rename it to just '.pdf' so it opens as a document.",
+        "option_4": "Forward it to a friend to test if it opens on their phone.",
+        "correct_option": 2,
+        "explanation": "Files ending in '.exe' are program files that can run harmful code on your computer. Hackers often add '.pdf' in front of '.exe' to trick you into opening a virus.",
+        "bonus_challenge": "Do you know how to turn on 'File Name Extensions' on your computer so hidden extensions like .exe always show up?"
+    }
+]
