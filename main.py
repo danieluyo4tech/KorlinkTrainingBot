@@ -18,6 +18,7 @@ TEXT_MODEL = os.getenv("GEMINI_MODEL")
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
+
 if not API_KEY:
     raise RuntimeError("GEMINI_API_KEY is not configured.")
 
@@ -31,15 +32,29 @@ if not TELEGRAM_CHAT_ID:
     raise RuntimeError("TELEGRAM_CHAT_ID is not configured.")
 
 
-client = genai.Client(api_key=API_KEY)
+# ============================================================
+# GEMINI CLIENT
+# ============================================================
+
+client = genai.Client(
+    api_key=API_KEY
+)
+
+
+# ============================================================
+# FILE DIRECTORIES
+# ============================================================
 
 BASE_DIR = Path(__file__).resolve().parent
+
 LOG_DIR = BASE_DIR / "logs"
 
 QUESTIONS_FILE = LOG_DIR / "questions.json"
 POSTS_FILE = LOG_DIR / "posts.json"
 
-LOG_DIR.mkdir(exist_ok=True)
+LOG_DIR.mkdir(
+    exist_ok=True
+)
 
 
 # ============================================================
@@ -47,6 +62,7 @@ LOG_DIR.mkdir(exist_ok=True)
 # ============================================================
 
 WEEKDAY_TRACKS = {
+
     0: {
         "school": "School of Computing",
         "name": "Cybersecurity",
@@ -105,15 +121,25 @@ def load_json(file_path):
         return []
 
     try:
+
         with open(
             file_path,
             "r",
             encoding="utf-8"
         ) as file:
 
-            return json.load(file)
+            data = json.load(file)
 
-    except Exception:
+            if isinstance(data, list):
+                return data
+
+            return []
+
+    except Exception as error:
+
+        print(
+            f"⚠️ Could not read {file_path}: {error}"
+        )
 
         return []
 
@@ -186,8 +212,8 @@ def save_post(post_data):
 def send_telegram_message(message):
 
     url = (
-        f"https://api.telegram.org/bot"
-        f"{TELEGRAM_BOT_TOKEN}/sendMessage"
+        f"https://api.telegram.org/"
+        f"bot{TELEGRAM_BOT_TOKEN}/sendMessage"
     )
 
     data = urllib.parse.urlencode({
@@ -221,7 +247,10 @@ def send_telegram_message(message):
 
             return True
 
-        print("❌ Telegram API error:")
+        print(
+            "❌ Telegram API error:"
+        )
+
         print(result)
 
         return False
@@ -239,29 +268,56 @@ def send_telegram_message(message):
 # GEMINI RETRY HANDLER
 # ============================================================
 
-def generate_with_retry(prompt, max_attempts=5):
+def generate_with_retry(
+    prompt,
+    max_attempts=5
+):
     """
-    Generate Gemini content with automatic retries for temporary
-    Gemini/API availability errors such as 503 and 429.
-
-    This prevents a temporary Gemini outage from immediately
-    stopping the daily training update.
+    Generate Gemini content with automatic retries
+    for temporary API errors such as 429, 500 and 503.
     """
 
-    delays = [5, 10, 20, 40, 60]
+    delays = [
+        5,
+        10,
+        20,
+        40,
+        60
+    ]
 
-    for attempt in range(1, max_attempts + 1):
+    for attempt in range(
+        1,
+        max_attempts + 1
+    ):
 
         try:
+
             print(
-                f"🤖 Gemini attempt {attempt}/{max_attempts}..."
+                f"🤖 Gemini attempt "
+                f"{attempt}/{max_attempts}..."
             )
 
-            return generate_with_retry(prompt)
+            # IMPORTANT:
+            # Actually call Gemini here.
+            # Do NOT call generate_with_retry()
+            # from inside itself.
+
+            response = client.models.generate_content(
+                model=TEXT_MODEL,
+                contents=prompt
+            )
+
+            if not response:
+
+                raise RuntimeError(
+                    "Gemini returned an empty response."
+                )
+
+            return response
 
         except Exception as error:
 
-            error_text = str(error)
+            error_text = str(error).upper()
 
             temporary_error = any(
                 code in error_text
@@ -273,18 +329,38 @@ def generate_with_retry(prompt, max_attempts=5):
                     "504",
                     "UNAVAILABLE",
                     "RESOURCE_EXHAUSTED",
-                    "INTERNAL"
+                    "INTERNAL",
+                    "TIMEOUT",
+                    "OVERLOADED"
                 ]
             )
 
-            if not temporary_error or attempt == max_attempts:
+            print(
+                f"⚠️ Gemini error: {error}"
+            )
+
+            if (
+                not temporary_error
+                or attempt == max_attempts
+            ):
+
+                print(
+                    "❌ Gemini generation failed."
+                )
+
                 raise
 
-            delay = delays[min(attempt - 1, len(delays) - 1)]
+            delay = delays[
+                min(
+                    attempt - 1,
+                    len(delays) - 1
+                )
+            ]
 
             print(
-                f"⚠️ Gemini temporarily unavailable."
+                "⚠️ Gemini temporarily unavailable."
             )
+
             print(
                 f"🔄 Retrying in {delay} seconds..."
             )
@@ -292,7 +368,8 @@ def generate_with_retry(prompt, max_attempts=5):
             time.sleep(delay)
 
     raise RuntimeError(
-        "Gemini generation failed after all retry attempts."
+        "Gemini generation failed after "
+        "all retry attempts."
     )
 
 
@@ -392,9 +469,13 @@ Use exactly:
 }}
 """
 
-    response = generate_with_retry(prompt)
+    response = generate_with_retry(
+        prompt
+    )
 
     text = response.text.strip()
+
+    # Remove Markdown code fences if Gemini adds them
 
     if text.startswith("```"):
 
@@ -410,14 +491,55 @@ Use exactly:
 
         text = text.strip()
 
-    return json.loads(text)
+    try:
+
+        poll = json.loads(
+            text
+        )
+
+    except json.JSONDecodeError as error:
+
+        print(
+            "❌ Gemini returned invalid JSON:"
+        )
+
+        print(text)
+
+        raise RuntimeError(
+            f"Gemini returned invalid JSON: {error}"
+        )
+
+    # Validate required fields
+
+    required_fields = [
+        "question",
+        "option_1",
+        "option_2",
+        "option_3",
+        "option_4",
+        "correct_option",
+        "simple_explanation",
+        "bonus_challenge"
+    ]
+
+    for field in required_fields:
+
+        if field not in poll:
+
+            raise RuntimeError(
+                f"Gemini response is missing: {field}"
+            )
+
+    return poll
 
 
 # ============================================================
 # DUPLICATE QUESTION CHECK
 # ============================================================
 
-def is_duplicate_question(new_question):
+def is_duplicate_question(
+    new_question
+):
 
     questions = load_questions()
 
@@ -455,7 +577,9 @@ If the question is substantially similar
 to an old question, return DUPLICATE.
 """
 
-    response = generate_with_retry(prompt)
+    response = generate_with_retry(
+        prompt
+    )
 
     result = response.text.strip().upper()
 
@@ -466,7 +590,10 @@ to an old question, return DUPLICATE.
 # MORNING POLL MESSAGE
 # ============================================================
 
-def format_poll(track, poll):
+def format_poll(
+    track,
+    poll
+):
 
     return f"""☀️ *KORLINK DAILY TECH POLL*
 
@@ -501,11 +628,14 @@ def get_today_question():
 
     questions = load_questions()
 
-    for question in reversed(questions):
+    for question in reversed(
+        questions
+    ):
 
         if (
             question.get("date") == today
-            and question.get("type") == "weekday_poll"
+            and
+            question.get("type") == "weekday_poll"
         ):
 
             return question
@@ -517,13 +647,21 @@ def get_today_question():
 # EVENING ANSWER MESSAGE
 # ============================================================
 
-def format_answer(question):
+def format_answer(
+    question
+):
 
-    correct = question["correct_option"]
+    correct = question[
+        "correct_option"
+    ]
 
-    option_key = f"option_{correct}"
+    option_key = (
+        f"option_{correct}"
+    )
 
-    correct_text = question[option_key]
+    correct_text = question[
+        option_key
+    ]
 
     return f"""🌙 *KORLINK ANSWER*
 
@@ -587,7 +725,9 @@ Use this format:
 💬 [short question]
 """
 
-    response = generate_with_retry(prompt)
+    response = generate_with_retry(
+        prompt
+    )
 
     return response.text.strip()
 
@@ -635,7 +775,9 @@ Use this format:
 [one short question]
 """
 
-    response = generate_with_retry(prompt)
+    response = generate_with_retry(
+        prompt
+    )
 
     return response.text.strip()
 
@@ -650,10 +792,19 @@ def run_morning():
 
     weekday = today.weekday()
 
-    track = WEEKDAY_TRACKS[weekday]
+    track = WEEKDAY_TRACKS.get(
+        weekday
+    )
+
+    if not track:
+
+        raise RuntimeError(
+            "No training track configured for today."
+        )
 
     print(
-        f"🎓 Generating {track['name']} poll..."
+        f"🎓 Generating "
+        f"{track['name']} poll..."
     )
 
     poll = None
@@ -687,8 +838,8 @@ def run_morning():
     if poll is None:
 
         raise RuntimeError(
-            "Could not generate a unique question "
-            "after three attempts."
+            "Could not generate a unique "
+            "question after three attempts."
         )
 
     message = format_poll(
@@ -697,38 +848,65 @@ def run_morning():
     )
 
     record = {
+
         "date": str(today),
+
         "type": "weekday_poll",
+
         "school": track["school"],
+
         "track": track["name"],
+
         "question": poll["question"],
+
         "option_1": poll["option_1"],
+
         "option_2": poll["option_2"],
+
         "option_3": poll["option_3"],
+
         "option_4": poll["option_4"],
+
         "correct_option": poll["correct_option"],
-        "explanation": poll["simple_explanation"],
-        "bonus_challenge": poll["bonus_challenge"],
+
+        "explanation": poll[
+            "simple_explanation"
+        ],
+
+        "bonus_challenge": poll[
+            "bonus_challenge"
+        ],
     }
 
-    save_question(record)
+    save_question(
+        record
+    )
 
     save_post({
+
         "date": str(today),
+
         "type": "weekday_poll",
+
         "track": track["name"],
+
         "message": message,
+
     })
 
     print()
     print("=" * 70)
-    print("📱 MORNING TELEGRAM MESSAGE")
+    print(
+        "📱 MORNING TELEGRAM MESSAGE"
+    )
     print("=" * 70)
 
     print(message)
 
     print()
-    print("📤 Sending to Telegram...")
+    print(
+        "📤 Sending to Telegram..."
+    )
 
     if not send_telegram_message(
         message
@@ -739,7 +917,9 @@ def run_morning():
         )
 
     print()
-    print("✅ Morning poll completed.")
+    print(
+        "✅ Morning poll completed."
+    )
 
 
 # ============================================================
@@ -762,23 +942,32 @@ def run_evening():
     )
 
     save_post({
+
         "date": str(
             datetime.date.today()
         ),
+
         "type": "weekday_answer",
+
         "track": question["track"],
+
         "message": message,
+
     })
 
     print()
     print("=" * 70)
-    print("📱 EVENING TELEGRAM MESSAGE")
+    print(
+        "📱 EVENING TELEGRAM MESSAGE"
+    )
     print("=" * 70)
 
     print(message)
 
     print()
-    print("📤 Sending to Telegram...")
+    print(
+        "📤 Sending to Telegram..."
+    )
 
     if not send_telegram_message(
         message
@@ -789,7 +978,9 @@ def run_evening():
         )
 
     print()
-    print("✅ Evening answer completed.")
+    print(
+        "✅ Evening answer completed."
+    )
 
 
 # ============================================================
@@ -808,7 +999,9 @@ def run_weekend():
 
         message = generate_saturday()
 
-        post_type = "saturday_motivation"
+        post_type = (
+            "saturday_motivation"
+        )
 
     else:
 
@@ -818,23 +1011,33 @@ def run_weekend():
 
         message = generate_sunday()
 
-        post_type = "sunday_inspiration"
+        post_type = (
+            "sunday_inspiration"
+        )
 
     save_post({
+
         "date": str(today),
+
         "type": post_type,
+
         "message": message,
+
     })
 
     print()
     print("=" * 70)
-    print("📱 WEEKEND TELEGRAM MESSAGE")
+    print(
+        "📱 WEEKEND TELEGRAM MESSAGE"
+    )
     print("=" * 70)
 
     print(message)
 
     print()
-    print("📤 Sending to Telegram...")
+    print(
+        "📤 Sending to Telegram..."
+    )
 
     if not send_telegram_message(
         message
@@ -845,7 +1048,9 @@ def run_weekend():
         )
 
     print()
-    print("✅ Weekend message completed.")
+    print(
+        "✅ Weekend message completed."
+    )
 
 
 # ============================================================
@@ -857,13 +1062,15 @@ def main():
     mode = os.getenv(
         "RUN_MODE",
         "morning"
-    )
+    ).lower().strip()
 
     today = datetime.date.today()
 
     print()
     print("=" * 70)
-    print("🚀 KORLINK TRAINING UPDATE AI")
+    print(
+        "🚀 KORLINK TRAINING UPDATE AI"
+    )
     print("=" * 70)
 
     print(
@@ -884,28 +1091,40 @@ def main():
     if mode == "morning":
 
         if today.weekday() <= 4:
+
             run_morning()
+
         else:
+
             print(
-                "⏭️ Morning poll is only for Monday-Friday."
+                "⏭️ Morning poll is only "
+                "for Monday-Friday."
             )
 
     elif mode == "evening":
 
         if today.weekday() <= 4:
+
             run_evening()
+
         else:
+
             print(
-                "⏭️ Evening answer is only for Monday-Friday."
+                "⏭️ Evening answer is only "
+                "for Monday-Friday."
             )
 
     elif mode == "weekend":
 
         if today.weekday() >= 5:
+
             run_weekend()
+
         else:
+
             print(
-                "⏭️ Weekend mode is only for Saturday/Sunday."
+                "⏭️ Weekend mode is only "
+                "for Saturday/Sunday."
             )
 
     else:
