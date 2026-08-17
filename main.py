@@ -610,7 +610,7 @@ def format_poll(
 3️⃣ {poll['option_3']}
 4️⃣ {poll['option_4']}
 
-👇 *Drop your answer number and why below.*
+👇 *Drop your answer number and thoughts below.*
 
 💡 _Don't be afraid to get it wrong. The goal is to learn!_
 """
