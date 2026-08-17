@@ -1,6 +1,7 @@
 import os
 import json
 import datetime
+import time
 import urllib.request
 import urllib.parse
 from pathlib import Path
@@ -235,6 +236,67 @@ def send_telegram_message(message):
 
 
 # ============================================================
+# GEMINI RETRY HANDLER
+# ============================================================
+
+def generate_with_retry(prompt, max_attempts=5):
+    """
+    Generate Gemini content with automatic retries for temporary
+    Gemini/API availability errors such as 503 and 429.
+
+    This prevents a temporary Gemini outage from immediately
+    stopping the daily training update.
+    """
+
+    delays = [5, 10, 20, 40, 60]
+
+    for attempt in range(1, max_attempts + 1):
+
+        try:
+            print(
+                f"🤖 Gemini attempt {attempt}/{max_attempts}..."
+            )
+
+            return generate_with_retry(prompt)
+
+        except Exception as error:
+
+            error_text = str(error)
+
+            temporary_error = any(
+                code in error_text
+                for code in [
+                    "503",
+                    "429",
+                    "500",
+                    "502",
+                    "504",
+                    "UNAVAILABLE",
+                    "RESOURCE_EXHAUSTED",
+                    "INTERNAL"
+                ]
+            )
+
+            if not temporary_error or attempt == max_attempts:
+                raise
+
+            delay = delays[min(attempt - 1, len(delays) - 1)]
+
+            print(
+                f"⚠️ Gemini temporarily unavailable."
+            )
+            print(
+                f"🔄 Retrying in {delay} seconds..."
+            )
+
+            time.sleep(delay)
+
+    raise RuntimeError(
+        "Gemini generation failed after all retry attempts."
+    )
+
+
+# ============================================================
 # GENERATE WEEKDAY POLL
 # ============================================================
 
@@ -330,10 +392,7 @@ Use exactly:
 }}
 """
 
-    response = client.models.generate_content(
-        model=TEXT_MODEL,
-        contents=prompt
-    )
+    response = generate_with_retry(prompt)
 
     text = response.text.strip()
 
@@ -396,10 +455,7 @@ If the question is substantially similar
 to an old question, return DUPLICATE.
 """
 
-    response = client.models.generate_content(
-        model=TEXT_MODEL,
-        contents=prompt
-    )
+    response = generate_with_retry(prompt)
 
     result = response.text.strip().upper()
 
@@ -531,10 +587,7 @@ Use this format:
 💬 [short question]
 """
 
-    response = client.models.generate_content(
-        model=TEXT_MODEL,
-        contents=prompt
-    )
+    response = generate_with_retry(prompt)
 
     return response.text.strip()
 
@@ -582,10 +635,7 @@ Use this format:
 [one short question]
 """
 
-    response = client.models.generate_content(
-        model=TEXT_MODEL,
-        contents=prompt
-    )
+    response = generate_with_retry(prompt)
 
     return response.text.strip()
 
