@@ -12,5 +12,19 @@
         "correct_option": 2,
         "explanation": "Files ending in '.exe' are program files that can run harmful code on your computer. Hackers often add '.pdf' in front of '.exe' to trick you into opening a virus.",
         "bonus_challenge": "Do you know how to turn on 'File Name Extensions' on your computer so hidden extensions like .exe always show up?"
+    },
+    {
+        "date": "2026-08-17",
+        "type": "weekday_poll",
+        "school": "School of Computing",
+        "track": "Cybersecurity",
+        "question": "You suddenly receive a text message with a login security code for your email account, but you didn't try to log in. What should you do right away?",
+        "option_1": "Ignore it, because the hacker didn't get the code.",
+        "option_2": "Change your email password immediately.",
+        "option_3": "Reply 'STOP' to the text message.",
+        "option_4": "Forward the message to your friend to ask if it is real.",
+        "correct_option": 2,
+        "explanation": "If you get a login code without asking for it, someone already knows your password and is trying to sign in. Changing your password immediately keeps your account safe!",
+        "bonus_challenge": "Check if your email provider lets you log out of all active devices with one click!"
     }
 ]
