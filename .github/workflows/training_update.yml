@@ -4,18 +4,20 @@ on:
   schedule:
 
     # Monday - Friday
-    # 7:50 AM Nigeria time (WAT / UTC+1)
-    - cron: "50 6 * * 1-5"
+    # 7:00 AM Nigeria Time (WAT / UTC+1)
+    - cron: "0 6 * * 1-5"
 
     # Monday - Friday
-    # 6:50 PM Nigeria time (WAT / UTC+1)
-    - cron: "50 17 * * 1-5"
+    # 6:00 PM Nigeria Time (WAT / UTC+1)
+    - cron: "0 17 * * 1-5"
 
-    # Saturday - 8:00 AM WAT
-    - cron: "0 7 * * 6"
+    # Saturday
+    # 7:00 AM Nigeria Time (WAT / UTC+1)
+    - cron: "0 6 * * 6"
 
-    # Sunday - 8:00 AM WAT
-    - cron: "0 7 * * 0"
+    # Sunday
+    # 7:00 AM Nigeria Time (WAT / UTC+1)
+    - cron: "0 6 * * 0"
 
   workflow_dispatch:
     inputs:
@@ -37,34 +39,37 @@ jobs:
 
     steps:
 
-      # ------------------------------------------------------
-      # CHECKOUT REPOSITORY
-      # ------------------------------------------------------
+      # ====================================================
+      # CHECKOUT
+      # ====================================================
 
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # ------------------------------------------------------
+
+      # ====================================================
       # SETUP PYTHON
-      # ------------------------------------------------------
+      # ====================================================
 
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      # ------------------------------------------------------
+
+      # ====================================================
       # INSTALL DEPENDENCIES
-      # ------------------------------------------------------
+      # ====================================================
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # ------------------------------------------------------
+
+      # ====================================================
       # DETERMINE RUN MODE
-      # ------------------------------------------------------
+      # ====================================================
 
       - name: Determine run mode
         id: mode
@@ -72,25 +77,56 @@ jobs:
 
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
 
-            echo "mode=${{ inputs.run_mode }}" >> $GITHUB_OUTPUT
+            echo "mode=${{ inputs.run_mode }}" >> "$GITHUB_OUTPUT"
 
-          elif [ "${{ github.event.schedule }}" = "50 6 * * 1-5" ]; then
+          elif [ "${{ github.event.schedule }}" = "0 6 * * 1-5" ]; then
 
-            echo "mode=morning" >> $GITHUB_OUTPUT
+            echo "mode=morning" >> "$GITHUB_OUTPUT"
 
-          elif [ "${{ github.event.schedule }}" = "50 17 * * 1-5" ]; then
+          elif [ "${{ github.event.schedule }}" = "0 17 * * 1-5" ]; then
 
-            echo "mode=evening" >> $GITHUB_OUTPUT
+            echo "mode=evening" >> "$GITHUB_OUTPUT"
+
+          elif [ "${{ github.event.schedule }}" = "0 6 * * 6" ]; then
+
+            echo "mode=weekend" >> "$GITHUB_OUTPUT"
+
+          elif [ "${{ github.event.schedule }}" = "0 6 * * 0" ]; then
+
+            echo "mode=weekend" >> "$GITHUB_OUTPUT"
 
           else
 
-            echo "mode=weekend" >> $GITHUB_OUTPUT
+            echo "mode=morning" >> "$GITHUB_OUTPUT"
 
           fi
 
-      # ------------------------------------------------------
+
+      # ====================================================
+      # SHOW RUN INFORMATION
+      # ====================================================
+
+      - name: Show run information
+        run: |
+
+          echo "=============================================="
+
+          echo "KORLINK TRAINING UPDATE AI"
+
+          echo "=============================================="
+
+          echo "Run mode: ${{ steps.mode.outputs.mode }}"
+
+          echo "Event: ${{ github.event_name }}"
+
+          echo "Schedule: ${{ github.event.schedule }}"
+
+          echo "=============================================="
+
+
+      # ====================================================
       # RUN AI ENGINE
-      # ------------------------------------------------------
+      # ====================================================
 
       - name: Run Korlink Training Update
         env:
@@ -109,9 +145,10 @@ jobs:
 
           python main.py
 
-      # ------------------------------------------------------
+
+      # ====================================================
       # SAVE GENERATED DATA
-      # ------------------------------------------------------
+      # ====================================================
 
       - name: Save generated logs
         run: |
