@@ -33,5 +33,11 @@
         "type": "weekday_poll",
         "track": "Software Engineering",
         "message": "☀️ *KORLINK DAILY TECH POLL*\n\n🎓 *Software Engineering*\n\n👀 *Let's see who gets this!*\n\n👉 *Question:*\n\nYou are building a simple shopping app. A user adds three items costing $10 each, but the total displays as $101010 instead of $30! What is most likely causing this bug?\n\n1️⃣ The store database is temporarily offline.\n2️⃣ The app is treating the prices as text instead of numbers.\n3️⃣ The phone's internet connection was interrupted.\n4️⃣ The user's phone screen resolution is too low.\n\n👇 *Drop your answer number and thoughts below.*\n\n💡 _Don't be afraid to get it wrong. The goal is to learn!_\n"
+    },
+    {
+        "date": "2026-08-18",
+        "type": "weekday_answer",
+        "track": "Software Engineering",
+        "message": "🌙 *KORLINK ANSWER*\n\n🎓 *Software Engineering*\n\n❓ *Today's Question:*\n\nYou are building a simple shopping app. A user adds three items costing $10 each, but the total displays as $101010 instead of $30! What is most likely causing this bug?\n\n✅ *Correct Answer:*\n\n2️⃣ The app is treating the prices as text instead of numbers.\n\n🧠 *Why?*\n\nWhen a computer program treats numbers as text (strings), using the plus sign glues the words together ('10' + '10' + '10' = '101010') instead of adding them mathematically!\n\n🚀 *BONUS CHALLENGE:*\n\nWhat function or tool in programming would you use to convert text numbers into real integers?\n\n🔥 _Keep learning. Keep practicing. Keep building!_\n"
     }
 ]
