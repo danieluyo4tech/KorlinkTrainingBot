@@ -26,5 +26,19 @@
         "correct_option": 2,
         "explanation": "If you get a login code without asking for it, someone already knows your password and is trying to sign in. Changing your password immediately keeps your account safe!",
         "bonus_challenge": "Check if your email provider lets you log out of all active devices with one click!"
+    },
+    {
+        "date": "2026-08-18",
+        "type": "weekday_poll",
+        "school": "School of Computing",
+        "track": "Software Engineering",
+        "question": "You are building a simple shopping app. A user adds three items costing $10 each, but the total displays as $101010 instead of $30! What is most likely causing this bug?",
+        "option_1": "The store database is temporarily offline.",
+        "option_2": "The app is treating the prices as text instead of numbers.",
+        "option_3": "The phone's internet connection was interrupted.",
+        "option_4": "The user's phone screen resolution is too low.",
+        "correct_option": 2,
+        "explanation": "When a computer program treats numbers as text (strings), using the plus sign glues the words together ('10' + '10' + '10' = '101010') instead of adding them mathematically!",
+        "bonus_challenge": "What function or tool in programming would you use to convert text numbers into real integers?"
     }
 ]
