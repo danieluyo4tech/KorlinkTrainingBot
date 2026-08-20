@@ -57,5 +57,11 @@
         "type": "weekday_poll",
         "track": "Smart Tech and Automation",
         "message": "☀️ *KORLINK DAILY TECH POLL*\n\n🎓 *Smart Tech and Automation*\n\n👀 *Let's see who gets this!*\n\n👉 *Question:*\n\nYou set up a smart system to automatically water your garden every morning. However, it keeps watering even right after a heavy rainstorm! What sensor should you add so it only waters when needed?\n\n1️⃣ Soil moisture sensor\n2️⃣ Motion sensor\n3️⃣ Sound sensor\n4️⃣ Ultrasonic distance sensor\n\n👇 *Drop your answer number and thoughts below.*\n\n💡 _Don't be afraid to get it wrong. The goal is to learn!_\n"
+    },
+    {
+        "date": "2026-08-20",
+        "type": "weekday_answer",
+        "track": "Smart Tech and Automation",
+        "message": "🌙 *KORLINK ANSWER*\n\n🎓 *Smart Tech and Automation*\n\n❓ *Today's Question:*\n\nYou set up a smart system to automatically water your garden every morning. However, it keeps watering even right after a heavy rainstorm! What sensor should you add so it only waters when needed?\n\n✅ *Correct Answer:*\n\n1️⃣ Soil moisture sensor\n\n🧠 *Why?*\n\nA soil moisture sensor checks how wet or dry the dirt actually is, so the controller knows to skip watering when the soil is already wet from rain!\n\n🚀 *BONUS CHALLENGE:*\n\nWhat threshold setting would you send to your controller to prevent the pump from turning on when it rains?\n\n🔥 _Keep learning. Keep practicing. Keep building!_\n"
     }
 ]
