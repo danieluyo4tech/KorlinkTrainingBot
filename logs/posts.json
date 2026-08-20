@@ -51,5 +51,11 @@
         "type": "weekday_answer",
         "track": "Network Engineering",
         "message": "🌙 *KORLINK ANSWER*\n\n🎓 *Network Engineering*\n\n❓ *Today's Question:*\n\nYou connect your laptop to your home Wi-Fi and see full signal bars, but no websites will load. What is most likely the issue?\n\n✅ *Correct Answer:*\n\n1️⃣ The router is sending a local Wi-Fi signal, but lost its connection to the Internet provider.\n\n🧠 *Why?*\n\nFull Wi-Fi bars mean your laptop is successfully talking to your router locally, but the router itself isn't getting Internet service from your provider.\n\n🚀 *BONUS CHALLENGE:*\n\nWhat quick physical test or check would you do on the router to see if the Internet cable/line is connected properly?\n\n🔥 _Keep learning. Keep practicing. Keep building!_\n"
+    },
+    {
+        "date": "2026-08-20",
+        "type": "weekday_poll",
+        "track": "Smart Tech and Automation",
+        "message": "☀️ *KORLINK DAILY TECH POLL*\n\n🎓 *Smart Tech and Automation*\n\n👀 *Let's see who gets this!*\n\n👉 *Question:*\n\nYou set up a smart system to automatically water your garden every morning. However, it keeps watering even right after a heavy rainstorm! What sensor should you add so it only waters when needed?\n\n1️⃣ Soil moisture sensor\n2️⃣ Motion sensor\n3️⃣ Sound sensor\n4️⃣ Ultrasonic distance sensor\n\n👇 *Drop your answer number and thoughts below.*\n\n💡 _Don't be afraid to get it wrong. The goal is to learn!_\n"
     }
 ]

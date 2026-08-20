@@ -54,5 +54,19 @@
         "correct_option": 1,
         "explanation": "Full Wi-Fi bars mean your laptop is successfully talking to your router locally, but the router itself isn't getting Internet service from your provider.",
         "bonus_challenge": "What quick physical test or check would you do on the router to see if the Internet cable/line is connected properly?"
+    },
+    {
+        "date": "2026-08-20",
+        "type": "weekday_poll",
+        "school": "School of Technology",
+        "track": "Smart Tech and Automation",
+        "question": "You set up a smart system to automatically water your garden every morning. However, it keeps watering even right after a heavy rainstorm! What sensor should you add so it only waters when needed?",
+        "option_1": "Soil moisture sensor",
+        "option_2": "Motion sensor",
+        "option_3": "Sound sensor",
+        "option_4": "Ultrasonic distance sensor",
+        "correct_option": 1,
+        "explanation": "A soil moisture sensor checks how wet or dry the dirt actually is, so the controller knows to skip watering when the soil is already wet from rain!",
+        "bonus_challenge": "What threshold setting would you send to your controller to prevent the pump from turning on when it rains?"
     }
 ]
