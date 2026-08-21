@@ -69,5 +69,11 @@
         "type": "weekday_poll",
         "track": "Solar PV Design and Installation",
         "message": "☀️ *KORLINK DAILY TECH POLL*\n\n🎓 *Solar PV Design and Installation*\n\n👀 *Let's see who gets this!*\n\n👉 *Question:*\n\nYou turn on a heavy electric iron while running on your home solar system, and the inverter suddenly starts beeping loudly and shuts off the power. What is most likely happening?\n\n1️⃣ The solar panels ran out of sunlight.\n2️⃣ The total power drawn exceeded the inverter's limit.\n3️⃣ The charge controller turned off the sun's energy.\n4️⃣ The battery completely drained in one second.\n\n👇 *Drop your answer number and thoughts below.*\n\n💡 _Don't be afraid to get it wrong. The goal is to learn!_\n"
+    },
+    {
+        "date": "2026-08-21",
+        "type": "weekday_answer",
+        "track": "Solar PV Design and Installation",
+        "message": "🌙 *KORLINK ANSWER*\n\n🎓 *Solar PV Design and Installation*\n\n❓ *Today's Question:*\n\nYou turn on a heavy electric iron while running on your home solar system, and the inverter suddenly starts beeping loudly and shuts off the power. What is most likely happening?\n\n✅ *Correct Answer:*\n\n2️⃣ The total power drawn exceeded the inverter's limit.\n\n🧠 *Why?*\n\nInverters have built-in overload protection. When you plug in high-wattage appliances that exceed what the inverter can safely deliver, it shuts down automatically to prevent damage.\n\n🚀 *BONUS CHALLENGE:*\n\nCan you name two other everyday home appliances that draw high wattage and could trigger an inverter overload?\n\n🔥 _Keep learning. Keep practicing. Keep building!_\n"
     }
 ]
