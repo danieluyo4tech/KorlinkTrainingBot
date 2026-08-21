@@ -68,5 +68,19 @@
         "correct_option": 1,
         "explanation": "A soil moisture sensor checks how wet or dry the dirt actually is, so the controller knows to skip watering when the soil is already wet from rain!",
         "bonus_challenge": "What threshold setting would you send to your controller to prevent the pump from turning on when it rains?"
+    },
+    {
+        "date": "2026-08-21",
+        "type": "weekday_poll",
+        "school": "School of Technology",
+        "track": "Solar PV Design and Installation",
+        "question": "You turn on a heavy electric iron while running on your home solar system, and the inverter suddenly starts beeping loudly and shuts off the power. What is most likely happening?",
+        "option_1": "The solar panels ran out of sunlight.",
+        "option_2": "The total power drawn exceeded the inverter's limit.",
+        "option_3": "The charge controller turned off the sun's energy.",
+        "option_4": "The battery completely drained in one second.",
+        "correct_option": 2,
+        "explanation": "Inverters have built-in overload protection. When you plug in high-wattage appliances that exceed what the inverter can safely deliver, it shuts down automatically to prevent damage.",
+        "bonus_challenge": "Can you name two other everyday home appliances that draw high wattage and could trigger an inverter overload?"
     }
 ]
