@@ -97,5 +97,11 @@
         "type": "weekday_answer",
         "track": "Cybersecurity",
         "message": "🌙 *KORLINK ANSWER*\n\n🎓 *Cybersecurity*\n\n❓ *Today's Question:*\n\nYou download a free simple Flashlight app on your phone. As soon as you open it, the app asks for permission to access your contacts and phone call history. What is the safest thing to do?\n\n✅ *Correct Answer:*\n\n2️⃣ Deny the permissions and uninstall the app immediately\n\n🧠 *Why?*\n\nA simple flashlight app only needs control of your camera's LED light. Requesting your personal contacts and phone logs is a big red flag that the app is harvesting your private data.\n\n🚀 *BONUS CHALLENGE:*\n\nCheck your phone settings right now! Name one app you found that has permission to access your Location or Microphone even though it doesn't really need it.\n\n🔥 _Keep learning. Keep practicing. Keep building!_\n"
+    },
+    {
+        "date": "2026-08-25",
+        "type": "weekday_poll",
+        "track": "Software Engineering",
+        "message": "☀️ *KORLINK DAILY TECH POLL*\n\n🎓 *Software Engineering*\n\n👀 *Let's see who gets this!*\n\n👉 *Question:*\n\nYou build a website with a 'Pay Now' button. When users click it, the payment takes 3 seconds to process. People keep clicking it repeatedly and get charged twice! How should you fix this in your app?\n\n1️⃣ Disable the button immediately after the first click\n2️⃣ Make the button text bigger so it is easier to read\n3️⃣ Tell users to refresh their screen before paying\n4️⃣ Delete the user's payment history from the database\n\n👇 *Drop your answer number and thoughts below.*\n\n💡 _Don't be afraid to get it wrong. The goal is to learn!_\n"
     }
 ]

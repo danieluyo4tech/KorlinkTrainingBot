@@ -96,5 +96,19 @@
         "correct_option": 2,
         "explanation": "A simple flashlight app only needs control of your camera's LED light. Requesting your personal contacts and phone logs is a big red flag that the app is harvesting your private data.",
         "bonus_challenge": "Check your phone settings right now! Name one app you found that has permission to access your Location or Microphone even though it doesn't really need it."
+    },
+    {
+        "date": "2026-08-25",
+        "type": "weekday_poll",
+        "school": "School of Computing",
+        "track": "Software Engineering",
+        "question": "You build a website with a 'Pay Now' button. When users click it, the payment takes 3 seconds to process. People keep clicking it repeatedly and get charged twice! How should you fix this in your app?",
+        "option_1": "Disable the button immediately after the first click",
+        "option_2": "Make the button text bigger so it is easier to read",
+        "option_3": "Tell users to refresh their screen before paying",
+        "option_4": "Delete the user's payment history from the database",
+        "correct_option": 1,
+        "explanation": "Disabling the submit button as soon as it is clicked prevents users from sending duplicate requests while waiting for the server to respond.",
+        "bonus_challenge": "Besides disabling the button, what visual indicator could you add to show users that their payment is actively processing?"
     }
 ]
