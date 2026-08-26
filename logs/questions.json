@@ -110,5 +110,19 @@
         "correct_option": 1,
         "explanation": "Disabling the submit button as soon as it is clicked prevents users from sending duplicate requests while waiting for the server to respond.",
         "bonus_challenge": "Besides disabling the button, what visual indicator could you add to show users that their payment is actively processing?"
+    },
+    {
+        "date": "2026-08-26",
+        "type": "weekday_poll",
+        "school": "School of Technology",
+        "track": "Network Engineering",
+        "question": "You manually set the IP address of a new desktop PC to 192.168.1.50. Instantly, a pop-up warning says 'IP Address Conflict' and the PC loses network access. What happened?",
+        "option_1": "Another device on the network is already using that exact IP address.",
+        "option_2": "The Ethernet cable was plugged into the computer upside down.",
+        "option_3": "The Wi-Fi router completely ran out of security passwords.",
+        "option_4": "The computer's main hard drive is completely full.",
+        "correct_option": 1,
+        "explanation": "Just like two houses cannot share the same physical street address, two devices on the same network cannot share the same IP address. When they do, a conflict occurs and network traffic gets confused!",
+        "bonus_challenge": "What feature on a router automatically hands out unique IP addresses to devices so you don't have to type them manually?"
     }
 ]

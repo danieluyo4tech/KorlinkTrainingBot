@@ -109,5 +109,11 @@
         "type": "weekday_answer",
         "track": "Software Engineering",
         "message": "🌙 *KORLINK ANSWER*\n\n🎓 *Software Engineering*\n\n❓ *Today's Question:*\n\nYou build a website with a 'Pay Now' button. When users click it, the payment takes 3 seconds to process. People keep clicking it repeatedly and get charged twice! How should you fix this in your app?\n\n✅ *Correct Answer:*\n\n1️⃣ Disable the button immediately after the first click\n\n🧠 *Why?*\n\nDisabling the submit button as soon as it is clicked prevents users from sending duplicate requests while waiting for the server to respond.\n\n🚀 *BONUS CHALLENGE:*\n\nBesides disabling the button, what visual indicator could you add to show users that their payment is actively processing?\n\n🔥 _Keep learning. Keep practicing. Keep building!_\n"
+    },
+    {
+        "date": "2026-08-26",
+        "type": "weekday_poll",
+        "track": "Network Engineering",
+        "message": "☀️ *KORLINK DAILY TECH POLL*\n\n🎓 *Network Engineering*\n\n👀 *Let's see who gets this!*\n\n👉 *Question:*\n\nYou manually set the IP address of a new desktop PC to 192.168.1.50. Instantly, a pop-up warning says 'IP Address Conflict' and the PC loses network access. What happened?\n\n1️⃣ Another device on the network is already using that exact IP address.\n2️⃣ The Ethernet cable was plugged into the computer upside down.\n3️⃣ The Wi-Fi router completely ran out of security passwords.\n4️⃣ The computer's main hard drive is completely full.\n\n👇 *Drop your answer number and thoughts below.*\n\n💡 _Don't be afraid to get it wrong. The goal is to learn!_\n"
     }
 ]
