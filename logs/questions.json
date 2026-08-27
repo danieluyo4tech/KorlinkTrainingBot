@@ -124,5 +124,19 @@
         "correct_option": 1,
         "explanation": "Just like two houses cannot share the same physical street address, two devices on the same network cannot share the same IP address. When they do, a conflict occurs and network traffic gets confused!",
         "bonus_challenge": "What feature on a router automatically hands out unique IP addresses to devices so you don't have to type them manually?"
+    },
+    {
+        "date": "2026-08-27",
+        "type": "weekday_poll",
+        "school": "School of Technology",
+        "track": "Smart Tech and Automation",
+        "question": "You set up a smart motion sensor light in your study room. It turns on when you walk in, but while you sit completely still reading a book, the light suddenly turns off! Why does this happen?",
+        "option_1": "Motion sensors detect movement, so sitting still makes the sensor think the room is empty.",
+        "option_2": "The smart light bulb automatically resets every few minutes to save internal memory.",
+        "option_3": "The controller disconnects from Wi-Fi whenever human body temperature stabilizes.",
+        "option_4": "The light switch timer overrides the sensor whenever the room gets too quiet.",
+        "correct_option": 1,
+        "explanation": "Standard motion sensors (like PIR sensors) look for changes in movement. If you sit completely still, the sensor no longer detects motion and assumes the room is empty!",
+        "bonus_challenge": "How could you program or adjust the system so the light doesn't turn off so quickly while someone is still reading?"
     }
 ]
