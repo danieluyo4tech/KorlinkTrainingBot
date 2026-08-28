@@ -138,5 +138,19 @@
         "correct_option": 1,
         "explanation": "Standard motion sensors (like PIR sensors) look for changes in movement. If you sit completely still, the sensor no longer detects motion and assumes the room is empty!",
         "bonus_challenge": "How could you program or adjust the system so the light doesn't turn off so quickly while someone is still reading?"
+    },
+    {
+        "date": "2026-08-28",
+        "type": "weekday_poll",
+        "school": "School of Technology",
+        "track": "Solar PV Design and Installation",
+        "question": "You are setting up a new solar power system. You connect the solar panel to the charge controller, but the controller's screen stays completely off. You haven't connected the battery yet. What is happening?",
+        "option_1": "The solar panel is not receiving enough sunlight",
+        "option_2": "The charge controller needs battery power first to turn on",
+        "option_3": "The solar panel voltage is too high for the controller",
+        "option_4": "The inverter is blocking power from the solar panel",
+        "correct_option": 2,
+        "explanation": "Most solar charge controllers are powered by the battery, not the solar panel! Always connect the battery first so the controller can boot up and recognize the system voltage before connecting the panels.",
+        "bonus_challenge": "What do you think could happen to a charge controller if you leave solar panels connected to it with no battery attached?"
     }
 ]

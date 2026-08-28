@@ -127,5 +127,11 @@
         "type": "weekday_poll",
         "track": "Smart Tech and Automation",
         "message": "☀️ *KORLINK DAILY TECH POLL*\n\n🎓 *Smart Tech and Automation*\n\n👀 *Let's see who gets this!*\n\n👉 *Question:*\n\nYou set up a smart motion sensor light in your study room. It turns on when you walk in, but while you sit completely still reading a book, the light suddenly turns off! Why does this happen?\n\n1️⃣ Motion sensors detect movement, so sitting still makes the sensor think the room is empty.\n2️⃣ The smart light bulb automatically resets every few minutes to save internal memory.\n3️⃣ The controller disconnects from Wi-Fi whenever human body temperature stabilizes.\n4️⃣ The light switch timer overrides the sensor whenever the room gets too quiet.\n\n👇 *Drop your answer number and thoughts below.*\n\n💡 _Don't be afraid to get it wrong. The goal is to learn!_\n"
+    },
+    {
+        "date": "2026-08-28",
+        "type": "weekday_poll",
+        "track": "Solar PV Design and Installation",
+        "message": "☀️ *KORLINK DAILY TECH POLL*\n\n🎓 *Solar PV Design and Installation*\n\n👀 *Let's see who gets this!*\n\n👉 *Question:*\n\nYou are setting up a new solar power system. You connect the solar panel to the charge controller, but the controller's screen stays completely off. You haven't connected the battery yet. What is happening?\n\n1️⃣ The solar panel is not receiving enough sunlight\n2️⃣ The charge controller needs battery power first to turn on\n3️⃣ The solar panel voltage is too high for the controller\n4️⃣ The inverter is blocking power from the solar panel\n\n👇 *Drop your answer number and thoughts below.*\n\n💡 _Don't be afraid to get it wrong. The goal is to learn!_\n"
     }
 ]
