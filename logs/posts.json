@@ -133,5 +133,10 @@
         "type": "weekday_poll",
         "track": "Solar PV Design and Installation",
         "message": "☀️ *KORLINK DAILY TECH POLL*\n\n🎓 *Solar PV Design and Installation*\n\n👀 *Let's see who gets this!*\n\n👉 *Question:*\n\nYou are setting up a new solar power system. You connect the solar panel to the charge controller, but the controller's screen stays completely off. You haven't connected the battery yet. What is happening?\n\n1️⃣ The solar panel is not receiving enough sunlight\n2️⃣ The charge controller needs battery power first to turn on\n3️⃣ The solar panel voltage is too high for the controller\n4️⃣ The inverter is blocking power from the solar panel\n\n👇 *Drop your answer number and thoughts below.*\n\n💡 _Don't be afraid to get it wrong. The goal is to learn!_\n"
+    },
+    {
+        "date": "2026-08-29",
+        "type": "saturday_motivation",
+        "message": "🚀 *SATURDAY MOTIVATION*\n\nYour tech career grows step by step. Stay consistent, keep learning, and practice every single day. The secret is to take what you learn and build real projects with it. Every small effort you make today is building your future success. Keep going—you’ve got what it takes!\n\n💬 What project are you working on today?"
     }
 ]
