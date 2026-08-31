@@ -152,5 +152,19 @@
         "correct_option": 2,
         "explanation": "Most solar charge controllers are powered by the battery, not the solar panel! Always connect the battery first so the controller can boot up and recognize the system voltage before connecting the panels.",
         "bonus_challenge": "What do you think could happen to a charge controller if you leave solar panels connected to it with no battery attached?"
+    },
+    {
+        "date": "2026-08-31",
+        "type": "weekday_poll",
+        "school": "School of Computing",
+        "track": "Cybersecurity",
+        "question": "You get an urgent text message saying your bank account will be locked in 1 hour unless you tap a link to verify your details. What should you do?",
+        "option_1": "Tap the link quickly so your account stays active.",
+        "option_2": "Reply to the text asking them to prove they are your bank.",
+        "option_3": "Ignore the link and call your bank using the phone number on your bank card.",
+        "option_4": "Forward the message to a friend to see if the link opens for them.",
+        "correct_option": 3,
+        "explanation": "Real banks will never force you to verify sensitive account details through a text message link under tight time pressure. Always use official contact channels to check.",
+        "bonus_challenge": "Do you know the technical term used for SMS phishing scams like this one?"
     }
 ]
