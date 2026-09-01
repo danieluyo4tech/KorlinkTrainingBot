@@ -161,5 +161,11 @@
         "type": "weekday_poll",
         "track": "Software Engineering",
         "message": "☀️ *KORLINK DAILY TECH POLL*\n\n🎓 *Software Engineering*\n\n👀 *Let's see who gets this!*\n\n👉 *Question:*\n\nYou build a website on your laptop and all the photos look perfect. But when you publish it online and open the link on your phone, none of the photos show up! What is most likely the cause?\n\n1️⃣ The photos are linked to a file path on your laptop (like C:/Users/...) instead of the web folder.\n2️⃣ Phone screens cannot display photos saved in standard image formats.\n3️⃣ You need to restart your home Wi-Fi router for web photos to sync.\n4️⃣ Web browsers automatically hide images to save mobile data.\n\n👇 *Drop your answer number and thoughts below.*\n\n💡 _Don't be afraid to get it wrong. The goal is to learn!_\n"
+    },
+    {
+        "date": "2026-09-01",
+        "type": "weekday_answer",
+        "track": "Software Engineering",
+        "message": "🌙 *KORLINK ANSWER*\n\n🎓 *Software Engineering*\n\n❓ *Today's Question:*\n\nYou build a website on your laptop and all the photos look perfect. But when you publish it online and open the link on your phone, none of the photos show up! What is most likely the cause?\n\n✅ *Correct Answer:*\n\n1️⃣ The photos are linked to a file path on your laptop (like C:/Users/...) instead of the web folder.\n\n🧠 *Why?*\n\nIf your code points to a private folder on your laptop, other devices on the internet won't be able to access those images!\n\n🚀 *BONUS CHALLENGE:*\n\nWhat is the name of the HTML attribute used to specify the file path of an image element?\n\n🔥 _Keep learning. Keep practicing. Keep building!_\n"
     }
 ]
