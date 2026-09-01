@@ -166,5 +166,19 @@
         "correct_option": 3,
         "explanation": "Real banks will never force you to verify sensitive account details through a text message link under tight time pressure. Always use official contact channels to check.",
         "bonus_challenge": "Do you know the technical term used for SMS phishing scams like this one?"
+    },
+    {
+        "date": "2026-09-01",
+        "type": "weekday_poll",
+        "school": "School of Computing",
+        "track": "Software Engineering",
+        "question": "You build a website on your laptop and all the photos look perfect. But when you publish it online and open the link on your phone, none of the photos show up! What is most likely the cause?",
+        "option_1": "The photos are linked to a file path on your laptop (like C:/Users/...) instead of the web folder.",
+        "option_2": "Phone screens cannot display photos saved in standard image formats.",
+        "option_3": "You need to restart your home Wi-Fi router for web photos to sync.",
+        "option_4": "Web browsers automatically hide images to save mobile data.",
+        "correct_option": 1,
+        "explanation": "If your code points to a private folder on your laptop, other devices on the internet won't be able to access those images!",
+        "bonus_challenge": "What is the name of the HTML attribute used to specify the file path of an image element?"
     }
 ]
