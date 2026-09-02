@@ -180,5 +180,19 @@
         "correct_option": 1,
         "explanation": "If your code points to a private folder on your laptop, other devices on the internet won't be able to access those images!",
         "bonus_challenge": "What is the name of the HTML attribute used to specify the file path of an image element?"
+    },
+    {
+        "date": "2026-09-02",
+        "type": "weekday_poll",
+        "school": "School of Technology",
+        "track": "Network Engineering",
+        "question": "You connect your laptop to an office 'Guest Wi-Fi' network, but when you try to print a document on the office Wi-Fi printer, your laptop cannot find the printer at all. What is the most likely reason?",
+        "option_1": "Guest networks isolate devices so visitors cannot communicate with local equipment.",
+        "option_2": "Printers automatically turn off their Wi-Fi when guests enter the building.",
+        "option_3": "Guest Wi-Fi only permits viewing web pages and blocks all document files.",
+        "option_4": "Wi-Fi printers require a wired USB cable to accept print jobs from laptops.",
+        "correct_option": 1,
+        "explanation": "Guest Wi-Fi networks use a feature called 'Client Isolation' (or AP Isolation). This prevents guest devices from seeing or accessing other local network devices like servers, printers, and computers for security reasons.",
+        "bonus_challenge": "If you were the network admin and wanted guests to be able to print, what switch or router setting would you adjust?"
     }
 ]

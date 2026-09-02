@@ -167,5 +167,11 @@
         "type": "weekday_answer",
         "track": "Software Engineering",
         "message": "🌙 *KORLINK ANSWER*\n\n🎓 *Software Engineering*\n\n❓ *Today's Question:*\n\nYou build a website on your laptop and all the photos look perfect. But when you publish it online and open the link on your phone, none of the photos show up! What is most likely the cause?\n\n✅ *Correct Answer:*\n\n1️⃣ The photos are linked to a file path on your laptop (like C:/Users/...) instead of the web folder.\n\n🧠 *Why?*\n\nIf your code points to a private folder on your laptop, other devices on the internet won't be able to access those images!\n\n🚀 *BONUS CHALLENGE:*\n\nWhat is the name of the HTML attribute used to specify the file path of an image element?\n\n🔥 _Keep learning. Keep practicing. Keep building!_\n"
+    },
+    {
+        "date": "2026-09-02",
+        "type": "weekday_poll",
+        "track": "Network Engineering",
+        "message": "☀️ *KORLINK DAILY TECH POLL*\n\n🎓 *Network Engineering*\n\n👀 *Let's see who gets this!*\n\n👉 *Question:*\n\nYou connect your laptop to an office 'Guest Wi-Fi' network, but when you try to print a document on the office Wi-Fi printer, your laptop cannot find the printer at all. What is the most likely reason?\n\n1️⃣ Guest networks isolate devices so visitors cannot communicate with local equipment.\n2️⃣ Printers automatically turn off their Wi-Fi when guests enter the building.\n3️⃣ Guest Wi-Fi only permits viewing web pages and blocks all document files.\n4️⃣ Wi-Fi printers require a wired USB cable to accept print jobs from laptops.\n\n👇 *Drop your answer number and thoughts below.*\n\n💡 _Don't be afraid to get it wrong. The goal is to learn!_\n"
     }
 ]
