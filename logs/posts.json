@@ -185,5 +185,11 @@
         "type": "weekday_poll",
         "track": "Smart Tech and Automation",
         "message": "☀️ *KORLINK DAILY TECH POLL*\n\n🎓 *Smart Tech and Automation*\n\n👀 *Let's see who gets this!*\n\n👉 *Question:*\n\nYou install a smart controller to auto-cool your room to 22°C. You mount the temperature sensor right in front of the AC cold air vent. The AC turns on, but shuts off after just 1 minute while the room is still hot. Why?\n\n1️⃣ The sensor gets hit by cold air immediately and thinks the entire room reached 22°C.\n2️⃣ The AC air flow blocks the sensor's Wi-Fi signal to the controller.\n3️⃣ The temperature sensor loses electrical power whenever cold air hits it.\n4️⃣ The smart controller shuts off automatically to prevent the AC from overheating.\n\n👇 *Drop your answer number and thoughts below.*\n\n💡 _Don't be afraid to get it wrong. The goal is to learn!_\n"
+    },
+    {
+        "date": "2026-09-03",
+        "type": "weekday_answer",
+        "track": "Smart Tech and Automation",
+        "message": "🌙 *KORLINK ANSWER*\n\n🎓 *Smart Tech and Automation*\n\n❓ *Today's Question:*\n\nYou install a smart controller to auto-cool your room to 22°C. You mount the temperature sensor right in front of the AC cold air vent. The AC turns on, but shuts off after just 1 minute while the room is still hot. Why?\n\n✅ *Correct Answer:*\n\n1️⃣ The sensor gets hit by cold air immediately and thinks the entire room reached 22°C.\n\n🧠 *Why?*\n\nSensor placement is crucial in smart automation! Placing a temperature sensor right in front of the cold air vent makes it measure the icy air blowing out, rather than the actual room temperature.\n\n🚀 *BONUS CHALLENGE:*\n\nWhere in a room would you place a temperature sensor to get the most accurate overall room reading?\n\n🔥 _Keep learning. Keep practicing. Keep building!_\n"
     }
 ]
