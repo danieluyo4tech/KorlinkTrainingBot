@@ -179,5 +179,11 @@
         "type": "weekday_answer",
         "track": "Network Engineering",
         "message": "🌙 *KORLINK ANSWER*\n\n🎓 *Network Engineering*\n\n❓ *Today's Question:*\n\nYou connect your laptop to an office 'Guest Wi-Fi' network, but when you try to print a document on the office Wi-Fi printer, your laptop cannot find the printer at all. What is the most likely reason?\n\n✅ *Correct Answer:*\n\n1️⃣ Guest networks isolate devices so visitors cannot communicate with local equipment.\n\n🧠 *Why?*\n\nGuest Wi-Fi networks use a feature called 'Client Isolation' (or AP Isolation). This prevents guest devices from seeing or accessing other local network devices like servers, printers, and computers for security reasons.\n\n🚀 *BONUS CHALLENGE:*\n\nIf you were the network admin and wanted guests to be able to print, what switch or router setting would you adjust?\n\n🔥 _Keep learning. Keep practicing. Keep building!_\n"
+    },
+    {
+        "date": "2026-09-03",
+        "type": "weekday_poll",
+        "track": "Smart Tech and Automation",
+        "message": "☀️ *KORLINK DAILY TECH POLL*\n\n🎓 *Smart Tech and Automation*\n\n👀 *Let's see who gets this!*\n\n👉 *Question:*\n\nYou install a smart controller to auto-cool your room to 22°C. You mount the temperature sensor right in front of the AC cold air vent. The AC turns on, but shuts off after just 1 minute while the room is still hot. Why?\n\n1️⃣ The sensor gets hit by cold air immediately and thinks the entire room reached 22°C.\n2️⃣ The AC air flow blocks the sensor's Wi-Fi signal to the controller.\n3️⃣ The temperature sensor loses electrical power whenever cold air hits it.\n4️⃣ The smart controller shuts off automatically to prevent the AC from overheating.\n\n👇 *Drop your answer number and thoughts below.*\n\n💡 _Don't be afraid to get it wrong. The goal is to learn!_\n"
     }
 ]

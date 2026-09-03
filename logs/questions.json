@@ -194,5 +194,19 @@
         "correct_option": 1,
         "explanation": "Guest Wi-Fi networks use a feature called 'Client Isolation' (or AP Isolation). This prevents guest devices from seeing or accessing other local network devices like servers, printers, and computers for security reasons.",
         "bonus_challenge": "If you were the network admin and wanted guests to be able to print, what switch or router setting would you adjust?"
+    },
+    {
+        "date": "2026-09-03",
+        "type": "weekday_poll",
+        "school": "School of Technology",
+        "track": "Smart Tech and Automation",
+        "question": "You install a smart controller to auto-cool your room to 22°C. You mount the temperature sensor right in front of the AC cold air vent. The AC turns on, but shuts off after just 1 minute while the room is still hot. Why?",
+        "option_1": "The sensor gets hit by cold air immediately and thinks the entire room reached 22°C.",
+        "option_2": "The AC air flow blocks the sensor's Wi-Fi signal to the controller.",
+        "option_3": "The temperature sensor loses electrical power whenever cold air hits it.",
+        "option_4": "The smart controller shuts off automatically to prevent the AC from overheating.",
+        "correct_option": 1,
+        "explanation": "Sensor placement is crucial in smart automation! Placing a temperature sensor right in front of the cold air vent makes it measure the icy air blowing out, rather than the actual room temperature.",
+        "bonus_challenge": "Where in a room would you place a temperature sensor to get the most accurate overall room reading?"
     }
 ]
