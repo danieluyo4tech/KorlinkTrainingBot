@@ -208,5 +208,19 @@
         "correct_option": 1,
         "explanation": "Sensor placement is crucial in smart automation! Placing a temperature sensor right in front of the cold air vent makes it measure the icy air blowing out, rather than the actual room temperature.",
         "bonus_challenge": "Where in a room would you place a temperature sensor to get the most accurate overall room reading?"
+    },
+    {
+        "date": "2026-09-04",
+        "type": "weekday_poll",
+        "school": "School of Technology",
+        "track": "Solar PV Design and Installation",
+        "question": "You install a solar panel on your roof, but a tree branch casts a shadow over just a small section of it. You notice the system's power output drops drastically. Why does a small shadow cause such a big loss in power?",
+        "option_1": "Solar cells are connected together, so blocking one cell restricts energy flow through the entire string.",
+        "option_2": "The shadow causes the solar panel to reverse its wiring and drain power from the battery.",
+        "option_3": "The inverter shuts down because it mistakes a small shadow for nighttime.",
+        "option_4": "Shadows raise the panel voltage beyond what the charge controller can handle.",
+        "correct_option": 1,
+        "explanation": "Think of solar cells in a panel like a series of connected water pipes. If a shadow blocks energy in just one cell, it acts like a pinch in the hose, slowing down the flow of electricity through all the cells connected to it.",
+        "bonus_challenge": "What small electronic component is installed inside solar panel junction boxes to help bypass shaded cells?"
     }
 ]
