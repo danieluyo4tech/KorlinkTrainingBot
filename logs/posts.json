@@ -203,5 +203,10 @@
         "type": "weekday_answer",
         "track": "Solar PV Design and Installation",
         "message": "🌙 *KORLINK ANSWER*\n\n🎓 *Solar PV Design and Installation*\n\n❓ *Today's Question:*\n\nYou install a solar panel on your roof, but a tree branch casts a shadow over just a small section of it. You notice the system's power output drops drastically. Why does a small shadow cause such a big loss in power?\n\n✅ *Correct Answer:*\n\n1️⃣ Solar cells are connected together, so blocking one cell restricts energy flow through the entire string.\n\n🧠 *Why?*\n\nThink of solar cells in a panel like a series of connected water pipes. If a shadow blocks energy in just one cell, it acts like a pinch in the hose, slowing down the flow of electricity through all the cells connected to it.\n\n🚀 *BONUS CHALLENGE:*\n\nWhat small electronic component is installed inside solar panel junction boxes to help bypass shaded cells?\n\n🔥 _Keep learning. Keep practicing. Keep building!_\n"
+    },
+    {
+        "date": "2026-09-05",
+        "type": "saturday_motivation",
+        "message": "🚀 *SATURDAY MOTIVATION*\n\nHey Korlink family! Your dream career is built step by step. Stay consistent, keep learning, and practice every single day. Every real project you build moves you closer to your goals. Trust yourself and keep pushing forward—you are making great progress!\n\n💬 What project are you working on this weekend?"
     }
 ]
