@@ -222,5 +222,19 @@
         "correct_option": 1,
         "explanation": "Think of solar cells in a panel like a series of connected water pipes. If a shadow blocks energy in just one cell, it acts like a pinch in the hose, slowing down the flow of electricity through all the cells connected to it.",
         "bonus_challenge": "What small electronic component is installed inside solar panel junction boxes to help bypass shaded cells?"
+    },
+    {
+        "date": "2026-09-07",
+        "type": "weekday_poll",
+        "school": "School of Computing",
+        "track": "Cybersecurity",
+        "question": "You find a USB flash drive lying on a table in your school library with a label that says 'Class Lecture Notes'. What is the safest action to take?",
+        "option_1": "Plug it into your laptop to check the files and find the owner's name",
+        "option_2": "Plug it in, but immediately run a full antivirus scan on the drive",
+        "option_3": "Hand it over to the lost-and-found desk without plugging it into your computer",
+        "option_4": "Format the USB drive right away so you can safely use it for yourself",
+        "correct_option": 3,
+        "explanation": "Plugging unknown USB drives into your computer is dangerous because they can automatically run malicious code or trick your system into installing malware the moment they are connected.",
+        "bonus_challenge": "Do you know what this social engineering tactic is called when an attacker leaves an infected drive in a public spot for someone to find?"
     }
 ]
