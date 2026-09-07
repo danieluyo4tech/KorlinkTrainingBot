@@ -236,5 +236,19 @@
         "correct_option": 3,
         "explanation": "Plugging unknown USB drives into your computer is dangerous because they can automatically run malicious code or trick your system into installing malware the moment they are connected.",
         "bonus_challenge": "Do you know what this social engineering tactic is called when an attacker leaves an infected drive in a public spot for someone to find?"
+    },
+    {
+        "date": "2026-09-07",
+        "type": "weekday_poll",
+        "school": "School of Computing",
+        "track": "Cybersecurity",
+        "question": "You receive a valid alert that a minor gaming site you used last year had a data breach. You used the exact same password for your main email account. What should you do first?",
+        "option_1": "Delete the gaming app from your phone",
+        "option_2": "Change your main email password immediately",
+        "option_3": "Ignore it because you don't play the game anymore",
+        "option_4": "Reply to the alert email asking for a refund",
+        "correct_option": 2,
+        "explanation": "When hackers steal passwords from a small site breach, they automatically test those same credentials on email, social media, and banking sites. Reusing passwords puts all your other accounts in danger!",
+        "bonus_challenge": "What tool or strategy can you use so you never have to remember dozens of unique, strong passwords yourself?"
     }
 ]
