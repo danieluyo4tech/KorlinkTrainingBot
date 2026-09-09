@@ -4,13 +4,13 @@
         "type": "weekday_poll",
         "school": "School of Technology",
         "track": "Smart Home Automation",
-        "question": "A homeowner installs a Zigbee door sensor on a garden gate, but it frequently drops its connection to the main smart home hub in the living room. What is the most effective way to establish a reliable connection without moving the hub?",
-        "option_1": "Upgrade the home internet plan to increase connection speed.",
-        "option_2": "Place a mains-powered Zigbee device midway to act as a repeater.",
-        "option_3": "Reconfigure the door sensor to connect to the 5 GHz Wi-Fi band.",
-        "option_4": "Reboot the internet router to clear temporary network cache.",
-        "correct_option": 2,
-        "explanation": "Zigbee networks use mesh topology where mains-powered devices, such as smart plugs or switches, relay signals to extend coverage. Since battery-powered sensors only act as end devices, adding an intermediate powered Zigbee node bridges the gap effectively.",
-        "bonus_challenge": "Name two common wireless protocols used in smart home automation that rely on mesh networking to extend signal range."
+        "question": "A homeowner installs smart bulbs in their living room, but family members keep turning off the physical wall switch, leaving the bulbs offline and breaking automations. What is the most practical solution to prevent this issue?",
+        "option_1": "Replace the traditional switch with a smart wall switch or install a switch cover.",
+        "option_2": "Reconfigure the smart bulbs to connect directly to a 5 GHz Wi-Fi network.",
+        "option_3": "Increase the bulb brightness and schedule frequency in the app.",
+        "option_4": "Add a second router to boost the local wireless signal.",
+        "correct_option": 1,
+        "explanation": "Smart bulbs require continuous electrical power to stay connected and run automations. Installing a smart switch or switch cover maintains constant power to the circuit while still allowing people to turn lights on or off physically using smart signals.",
+        "bonus_challenge": "If you decide to use a smart switch with standard LED bulbs instead of smart bulbs, what specific lighting feature do you lose?"
     }
 ]
