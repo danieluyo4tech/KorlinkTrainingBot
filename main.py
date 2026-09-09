@@ -913,8 +913,8 @@ def format_poll(
         f"2. {options[1]}\n"
         f"3. {options[2]}\n"
         f"4. {options[3]}\n\n"
-        "What would you do in this situation?/n/n"
-        "Don't be afraid to get it wrong. The goal is to learn!/n"
+        "What would you do in this situation?\n\n"
+        "Don't be afraid to get it wrong. The goal is to learn!\n"
     )
 
 
