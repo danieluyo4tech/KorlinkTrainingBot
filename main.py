@@ -11,73 +11,39 @@ from google import genai
 
 
 # ============================================================
-# KORLINK TECHNOLOGIES
-# TRAINING UPDATE AI
+# KORLINK TRAINING UPDATE AI
 # ============================================================
+
+APP_NAME = "Korlink Daily Challenge"
+
+API_KEY = os.getenv("GEMINI_API_KEY")
+GEMINI_MODEL = os.getenv("GEMINI_MODEL")
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
+RUN_MODE = os.getenv("RUN_MODE", "morning").lower().strip()
 
 NIGERIA_TZ = ZoneInfo("Africa/Lagos")
 
-
-# ============================================================
-# CONFIGURATION
-# ============================================================
-
-API_KEY = os.getenv("GEMINI_API_KEY")
-TEXT_MODEL = os.getenv("GEMINI_MODEL")
-TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
-TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
-
-
-if not API_KEY:
-    raise RuntimeError("GEMINI_API_KEY is not configured.")
-
-if not TEXT_MODEL:
-    raise RuntimeError("GEMINI_MODEL is not configured.")
-
-if not TELEGRAM_BOT_TOKEN:
-    raise RuntimeError("TELEGRAM_BOT_TOKEN is not configured.")
-
-if not TELEGRAM_CHAT_ID:
-    raise RuntimeError("TELEGRAM_CHAT_ID is not configured.")
-
-
-# ============================================================
-# GEMINI CLIENT
-# ============================================================
-
-client = genai.Client(
-    api_key=API_KEY
-)
-
-
-# ============================================================
-# FILE DIRECTORIES
-# ============================================================
-
 BASE_DIR = Path(__file__).resolve().parent
-
 LOG_DIR = BASE_DIR / "logs"
 
 QUESTIONS_FILE = LOG_DIR / "questions.json"
 POSTS_FILE = LOG_DIR / "posts.json"
 
-LOG_DIR.mkdir(
-    exist_ok=True
-)
+LOG_DIR.mkdir(parents=True, exist_ok=True)
 
 
 # ============================================================
-# WEEKLY TRAINING SCHEDULE
+# WEEKLY TRAINING TRACKS
 # ============================================================
 
 WEEKDAY_TRACKS = {
-
     0: {
         "school": "School of Computing",
         "name": "Cybersecurity",
         "description": (
-            "online safety, phishing, passwords, privacy, "
-            "malware, scams and practical cybersecurity"
+            "cybersecurity awareness, phishing, passwords, "
+            "social engineering, privacy, threats and safe digital practices"
         ),
     },
 
@@ -85,8 +51,8 @@ WEEKDAY_TRACKS = {
         "school": "School of Computing",
         "name": "Software Engineering",
         "description": (
-            "websites, applications, coding, databases, "
-            "debugging and practical software development"
+            "software development, programming, debugging, "
+            "testing, databases, APIs and software development practices"
         ),
     },
 
@@ -94,7 +60,7 @@ WEEKDAY_TRACKS = {
         "school": "School of Technology",
         "name": "Smart Home Automation",
         "description": (
-            "smart homes, IoT devices, sensors, smart lighting, "
+            "smart homes, IoT devices, sensors, lighting, "
             "security systems, controllers and practical home automation"
         ),
     },
@@ -103,8 +69,8 @@ WEEKDAY_TRACKS = {
         "school": "School of Technology",
         "name": "Network Engineering",
         "description": (
-            "Wi-Fi, routers, switches, IP addresses, "
-            "Internet connections and network troubleshooting"
+            "computer networks, routers, switches, Wi-Fi, IP addressing, "
+            "connectivity, troubleshooting and network security"
         ),
     },
 
@@ -112,1288 +78,890 @@ WEEKDAY_TRACKS = {
         "school": "School of Technology",
         "name": "Solar PV Design and Installation",
         "description": (
-            "solar panels, batteries, inverters, "
-            "charge controllers, solar system design "
-            "and installation"
+            "solar panels, batteries, charge controllers, inverters, "
+            "system sizing, installation and practical solar troubleshooting"
         ),
     },
 }
 
 
 # ============================================================
-# NIGERIA DATE / TIME HELPERS
+# TIME HELPERS
 # ============================================================
 
 def nigeria_now():
-    """
-    Return the current date and time in Nigeria.
-    """
-
-    return datetime.datetime.now(
-        NIGERIA_TZ
-    )
+    return datetime.datetime.now(NIGERIA_TZ)
 
 
 def nigeria_today():
-    """
-    Return today's date according to Nigeria time.
-    """
-
     return nigeria_now().date()
 
 
 def today_string():
-    """
-    Return today's Nigeria date as YYYY-MM-DD.
-    """
+    return nigeria_today().isoformat()
 
-    return str(
-        nigeria_today()
-    )
+
+# ============================================================
+# VALIDATION
+# ============================================================
+
+def validate_environment():
+    missing = []
+
+    if not API_KEY:
+        missing.append("GEMINI_API_KEY")
+
+    if not GEMINI_MODEL:
+        missing.append("GEMINI_MODEL")
+
+    if not TELEGRAM_BOT_TOKEN:
+        missing.append("TELEGRAM_BOT_TOKEN")
+
+    if not TELEGRAM_CHAT_ID:
+        missing.append("TELEGRAM_CHAT_ID")
+
+    if missing:
+        raise RuntimeError(
+            "Missing required environment variables: "
+            + ", ".join(missing)
+        )
 
 
 # ============================================================
 # JSON STORAGE
 # ============================================================
 
-def load_json(file_path):
-
+def load_json(file_path, default):
     if not file_path.exists():
-        return []
+        return default
 
     try:
-
-        with open(
-            file_path,
-            "r",
-            encoding="utf-8"
-        ) as file:
-
+        with open(file_path, "r", encoding="utf-8") as file:
             data = json.load(file)
 
-            if isinstance(data, list):
-                return data
+        return data
 
-            return []
-
-    except Exception as error:
-
-        print(
-            f"Could not read {file_path}: {error}"
-        )
-
-        return []
+    except (json.JSONDecodeError, OSError):
+        print(f"Warning: Could not read {file_path}. Starting fresh.")
+        return default
 
 
 def save_json(file_path, data):
+    """
+    Atomic JSON write to reduce the chance of corrupted log files.
+    """
+    temporary_file = file_path.with_suffix(".tmp")
 
-    temporary_file = file_path.with_suffix(
-        file_path.suffix + ".tmp"
-    )
-
-    with open(
-        temporary_file,
-        "w",
-        encoding="utf-8"
-    ) as file:
-
+    with open(temporary_file, "w", encoding="utf-8") as file:
         json.dump(
             data,
             file,
-            indent=4,
-            ensure_ascii=False
+            indent=2,
+            ensure_ascii=False,
         )
 
-    temporary_file.replace(
-        file_path
-    )
+    temporary_file.replace(file_path)
 
-
-# ============================================================
-# QUESTION STORAGE
-# ============================================================
 
 def load_questions():
-
-    return load_json(
-        QUESTIONS_FILE
-    )
+    return load_json(QUESTIONS_FILE, [])
 
 
-def save_question(question_data):
+def save_questions(questions):
+    # Keep the log manageable.
+    save_json(QUESTIONS_FILE, questions[-300:])
 
-    questions = load_questions()
 
-    # Prevent duplicate records for the same date.
-    questions = [
-        item
-        for item in questions
-        if not (
-            item.get("date") == question_data.get("date")
-            and item.get("type") == question_data.get("type")
-        )
+def load_posts():
+    return load_json(POSTS_FILE, [])
+
+
+def save_posts(posts):
+    save_json(POSTS_FILE, posts[-300:])
+
+
+# ============================================================
+# GEMINI
+# ============================================================
+
+client = None
+
+if API_KEY:
+    client = genai.Client(api_key=API_KEY)
+
+
+def clean_json_response(text):
+    """
+    Cleans Gemini output when it returns JSON wrapped in markdown.
+    """
+
+    if not text:
+        raise ValueError("Gemini returned an empty response.")
+
+    text = text.strip()
+
+    if text.startswith("```"):
+        lines = text.splitlines()
+
+        if lines and lines[0].startswith("```"):
+            lines = lines[1:]
+
+        if lines and lines[-1].strip() == "```":
+            lines = lines[:-1]
+
+        text = "\n".join(lines).strip()
+
+    # Handle accidental text before/after the JSON object.
+    start = text.find("{")
+    end = text.rfind("}")
+
+    if start != -1 and end != -1 and end > start:
+        text = text[start:end + 1]
+
+    return text
+
+
+def normalize_correct_option(poll):
+    """
+    Gemini sometimes returns a different field name.
+    Normalize common alternatives to correct_option.
+    """
+
+    if "correct_option" not in poll:
+        aliases = [
+            "correct_answer",
+            "answer",
+            "correct",
+            "correct_choice",
+            "correct_index",
+        ]
+
+        for alias in aliases:
+            if alias in poll:
+                poll["correct_option"] = poll[alias]
+                break
+
+    if "correct_option" not in poll:
+        return poll
+
+    value = poll["correct_option"]
+
+    # Handle numeric strings.
+    if isinstance(value, str):
+        value = value.strip()
+
+        if value.isdigit():
+            value = int(value)
+
+        else:
+            # Handle "Option 2"
+            lowered = value.lower()
+
+            if lowered.startswith("option "):
+                number = lowered.replace("option ", "").strip()
+
+                if number.isdigit():
+                    value = int(number)
+
+            # Handle answer text matching one of the choices.
+            if isinstance(value, str) and "options" in poll:
+                for index, option in enumerate(poll["options"], start=1):
+                    if value.lower() == str(option).lower():
+                        value = index
+                        break
+
+    poll["correct_option"] = value
+
+    return poll
+
+
+def validate_poll(poll):
+    """
+    Ensures Gemini produced the structure required by the bot.
+    """
+
+    if not isinstance(poll, dict):
+        raise ValueError("Gemini response is not a JSON object.")
+
+    required_fields = [
+        "question",
+        "options",
+        "correct_option",
+        "explanation",
     ]
 
-    questions.append(
-        question_data
-    )
+    for field in required_fields:
+        if field not in poll:
+            raise ValueError(
+                f"Gemini response is missing: {field}"
+            )
 
-    # Retain enough history for duplicate checking.
-    questions = questions[-100:]
+    question = poll["question"]
+    options = poll["options"]
+    correct_option = poll["correct_option"]
+    explanation = poll["explanation"]
 
-    save_json(
-        QUESTIONS_FILE,
-        questions
+    if not isinstance(question, str) or not question.strip():
+        raise ValueError("Question is empty.")
+
+    if not isinstance(options, list) or len(options) != 4:
+        raise ValueError(
+            "Poll must contain exactly four options."
+        )
+
+    for option in options:
+        if not isinstance(option, str) or not option.strip():
+            raise ValueError("Poll contains an invalid option.")
+
+    try:
+        correct_option = int(correct_option)
+    except (TypeError, ValueError):
+        raise ValueError(
+            "correct_option must be a number from 1 to 4."
+        )
+
+    if correct_option not in [1, 2, 3, 4]:
+        raise ValueError(
+            "correct_option must be between 1 and 4."
+        )
+
+    if not isinstance(explanation, str) or not explanation.strip():
+        raise ValueError("Explanation is empty.")
+
+    poll["correct_option"] = correct_option
+
+    # Optional field.
+    if "practical_challenge" not in poll:
+        poll["practical_challenge"] = ""
+
+    if not isinstance(poll["practical_challenge"], str):
+        poll["practical_challenge"] = str(
+            poll["practical_challenge"]
+        )
+
+    return poll
+
+
+def gemini_generate(prompt, attempts=5):
+    """
+    Calls Gemini with retries.
+    """
+
+    if client is None:
+        raise RuntimeError("Gemini client is not configured.")
+
+    last_error = None
+
+    for attempt in range(1, attempts + 1):
+        try:
+            print(
+                f"Gemini attempt {attempt}/{attempts}..."
+            )
+
+            response = client.models.generate_content(
+                model=GEMINI_MODEL,
+                contents=prompt,
+            )
+
+            if not response:
+                raise RuntimeError(
+                    "Gemini returned no response."
+                )
+
+            text = getattr(response, "text", None)
+
+            if not text:
+                raise RuntimeError(
+                    "Gemini response contained no text."
+                )
+
+            return text
+
+        except Exception as error:
+            last_error = error
+
+            print(
+                f"Gemini attempt {attempt} failed: {error}"
+            )
+
+            if attempt < attempts:
+                time.sleep(2 * attempt)
+
+    raise RuntimeError(
+        f"Gemini generation failed after {attempts} attempts: "
+        f"{last_error}"
     )
 
 
 # ============================================================
-# POST STORAGE
+# POLL GENERATION
 # ============================================================
 
-def save_post(post_data):
+def generate_poll(track):
+    """
+    Generates a realistic, engaging Korlink Daily Challenge.
 
-    posts = load_json(
-        POSTS_FILE
+    The question should be:
+    - Interesting from the first sentence
+    - Based on a familiar real-world situation
+    - Easy to understand
+    - Useful to both beginners and technical learners
+    - Medium length
+    - Not a mini-article
+    """
+
+    prompt = f"""
+You are writing a professional daily technology challenge for
+Korlink Technologies Ltd.
+
+PROGRAM:
+Korlink Daily Challenge
+
+TRAINING TRACK:
+{track["name"]}
+
+SCHOOL:
+{track["school"]}
+
+TOPIC AREA:
+{track["description"]}
+
+Create ONE multiple-choice challenge.
+
+IMPORTANT WRITING STYLE:
+
+The challenge must feel like something an experienced instructor
+would naturally write for a real training community.
+
+Do NOT make it sound like AI-generated content.
+
+Do NOT use:
+- excessive motivational language
+- childish wording
+- exaggerated hype
+- unnecessary emojis
+- long introductions
+- textbook-style definitions
+- complicated technical jargon
+- artificial phrases such as "Let's see who gets this!"
+
+The challenge should be interesting to someone who has no technical
+background while still teaching a real technical concept.
+
+Use this structure:
+
+REAL-LIFE SITUATION -> QUESTION -> FOUR CHOICES
+
+The opening should create curiosity.
+
+Good openings can sound like:
+"You receive..."
+"You notice..."
+"Imagine you are..."
+"Your customer reports..."
+"Your Wi-Fi suddenly..."
+"You want your..."
+"After making a small change..."
+
+QUESTION LENGTH:
+
+Aim for approximately 18-35 words.
+
+Use one or two sentences maximum.
+
+Give enough context to make the situation interesting, but do not
+write a story or mini-article.
+
+The reader should be able to understand the question quickly.
+
+OPTIONS:
+
+Provide exactly four choices.
+
+Each option should be short, natural and believable.
+
+Avoid obviously silly answers.
+
+The choices should be numbered conceptually from 1 to 4.
+
+EXPLANATION:
+
+Explain the correct answer in approximately 25-50 words.
+
+Keep the explanation practical and easy to understand.
+
+PRACTICAL CHALLENGE:
+
+Provide one short follow-up question that can encourage discussion.
+Do not make it complicated.
+
+IMPORTANT:
+
+The correct answer MUST be represented by a number from 1 to 4.
+
+Return ONLY valid JSON.
+
+Use EXACTLY this structure:
+
+{{
+  "question": "The challenge question",
+  "options": [
+    "First option",
+    "Second option",
+    "Third option",
+    "Fourth option"
+  ],
+  "correct_option": 1,
+  "explanation": "Short practical explanation.",
+  "practical_challenge": "Short follow-up question."
+}}
+
+Do not rename any of these fields.
+Do not omit correct_option.
+Do not include markdown.
+Do not include text outside the JSON.
+"""
+
+    # Generate several times if Gemini produces invalid structure.
+    for generation_attempt in range(1, 4):
+
+        print(
+            f"Question generation attempt "
+            f"{generation_attempt}/3..."
+        )
+
+        try:
+            raw_response = gemini_generate(
+                prompt,
+                attempts=5,
+            )
+
+            cleaned = clean_json_response(raw_response)
+
+            poll = json.loads(cleaned)
+
+            poll = normalize_correct_option(poll)
+
+            poll = validate_poll(poll)
+
+            return poll
+
+        except Exception as error:
+            print(
+                f"Invalid poll generated: {error}"
+            )
+
+            if generation_attempt < 3:
+                time.sleep(2)
+
+    raise RuntimeError(
+        "Gemini failed to produce a valid poll after multiple attempts."
     )
 
-    posts.append(
-        post_data
-    )
 
-    posts = posts[-200:]
+# ============================================================
+# DUPLICATE DETECTION
+# ============================================================
 
-    save_json(
-        POSTS_FILE,
-        posts
-    )
+def question_already_used(question, questions):
+    normalized = question.strip().lower()
+
+    for item in questions:
+        if not isinstance(item, dict):
+            continue
+
+        old_question = item.get("question", "")
+
+        if old_question.strip().lower() == normalized:
+            return True
+
+    return False
+
+
+def get_today_question(questions):
+    today = today_string()
+
+    for item in reversed(questions):
+        if item.get("date") == today:
+            return item
+
+    return None
 
 
 # ============================================================
 # TELEGRAM
 # ============================================================
 
-def send_telegram_message(message):
-
+def telegram_request(method, params):
     url = (
-        f"https://api.telegram.org/"
-        f"bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+        f"https://api.telegram.org/bot"
+        f"{TELEGRAM_BOT_TOKEN}/{method}"
     )
 
-    data = urllib.parse.urlencode({
-        "chat_id": TELEGRAM_CHAT_ID,
-        "text": message,
-        "parse_mode": "Markdown",
-        "disable_web_page_preview": "true",
-    }).encode("utf-8")
+    encoded = urllib.parse.urlencode(params).encode("utf-8")
 
     request = urllib.request.Request(
         url,
-        data=data,
-        method="POST"
+        data=encoded,
+        headers={
+            "Content-Type":
+                "application/x-www-form-urlencoded"
+        },
+        method="POST",
     )
 
-    try:
+    with urllib.request.urlopen(
+        request,
+        timeout=30,
+    ) as response:
 
-        with urllib.request.urlopen(
-            request,
-            timeout=30
-        ) as response:
+        response_data = response.read().decode("utf-8")
 
-            result = json.loads(
-                response.read().decode("utf-8")
-            )
+        result = json.loads(response_data)
 
-        if result.get("ok"):
-
-            print(
-                "Telegram message sent successfully."
-            )
-
-            return True
-
-        print(
-            "Telegram API error:"
-        )
-
-        print(result)
-
-        return False
-
-    except Exception as error:
-
-        print(
-            f"Telegram connection error: {error}"
-        )
-
-        return False
-
-
-# ============================================================
-# GEMINI RETRY HANDLER
-# ============================================================
-
-def generate_with_retry(
-    prompt,
-    max_attempts=5
-):
-    """
-    Generate Gemini content with automatic retries
-    for temporary API errors.
-    """
-
-    delays = [
-        5,
-        10,
-        20,
-        40,
-        60
-    ]
-
-    for attempt in range(
-        1,
-        max_attempts + 1
-    ):
-
-        try:
-
-            print(
-                f"Gemini attempt "
-                f"{attempt}/{max_attempts}..."
-            )
-
-            response = client.models.generate_content(
-                model=TEXT_MODEL,
-                contents=prompt
-            )
-
-            if not response:
-
-                raise RuntimeError(
-                    "Gemini returned an empty response."
-                )
-
-            if not getattr(
-                response,
-                "text",
-                None
-            ):
-
-                raise RuntimeError(
-                    "Gemini returned no text."
-                )
-
-            return response
-
-        except Exception as error:
-
-            error_text = str(error).upper()
-
-            temporary_error = any(
-                code in error_text
-                for code in [
-                    "503",
-                    "429",
-                    "500",
-                    "502",
-                    "504",
-                    "UNAVAILABLE",
-                    "RESOURCE_EXHAUSTED",
-                    "INTERNAL",
-                    "TIMEOUT",
-                    "OVERLOADED"
-                ]
-            )
-
-            print(
-                f"Gemini error: {error}"
-            )
-
-            if (
-                not temporary_error
-                or attempt == max_attempts
-            ):
-
-                print(
-                    "Gemini generation failed."
-                )
-
-                raise
-
-            delay = delays[
-                min(
-                    attempt - 1,
-                    len(delays) - 1
-                )
-            ]
-
-            print(
-                "Gemini is temporarily unavailable."
-            )
-
-            print(
-                f"Retrying in {delay} seconds..."
-            )
-
-            time.sleep(
-                delay
-            )
-
-    raise RuntimeError(
-        "Gemini generation failed after "
-        "all retry attempts."
-    )
-
-
-# ============================================================
-# CLEAN GEMINI JSON RESPONSE
-# ============================================================
-
-def clean_json_response(text):
-
-    if not text:
-        raise RuntimeError(
-            "Gemini returned an empty response."
-        )
-
-    text = text.strip()
-
-    # Remove Markdown code fences.
-    if text.startswith("```"):
-
-        lines = text.splitlines()
-
-        if lines:
-            lines = lines[1:]
-
-        if lines and lines[-1].strip() == "```":
-            lines = lines[:-1]
-
-        text = "\n".join(
-            lines
-        ).strip()
-
-    # Handle accidental surrounding text by extracting
-    # the outermost JSON object.
-    if not text.startswith("{"):
-
-        start = text.find("{")
-        end = text.rfind("}")
-
-        if start != -1 and end != -1 and end > start:
-
-            text = text[
-                start:end + 1
-            ]
-
-    return text.strip()
-
-
-# ============================================================
-# VALIDATE GENERATED POLL
-# ============================================================
-
-def validate_poll(poll):
-
-    required_fields = [
-        "question",
-        "option_1",
-        "option_2",
-        "option_3",
-        "option_4",
-        "correct_option",
-        "simple_explanation",
-        "bonus_challenge"
-    ]
-
-    if not isinstance(
-        poll,
-        dict
-    ):
-
-        raise RuntimeError(
-            "Gemini response is not a JSON object."
-        )
-
-    for field in required_fields:
-
-        if field not in poll:
-
+        if not result.get("ok"):
             raise RuntimeError(
-                f"Gemini response is missing: {field}"
+                f"Telegram API error: {result}"
             )
 
-        if poll[field] is None:
+        return result
 
-            raise RuntimeError(
-                f"Gemini returned an empty field: {field}"
-            )
 
-    # Convert numeric strings such as "3" to integers.
-    try:
+def send_telegram_message(text):
+    return telegram_request(
+        "sendMessage",
+        {
+            "chat_id": TELEGRAM_CHAT_ID,
+            "text": text,
+            "parse_mode": "Markdown",
+            "disable_web_page_preview": "true",
+        },
+    )
 
-        poll["correct_option"] = int(
-            poll["correct_option"]
+
+# ============================================================
+# POLL FORMATTING
+# ============================================================
+
+def format_poll(poll, track):
+    options = poll["options"]
+
+    return (
+        "*KORLINK TECHNOLOGIES*\n\n"
+        "*DAILY CHALLENGE*\n\n"
+        f"*Track:* {track['name']}\n\n"
+        f"{poll['question']}\n\n"
+        f"1. {options[0]}\n"
+        f"2. {options[1]}\n"
+        f"3. {options[2]}\n"
+        f"4. {options[3]}\n\n"
+        "What would you choose? "
+        "If possible, share your reason."
+    )
+
+
+# ============================================================
+# ANSWER FORMATTING
+# ============================================================
+
+def format_answer(poll, track):
+    correct_number = poll["correct_option"]
+    correct_answer = poll["options"][correct_number - 1]
+
+    explanation = poll["explanation"].strip()
+    practical = poll.get(
+        "practical_challenge",
+        ""
+    ).strip()
+
+    message = (
+        "*KORLINK TECHNOLOGIES*\n\n"
+        "*DAILY CHALLENGE*\n\n"
+        "*Answer & Explanation*\n"
+        f"*Track:* {track['name']}\n\n"
+        "*Correct Answer:*\n"
+        f"{correct_number}. {correct_answer}\n\n"
+        "*Why?*\n"
+        f"{explanation}"
+    )
+
+    if practical:
+        message += (
+            "\n\n"
+            "*Practical Challenge:*\n"
+            f"{practical}"
         )
 
-    except (
-        TypeError,
-        ValueError
-    ):
-
-        raise RuntimeError(
-            "correct_option must be a number from 1 to 4."
-        )
-
-    if poll["correct_option"] not in [
-        1,
-        2,
-        3,
-        4
-    ]:
-
-        raise RuntimeError(
-            "correct_option must be between 1 and 4."
-        )
-
-    # Ensure all text fields are strings.
-    text_fields = [
-        "question",
-        "option_1",
-        "option_2",
-        "option_3",
-        "option_4",
-        "simple_explanation",
-        "bonus_challenge"
-    ]
-
-    for field in text_fields:
-
-        if not isinstance(
-            poll[field],
-            str
-        ):
-
-            poll[field] = str(
-                poll[field]
-            )
-
-        poll[field] = poll[field].strip()
-
-        if not poll[field]:
-
-            raise RuntimeError(
-                f"Generated field is empty: {field}"
-            )
-
-    return poll
+    return message
 
 
 # ============================================================
-# GENERATE WEEKDAY CHALLENGE
+# WEEKEND CONTENT
 # ============================================================
 
-def generate_poll(track):
-
-    questions = load_questions()
-
-    recent_questions = questions[-50:]
-
-    history = "\n".join(
-        f"- {item.get('question', '')}"
-        for item in recent_questions
-    )
-
-    prompt = f"""
-You are the official content writer and practical instructor
-for Korlink Technologies.
-
-Korlink Technologies runs a professional technology training
-community called "Korlink Daily Challenge".
-
-Your task is to create today's challenge for the community.
-
-TODAY'S TRAINING TRACK
-
-School:
-{track['school']}
-
-Course:
-{track['name']}
-
-Training focus:
-{track['description']}
-
-PURPOSE
-
-The challenge should encourage people to stop, think and
-participate.
-
-It must feel like something a knowledgeable human instructor
-would naturally post in a professional training community.
-
-The audience can include:
-- complete beginners
-- students
-- working professionals
-- people changing careers
-- technically experienced learners
-
-Therefore, the challenge must be understandable even to someone
-who is not yet familiar with the technical subject.
-
-CONTENT STYLE
-
-Write in natural, clear English.
-
-Make the challenge engaging without sounding childish.
-
-Use a realistic situation from everyday life, work, business,
-school, home or technology use.
-
-The scenario should provide enough context to make the question
-interesting, but it must not become a long story.
-
-The ideal question can normally be read in about 15 to 25 seconds.
-
-Do NOT make the question extremely short.
-
-Do NOT make the question excessively long.
-
-Aim for approximately 25 to 55 words for the question.
-
-OPTIONS
-
-Create exactly four options.
-
-Each option should normally be short enough to read quickly.
-
-All four options should be plausible.
-
-Only one option must be correct.
-
-The correct answer must be technically accurate.
-
-Avoid trick questions.
-
-LEARNING VALUE
-
-The challenge should test practical understanding rather than
-memorisation.
-
-Whenever possible, make the learner think about what they would
-actually do in a real situation.
-
-Avoid repeatedly asking simple definitions such as:
-"What is..."
-"Define..."
-"Which of these is..."
-
-A definition-based question is acceptable only when it is
-genuinely useful and presented in a practical context.
-
-EXAMPLES OF THE RIGHT STYLE
-
-Cybersecurity:
-
-A staff member receives an email claiming that their company
-account will be suspended unless they confirm their password
-through a link. What should they do before taking any action?
-
-Software Engineering:
-
-A developer adds a new feature to an application, but an older
-feature suddenly stops working. What should the developer check
-first?
-
-Smart Home Automation:
-
-A homeowner wants the corridor light to turn on automatically
-when someone enters at night. Which device would best detect
-the person's movement?
-
-Network Engineering:
-
-A laptop connects successfully to the office Wi-Fi, but websites
-will not open while other devices are working normally. What is
-the most useful first check?
-
-Solar PV:
-
-A solar system receives good sunlight during the day, but the
-battery is not charging as expected. Which part of the system
-should be checked first?
-
-These examples show the desired level of detail. Do not copy
-them or create questions substantially similar to them.
-
-PROFESSIONAL STYLE
-
-Do:
-- Sound like an experienced instructor.
-- Be practical.
-- Be clear.
-- Be interesting.
-- Use natural language.
-- Make people curious enough to answer.
-- Make the content useful.
-
-Do not:
-- Mention AI.
-- Mention Gemini.
-- Mention prompts.
-- Use hashtags.
-- Use excessive emojis.
-- Use hype.
-- Use slang.
-- Use childish expressions.
-- Use exaggerated motivational phrases.
-- Use "Let's see who gets this!"
-- Use "Are you ready?"
-- Use "Tech warriors!"
-- Use "Test your brain!"
-- Use "Level up!"
-- Use "Crush this!"
-- Turn the question into an advertisement.
-
-EXPLANATION
-
-The explanation should be approximately 25 to 60 words.
-
-It should clearly explain why the correct answer is correct.
-
-Write it so that someone who selected the wrong answer can
-still learn something useful.
-
-BONUS CHALLENGE
-
-The bonus challenge should be one short practical question or
-task related to the same topic.
-
-It should encourage further thinking without becoming another
-long lesson.
-
-QUESTION HISTORY
-
-Do not repeat or substantially recreate any of these previous
-questions:
-
-{history}
-
-IMPORTANT JSON REQUIREMENTS
-
-Your entire response MUST be valid JSON.
-
-Do not write anything before the JSON.
-
-Do not write anything after the JSON.
-
-Do not use Markdown code fences.
-
-The JSON must contain ALL of these fields:
-
-{{
-    "question": "string",
-    "option_1": "string",
-    "option_2": "string",
-    "option_3": "string",
-    "option_4": "string",
-    "correct_option": 1,
-    "simple_explanation": "string",
-    "bonus_challenge": "string"
-}}
-
-"correct_option" MUST be a number, not a word and not a string.
-
-It MUST be exactly one of:
-
-1
-2
-3
-4
-
-Before returning the response, verify that:
-1. There are exactly four options.
-2. There is exactly one correct answer.
-3. correct_option matches the correct option.
-4. The question is realistic.
-5. The question is not too long.
-6. The explanation is useful but concise.
-7. The bonus challenge is short.
-8. The question is not substantially similar to the previous questions.
-"""
-
-    response = generate_with_retry(
-        prompt
-    )
-
-    text = clean_json_response(
-        response.text
-    )
-
-    try:
-
-        poll = json.loads(
-            text
-        )
-
-    except json.JSONDecodeError as error:
-
-        print(
-            "Gemini returned invalid JSON:"
-        )
-
-        print(text)
-
-        raise RuntimeError(
-            f"Gemini returned invalid JSON: {error}"
-        )
-
-    return validate_poll(
-        poll
-    )
-
-
-# ============================================================
-# DUPLICATE QUESTION CHECK
-# ============================================================
-
-def is_duplicate_question(
-    new_question
-):
-
-    questions = load_questions()
-
-    if not questions:
-        return False
-
-    previous = "\n".join(
-        f"- {item.get('question', '')}"
-        for item in questions[-50:]
-    )
-
-    prompt = f"""
-Compare this new training challenge with the previous challenges.
-
-NEW CHALLENGE:
-
-{new_question}
-
-PREVIOUS CHALLENGES:
-
-{previous}
-
-Determine whether the new challenge is substantially similar
-to any previous challenge.
-
-Consider:
-- the scenario
-- the learning objective
-- the practical situation
-- the reasoning required
-- the subject being tested
-
-Do not mark it as duplicate simply because it belongs to the
-same course.
-
-Return ONLY one word:
-
-DUPLICATE
-
-or
-
-UNIQUE
-"""
-
-    response = generate_with_retry(
-        prompt
-    )
-
-    result = response.text.strip().upper()
-
-    return result.startswith(
-        "DUPLICATE"
-    )
-
-
-# ============================================================
-# MORNING CHALLENGE MESSAGE
-# ============================================================
-
-def format_poll(
-    track,
-    poll
-):
-
-    return f"""*KORLINK TECHNOLOGIES*
-
-*DAILY CHALLENGE*
-
-*Track:* {track['name']}
-
-{poll['question']}
-
-1. {poll['option_1']}
-2. {poll['option_2']}
-3. {poll['option_3']}
-4. {poll['option_4']}
-
-Share your answer and, if possible, tell us why you chose it.
-"""
-
-
-# ============================================================
-# FIND TODAY'S QUESTION
-# ============================================================
-
-def get_today_question():
-
-    today = today_string()
-
-    questions = load_questions()
-
-    for question in reversed(
-        questions
-    ):
-
-        if (
-            question.get("date") == today
-            and
-            question.get("type") == "weekday_poll"
-        ):
-
-            return question
-
-    return None
-
-
-# ============================================================
-# EVENING ANSWER MESSAGE
-# ============================================================
-
-def format_answer(
-    question
-):
-
-    correct = question[
-        "correct_option"
-    ]
-
-    option_key = (
-        f"option_{correct}"
-    )
-
-    correct_text = question[
-        option_key
-    ]
-
-    return f"""*KORLINK TECHNOLOGIES*
-
-*DAILY CHALLENGE*
-
-*Answer & Explanation*
-*Track:* {question['track']}
-
-*Today's Challenge*
-
-{question['question']}
-
-*Correct Answer:*
-
-{correct}. {correct_text}
-
-*Explanation:*
-
-{question['explanation']}
-
-*Practical Challenge:*
-
-{question['bonus_challenge']}
-"""
-
-
-# ============================================================
-# SATURDAY BOOST
-# ============================================================
-
-def generate_saturday():
-
+def generate_saturday_message():
     prompt = """
-Write the official Saturday message for Korlink Technologies'
-training community.
+Write a short professional Saturday message for the Korlink
+Technologies training community.
 
-Programme:
-KORLINK DAILY CHALLENGE
+The message should:
+- Be natural and authentic
+- Sound like a real training organization
+- Encourage learners to review what they learned during the week
+- Be useful to both beginners and experienced learners
+- Avoid excessive motivational language
+- Avoid emojis
+- Avoid clichés
+- Be concise
 
-Heading:
-Saturday Boost
-
-Create a warm, professional message for students and aspiring
-technology professionals.
-
-Maximum 80 words.
-
-Focus naturally on:
-- consistency
-- practice
-- learning
-- building projects
-- professional development
-
-The message should feel like it was written by an experienced
-training organisation, not an AI.
-
-Avoid:
-- clichés
-- excessive motivation
-- exaggerated promises
-- hashtags
-- slang
-- childish language
-- unnecessary emojis
-- famous quotes
-- references to AI
-
-End with one simple question that encourages students to reply.
-
-Return only the final message.
+Return only the message text.
 """
 
-    response = generate_with_retry(
-        prompt
-    )
-
-    return response.text.strip()
+    return gemini_generate(prompt).strip()
 
 
-# ============================================================
-# SUNDAY REFLECTION
-# ============================================================
-
-def generate_sunday():
-
+def generate_sunday_message():
     prompt = """
-Write the official Sunday message for Korlink Technologies'
-training community.
+Write a short professional Sunday reflection for the Korlink
+Technologies training community.
 
-Programme:
-KORLINK DAILY CHALLENGE
+The message should:
+- Have a thoughtful and positive tone
+- Connect personal growth with learning technology
+- Be suitable for a professional training community
+- Be concise
+- Avoid excessive religious preaching
+- Avoid hype
+- Avoid emojis
+- Sound naturally written by a real organization
 
-Heading:
-Sunday Reflection
-
-Create a short, respectful Sunday reflection.
-
-Maximum 100 words.
-
-The message may be inspired by a Gospel principle or a short
-Bible reference.
-
-Connect the reflection naturally with:
-- wisdom
-- discipline
-- learning
-- purpose
-- using skills responsibly
-- preparing for the coming week
-
-The tone should be warm, professional and respectful.
-
-Do not preach harshly.
-
-Do not reproduce a long Bible passage.
-
-Avoid excessive religious language, hashtags, slang,
-childish wording and unnecessary emojis.
-
-Do not mention AI.
-
-End with one simple reflection question.
-
-Return only the final message.
+Return only the message text.
 """
 
-    response = generate_with_retry(
-        prompt
-    )
-
-    return response.text.strip()
+    return gemini_generate(prompt).strip()
 
 
 # ============================================================
-# MORNING ENGINE
+# MORNING RUN
 # ============================================================
 
 def run_morning():
-
-    today = nigeria_today()
-
-    weekday = today.weekday()
-
-    track = WEEKDAY_TRACKS.get(
-        weekday
-    )
-
-    if not track:
-
-        raise RuntimeError(
-            "No training track configured for today."
-        )
+    now = nigeria_now()
 
     print(
-        f"Generating {track['name']} challenge..."
+        f"Nigeria time: "
+        f"{now.strftime('%A, %d %B %Y %H:%M:%S WAT')}"
     )
 
-    poll = None
+    print(f"Gemini model: {GEMINI_MODEL}")
+    print("Run mode: morning")
 
-    for attempt in range(3):
+    weekday = now.weekday()
 
+    # Monday-Friday.
+    if weekday not in WEEKDAY_TRACKS:
         print(
-            f"Question generation attempt "
-            f"{attempt + 1}/3..."
+            "Today is a weekend. "
+            "Morning challenge is not required."
         )
+        return
 
-        candidate = generate_poll(
-            track
-        )
+    track = WEEKDAY_TRACKS[weekday]
 
-        if not is_duplicate_question(
-            candidate["question"]
-        ):
+    print(
+        f"Generating {track['name']} poll..."
+    )
 
-            poll = candidate
+    questions = load_questions()
 
-            break
+    existing_today = get_today_question(questions)
 
+    if existing_today:
         print(
-            "A similar question was detected."
+            "A question already exists for today. "
+            "Using the existing question."
         )
 
-        print(
-            "Generating another challenge..."
+        poll = existing_today
+
+    else:
+        poll = None
+
+        # Generate a new question and reject duplicates.
+        for attempt in range(1, 6):
+
+            candidate = generate_poll(track)
+
+            if not question_already_used(
+                candidate["question"],
+                questions,
+            ):
+                poll = candidate
+                break
+
+            print(
+                "Generated question already exists. "
+                "Generating another one..."
+            )
+
+        if poll is None:
+            raise RuntimeError(
+                "Could not generate a unique question."
+            )
+
+        questions.append(
+            {
+                "date": today_string(),
+                "weekday": now.strftime("%A"),
+                "school": track["school"],
+                "track": track["name"],
+                "question": poll["question"],
+                "options": poll["options"],
+                "correct_option": poll["correct_option"],
+                "explanation": poll["explanation"],
+                "practical_challenge":
+                    poll.get("practical_challenge", ""),
+                "created_at": now.isoformat(),
+            }
         )
 
-    if poll is None:
-
-        raise RuntimeError(
-            "Could not generate a unique "
-            "challenge after three attempts."
-        )
+        save_questions(questions)
 
     message = format_poll(
+        poll,
         track,
-        poll
     )
 
-    record = {
+    send_telegram_message(message)
 
-        "date": str(today),
-
-        "type": "weekday_poll",
-
-        "school": track["school"],
-
-        "track": track["name"],
-
-        "question": poll["question"],
-
-        "option_1": poll["option_1"],
-
-        "option_2": poll["option_2"],
-
-        "option_3": poll["option_3"],
-
-        "option_4": poll["option_4"],
-
-        "correct_option": poll[
-            "correct_option"
-        ],
-
-        "explanation": poll[
-            "simple_explanation"
-        ],
-
-        "bonus_challenge": poll[
-            "bonus_challenge"
-        ],
-    }
-
-    save_question(
-        record
-    )
-
-    save_post({
-
-        "date": str(today),
-
-        "type": "weekday_poll",
-
-        "track": track["name"],
-
-        "message": message,
-
-    })
-
-    print()
-    print("=" * 70)
     print(
-        "MORNING TELEGRAM MESSAGE"
-    )
-    print("=" * 70)
-
-    print(message)
-
-    print()
-    print(
-        "Sending to Telegram..."
-    )
-
-    if not send_telegram_message(
-        message
-    ):
-
-        raise RuntimeError(
-            "Telegram message could not be sent."
-        )
-
-    print()
-    print(
-        "Morning challenge completed successfully."
+        "Morning challenge sent successfully."
     )
 
 
 # ============================================================
-# EVENING ENGINE
+# EVENING RUN
 # ============================================================
 
 def run_evening():
+    now = nigeria_now()
 
-    question = get_today_question()
+    print(
+        f"Nigeria time: "
+        f"{now.strftime('%A, %d %B %Y %H:%M:%S WAT')}"
+    )
 
-    if not question:
+    print(f"Gemini model: {GEMINI_MODEL}")
+    print("Run mode: evening")
 
+    weekday = now.weekday()
+
+    if weekday not in WEEKDAY_TRACKS:
+        print(
+            "Today is a weekend. "
+            "Evening answer is not required."
+        )
+        return
+
+    track = WEEKDAY_TRACKS[weekday]
+
+    questions = load_questions()
+
+    poll = get_today_question(questions)
+
+    if not poll:
         raise RuntimeError(
-            "No challenge was found for today. "
-            "The morning challenge may not have completed successfully."
+            "No morning challenge was found for today."
         )
 
     message = format_answer(
-        question
+        poll,
+        track,
     )
 
-    save_post({
+    send_telegram_message(message)
 
-        "date": today_string(),
+    posts = load_posts()
 
-        "type": "weekday_answer",
-
-        "track": question["track"],
-
-        "message": message,
-
-    })
-
-    print()
-    print("=" * 70)
-    print(
-        "EVENING TELEGRAM MESSAGE"
-    )
-    print("=" * 70)
-
-    print(message)
-
-    print()
-    print(
-        "Sending to Telegram..."
+    posts.append(
+        {
+            "date": today_string(),
+            "weekday": now.strftime("%A"),
+            "type": "evening_answer",
+            "track": track["name"],
+            "message": message,
+            "created_at": now.isoformat(),
+        }
     )
 
-    if not send_telegram_message(
-        message
-    ):
+    save_posts(posts)
 
-        raise RuntimeError(
-            "Telegram message could not be sent."
-        )
-
-    print()
     print(
-        "Evening answer completed successfully."
+        "Evening answer sent successfully."
     )
 
 
 # ============================================================
-# WEEKEND ENGINE
+# WEEKEND RUN
 # ============================================================
 
 def run_weekend():
+    now = nigeria_now()
 
-    today = nigeria_today()
+    print(
+        f"Nigeria time: "
+        f"{now.strftime('%A, %d %B %Y %H:%M:%S WAT')}"
+    )
 
-    if today.weekday() == 5:
+    print(f"Gemini model: {GEMINI_MODEL}")
+    print("Run mode: weekend")
 
-        print(
-            "Generating Saturday Boost..."
-        )
+    weekday = now.weekday()
 
-        message = generate_saturday()
+    if weekday == 5:
+        print("Generating Saturday message...")
 
-        post_type = (
-            "saturday_boost"
-        )
+        message_body = generate_saturday_message()
 
-    elif today.weekday() == 6:
+        heading = "Saturday Boost"
 
-        print(
-            "Generating Sunday Reflection..."
-        )
+    elif weekday == 6:
+        print("Generating Sunday message...")
 
-        message = generate_sunday()
+        message_body = generate_sunday_message()
 
-        post_type = (
-            "sunday_reflection"
-        )
+        heading = "Sunday Reflection"
 
     else:
-
-        raise RuntimeError(
+        print(
             "Weekend mode can only run on Saturday or Sunday."
         )
+        return
 
-    save_post({
-
-        "date": str(today),
-
-        "type": post_type,
-
-        "message": message,
-
-    })
-
-    print()
-    print("=" * 70)
-    print(
-        "WEEKEND TELEGRAM MESSAGE"
-    )
-    print("=" * 70)
-
-    print(message)
-
-    print()
-    print(
-        "Sending to Telegram..."
+    message = (
+        "*KORLINK TECHNOLOGIES*\n\n"
+        f"*{heading}*\n\n"
+        f"{message_body}"
     )
 
-    if not send_telegram_message(
-        message
-    ):
+    send_telegram_message(message)
 
-        raise RuntimeError(
-            "Telegram message could not be sent."
-        )
+    posts = load_posts()
 
-    print()
+    posts.append(
+        {
+            "date": today_string(),
+            "weekday": now.strftime("%A"),
+            "type": "weekend",
+            "message": message,
+            "created_at": now.isoformat(),
+        }
+    )
+
+    save_posts(posts)
+
     print(
-        "Weekend message completed successfully."
+        f"{heading} sent successfully."
     )
 
 
@@ -1402,108 +970,28 @@ def run_weekend():
 # ============================================================
 
 def main():
+    validate_environment()
 
-    mode = os.getenv(
-        "RUN_MODE",
-        "morning"
-    ).lower().strip()
+    print("=" * 60)
+    print("Korlink Daily Challenge")
+    print("Korlink Technologies Ltd")
+    print("=" * 60)
 
-    current_time = nigeria_now()
+    if RUN_MODE == "morning":
+        run_morning()
 
-    today = current_time.date()
+    elif RUN_MODE == "evening":
+        run_evening()
 
-    print()
-    print("=" * 70)
-    print(
-        "KORLINK TECHNOLOGIES"
-    )
-    print(
-        "Training Update AI"
-    )
-    print("=" * 70)
-
-    print(
-        f"Nigeria time: "
-        f"{current_time.strftime('%A, %d %B %Y %H:%M:%S WAT')}"
-    )
-
-    print(
-        f"Gemini model: {TEXT_MODEL}"
-    )
-
-    print(
-        f"Run mode: {mode}"
-    )
-
-    print()
-
-    # --------------------------------------------------------
-    # MORNING
-    # --------------------------------------------------------
-
-    if mode == "morning":
-
-        if today.weekday() <= 4:
-
-            run_morning()
-
-        else:
-
-            print(
-                "Morning weekday challenge is not scheduled "
-                "for Saturday or Sunday."
-            )
-
-    # --------------------------------------------------------
-    # EVENING
-    # --------------------------------------------------------
-
-    elif mode == "evening":
-
-        if today.weekday() <= 4:
-
-            run_evening()
-
-        else:
-
-            print(
-                "Evening weekday answer is not scheduled "
-                "for Saturday or Sunday."
-            )
-
-    # --------------------------------------------------------
-    # WEEKEND
-    # --------------------------------------------------------
-
-    elif mode == "weekend":
-
-        if today.weekday() >= 5:
-
-            run_weekend()
-
-        else:
-
-            print(
-                "Weekend mode is only available "
-                "on Saturday or Sunday."
-            )
-
-    # --------------------------------------------------------
-    # INVALID MODE
-    # --------------------------------------------------------
+    elif RUN_MODE == "weekend":
+        run_weekend()
 
     else:
-
-        raise RuntimeError(
-            f"Unknown RUN_MODE: {mode}. "
-            f"Expected morning, evening or weekend."
+        raise ValueError(
+            f"Invalid RUN_MODE: {RUN_MODE}. "
+            "Use morning, evening or weekend."
         )
 
 
-# ============================================================
-# START APPLICATION
-# ============================================================
-
 if __name__ == "__main__":
-
     main()
