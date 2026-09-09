@@ -4,5 +4,11 @@
         "type": "weekday_poll",
         "track": "Smart Home Automation",
         "message": "*KORLINK TECHNOLOGIES*\n\n*Daily Challenge*\n\n*Track:* Smart Home Automation\n\nA homeowner installs a smart motion sensor to automatically turn on the hallway lights when someone walks by. However, the lights keep turning on during the daytime when natural light is already sufficient. What is the best way to refine this automation?\n\n1. Add a light level (lux) condition so the automation only runs when ambient light is low\n2. Increase the motion sensor's sensitivity so it detects movement faster\n3. Switch the smart light bulbs from a Wi-Fi connection to Zigbee\n4. Replace the smart bulbs with higher wattage LED lamps\n\nShare the option you consider correct and, if possible,\nbriefly explain your reasoning.\n"
+    },
+    {
+        "date": "2026-09-09",
+        "type": "weekday_poll",
+        "track": "Smart Home Automation",
+        "message": "*KORLINK TECHNOLOGIES*\n\n*DAILY CHALLENGE*\n\n*Track:* Smart Home Automation\n\nA homeowner installs a Zigbee door sensor on a garden gate, but it frequently drops its connection to the main smart home hub in the living room. What is the most effective way to establish a reliable connection without moving the hub?\n\n1. Upgrade the home internet plan to increase connection speed.\n2. Place a mains-powered Zigbee device midway to act as a repeater.\n3. Reconfigure the door sensor to connect to the 5 GHz Wi-Fi band.\n4. Reboot the internet router to clear temporary network cache.\n\nShare your answer and, if possible, tell us why you chose it.\n"
     }
 ]
