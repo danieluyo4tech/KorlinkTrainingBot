@@ -1,0 +1,16 @@
+[
+    {
+        "date": "2026-09-09",
+        "type": "weekday_poll",
+        "school": "School of Technology",
+        "track": "Smart Home Automation",
+        "question": "A homeowner installs a smart motion sensor to automatically turn on the hallway lights when someone walks by. However, the lights keep turning on during the daytime when natural light is already sufficient. What is the best way to refine this automation?",
+        "option_1": "Add a light level (lux) condition so the automation only runs when ambient light is low",
+        "option_2": "Increase the motion sensor's sensitivity so it detects movement faster",
+        "option_3": "Switch the smart light bulbs from a Wi-Fi connection to Zigbee",
+        "option_4": "Replace the smart bulbs with higher wattage LED lamps",
+        "correct_option": 1,
+        "explanation": "Standard motion sensors only detect movement, not brightness. Adding a light sensor (lux) condition to the automation rule ensures the lights turn on only when the space is actually dark, preventing wasted energy during the day.",
+        "bonus_challenge": "If your motion sensor does not have a built-in light sensor, what other condition could you add to your hub's automation rule to achieve a similar result?"
+    }
+]

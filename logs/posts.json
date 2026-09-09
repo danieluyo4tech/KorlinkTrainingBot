@@ -1,0 +1,8 @@
+[
+    {
+        "date": "2026-09-09",
+        "type": "weekday_poll",
+        "track": "Smart Home Automation",
+        "message": "*KORLINK TECHNOLOGIES*\n\n*Daily Challenge*\n\n*Track:* Smart Home Automation\n\nA homeowner installs a smart motion sensor to automatically turn on the hallway lights when someone walks by. However, the lights keep turning on during the daytime when natural light is already sufficient. What is the best way to refine this automation?\n\n1. Add a light level (lux) condition so the automation only runs when ambient light is low\n2. Increase the motion sensor's sensitivity so it detects movement faster\n3. Switch the smart light bulbs from a Wi-Fi connection to Zigbee\n4. Replace the smart bulbs with higher wattage LED lamps\n\nShare the option you consider correct and, if possible,\nbriefly explain your reasoning.\n"
+    }
+]
