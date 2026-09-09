@@ -870,7 +870,7 @@ Use this format:
 
 *KORLINK TECHNOLOGIES*
 
-*Saturday Learning Note*
+*Saturday Inspiration Note*
 
 [short message]
 
