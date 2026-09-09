@@ -745,7 +745,7 @@ def format_poll(
 
     return f"""*KORLINK TECHNOLOGIES*
 
-*Daily Technical Question*
+*Daily Challenge*
 
 *Track:* {track['name']}
 
@@ -808,7 +808,7 @@ def format_answer(
 
     return f"""*KORLINK TECHNOLOGIES*
 
-*Daily Question — Answer*
+*Daily Challenge — Answer*
 
 *Track:* {question['track']}
 
