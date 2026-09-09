@@ -1,21 +1,18 @@
 name: Korlink Training Update AI
 
 on:
-  # Monday-Friday
-  # 4:00 AM Nigeria time (WAT) = 3:00 AM UTC
-  - cron: "0 3 * * 1-5"
+  schedule:
+    # Monday-Friday: 4:00 AM Nigeria time (WAT / UTC+1)
+    - cron: "0 3 * * 1-5"
 
-  # Monday-Friday
-  # 4:00 PM Nigeria time (WAT) = 3:00 PM UTC
-  - cron: "0 15 * * 1-5"
+    # Monday-Friday: 4:00 PM Nigeria time (WAT / UTC+1)
+    - cron: "0 15 * * 1-5"
 
-  # Saturday
-  # 4:00 AM Nigeria time (WAT) = 3:00 AM UTC
-  - cron: "0 3 * * 6"
+    # Saturday: 4:00 AM Nigeria time
+    - cron: "0 3 * * 6"
 
-  # Sunday
-  # 4:00 AM Nigeria time (WAT) = 3:00 AM UTC
-  - cron: "0 3 * * 0"
+    # Sunday: 4:00 AM Nigeria time
+    - cron: "0 3 * * 0"
 
   workflow_dispatch:
     inputs:
@@ -68,18 +65,23 @@ jobs:
             HOUR=$(date -u +%H)
 
             if [ "$DAY" -ge 1 ] && [ "$DAY" -le 5 ]; then
+
               if [ "$HOUR" = "03" ]; then
                 MODE="morning"
+
               elif [ "$HOUR" = "15" ]; then
                 MODE="evening"
+
               else
                 echo "No weekday schedule matched."
                 exit 1
               fi
 
             elif [ "$DAY" = "6" ] || [ "$DAY" = "7" ]; then
+
               if [ "$HOUR" = "03" ]; then
                 MODE="weekend"
+
               else
                 echo "No weekend schedule matched."
                 exit 1
