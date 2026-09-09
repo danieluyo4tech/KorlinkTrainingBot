@@ -906,15 +906,15 @@ def format_poll(
 
     return (
         "*KORLINK TECHNOLOGIES*\n\n"
-        "*KORLINK DAILY CHALLENGE*\n\n"
-        "*Today's Challenge*\n"
+        "*DAILY CHALLENGE*\n\n"
         f"*Track:* {track['name']}\n\n"
         f"{poll['question']}\n\n"
         f"1. {options[0]}\n"
         f"2. {options[1]}\n"
         f"3. {options[2]}\n"
         f"4. {options[3]}\n\n"
-        "What would you do in this situation?"
+        "What would you do in this situation?/n/n"
+        "Don't be afraid to get it wrong. The goal is to learn!/n"
     )
 
 
@@ -950,7 +950,7 @@ def format_answer(
 
     message = (
         "*KORLINK TECHNOLOGIES*\n\n"
-        "*KORLINK DAILY CHALLENGE*\n\n"
+        "*DAILY CHALLENGE*\n\n"
         "*Answer & Explanation*\n"
         f"*Track:* {track['name']}\n\n"
         "*Correct Answer:*\n"
