@@ -5,8 +5,21 @@ import time
 import urllib.request
 import urllib.parse
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 from google import genai
+
+
+# ============================================================
+# KORLINK TECHNOLOGIES
+# TRAINING UPDATE AI
+# ============================================================
+
+# Nigeria operates on West Africa Time (UTC+1).
+# GitHub Actions itself runs on UTC, but all content dates
+# and scheduling logic inside this application use Nigeria time.
+
+NIGERIA_TZ = ZoneInfo("Africa/Lagos")
 
 
 # ============================================================
@@ -83,19 +96,19 @@ WEEKDAY_TRACKS = {
 
     2: {
         "school": "School of Technology",
-        "name": "Network Engineering",
+        "name": "Smart Home Automation",
         "description": (
-            "Wi-Fi, routers, switches, IP addresses, "
-            "Internet connections and network troubleshooting"
+            "smart homes, IoT devices, sensors, smart lighting, "
+            "security systems, controllers and practical home automation"
         ),
     },
 
     3: {
         "school": "School of Technology",
-        "name": "Smart Tech and Automation",
+        "name": "Network Engineering",
         "description": (
-            "IoT, sensors, smart devices, automation, "
-            "controllers and practical automation"
+            "Wi-Fi, routers, switches, IP addresses, "
+            "Internet connections and network troubleshooting"
         ),
     },
 
@@ -109,6 +122,38 @@ WEEKDAY_TRACKS = {
         ),
     },
 }
+
+
+# ============================================================
+# NIGERIA DATE / TIME HELPERS
+# ============================================================
+
+def nigeria_now():
+    """
+    Return the current date and time in Nigeria.
+    """
+
+    return datetime.datetime.now(
+        NIGERIA_TZ
+    )
+
+
+def nigeria_today():
+    """
+    Return today's date according to Nigeria time.
+    """
+
+    return nigeria_now().date()
+
+
+def today_string():
+    """
+    Return today's Nigeria date as YYYY-MM-DD.
+    """
+
+    return str(
+        nigeria_today()
+    )
 
 
 # ============================================================
@@ -138,7 +183,7 @@ def load_json(file_path):
     except Exception as error:
 
         print(
-            f"⚠️ Could not read {file_path}: {error}"
+            f"Could not read {file_path}: {error}"
         )
 
         return []
@@ -146,8 +191,12 @@ def load_json(file_path):
 
 def save_json(file_path, data):
 
+    temporary_file = file_path.with_suffix(
+        file_path.suffix + ".tmp"
+    )
+
     with open(
-        file_path,
+        temporary_file,
         "w",
         encoding="utf-8"
     ) as file:
@@ -158,6 +207,12 @@ def save_json(file_path, data):
             indent=4,
             ensure_ascii=False
         )
+
+    # Replace the old file only after the new file
+    # has been written successfully.
+    temporary_file.replace(
+        file_path
+    )
 
 
 # ============================================================
@@ -175,9 +230,25 @@ def save_question(question_data):
 
     questions = load_questions()
 
+    # Prevent duplicate records for the same date.
+    # This is useful if a manual workflow is accidentally
+    # run twice on the same morning.
+    questions = [
+        item
+        for item in questions
+        if not (
+            item.get("date") == question_data.get("date")
+            and item.get("type") == question_data.get("type")
+        )
+    ]
+
     questions.append(
         question_data
     )
+
+    # Keep the history manageable while retaining
+    # enough information for duplicate checking.
+    questions = questions[-100:]
 
     save_json(
         QUESTIONS_FILE,
@@ -198,6 +269,9 @@ def save_post(post_data):
     posts.append(
         post_data
     )
+
+    # Keep the most recent 200 posts.
+    posts = posts[-200:]
 
     save_json(
         POSTS_FILE,
@@ -220,6 +294,7 @@ def send_telegram_message(message):
         "chat_id": TELEGRAM_CHAT_ID,
         "text": message,
         "parse_mode": "Markdown",
+        "disable_web_page_preview": "true",
     }).encode("utf-8")
 
     request = urllib.request.Request(
@@ -242,13 +317,13 @@ def send_telegram_message(message):
         if result.get("ok"):
 
             print(
-                "✅ Telegram message sent successfully."
+                "Telegram message sent successfully."
             )
 
             return True
 
         print(
-            "❌ Telegram API error:"
+            "Telegram API error:"
         )
 
         print(result)
@@ -258,7 +333,7 @@ def send_telegram_message(message):
     except Exception as error:
 
         print(
-            f"❌ Telegram connection error: {error}"
+            f"Telegram connection error: {error}"
         )
 
         return False
@@ -293,14 +368,9 @@ def generate_with_retry(
         try:
 
             print(
-                f"🤖 Gemini attempt "
+                f"Gemini attempt "
                 f"{attempt}/{max_attempts}..."
             )
-
-            # IMPORTANT:
-            # Actually call Gemini here.
-            # Do NOT call generate_with_retry()
-            # from inside itself.
 
             response = client.models.generate_content(
                 model=TEXT_MODEL,
@@ -311,6 +381,16 @@ def generate_with_retry(
 
                 raise RuntimeError(
                     "Gemini returned an empty response."
+                )
+
+            if not getattr(
+                response,
+                "text",
+                None
+            ):
+
+                raise RuntimeError(
+                    "Gemini returned no text."
                 )
 
             return response
@@ -336,7 +416,7 @@ def generate_with_retry(
             )
 
             print(
-                f"⚠️ Gemini error: {error}"
+                f"Gemini error: {error}"
             )
 
             if (
@@ -345,7 +425,7 @@ def generate_with_retry(
             ):
 
                 print(
-                    "❌ Gemini generation failed."
+                    "Gemini generation failed."
                 )
 
                 raise
@@ -358,19 +438,47 @@ def generate_with_retry(
             ]
 
             print(
-                "⚠️ Gemini temporarily unavailable."
+                "Gemini is temporarily unavailable."
             )
 
             print(
-                f"🔄 Retrying in {delay} seconds..."
+                f"Retrying in {delay} seconds..."
             )
 
-            time.sleep(delay)
+            time.sleep(
+                delay
+            )
 
     raise RuntimeError(
         "Gemini generation failed after "
         "all retry attempts."
     )
+
+
+# ============================================================
+# CLEAN GEMINI JSON RESPONSE
+# ============================================================
+
+def clean_json_response(text):
+
+    text = text.strip()
+
+    # Remove Markdown code fences if Gemini adds them.
+    if text.startswith("```"):
+
+        lines = text.splitlines()
+
+        if lines:
+            lines = lines[1:]
+
+        if lines and lines[-1].strip() == "```":
+            lines = lines[:-1]
+
+        text = "\n".join(
+            lines
+        ).strip()
+
+    return text
 
 
 # ============================================================
@@ -389,10 +497,14 @@ def generate_poll(track):
     )
 
     prompt = f"""
-You are the friendly practical instructor for
-Korlink Technologies Training Update.
+You are the official content editor and practical instructor
+for Korlink Technologies Training Update.
 
-TODAY'S TRAINING TRACK:
+Korlink Technologies is a professional technology training
+company. Its training communication must sound authentic,
+clear and professional.
+
+TODAY'S TRAINING TRACK
 
 School:
 {track['school']}
@@ -403,51 +515,75 @@ Course:
 Focus:
 {track['description']}
 
-Create ONE interesting practical Telegram poll.
+Create ONE practical multiple-choice question for a Telegram
+learning community.
 
-The audience contains beginners.
+The audience includes beginners and developing learners.
 
-The main goal is STUDENT INTERACTION.
+The main purpose is STUDENT INTERACTION and practical learning.
 
-Do NOT make it sound like an examination.
+EDITORIAL STYLE:
 
-Do NOT ask boring definition questions such as:
+- Write like an experienced human instructor.
+- Use natural, professional English.
+- Keep the tone confident, approachable and educational.
+- Make the situation realistic.
+- Use practical examples from everyday life, work or training.
+- Keep the question reasonably short.
+- Avoid unnecessary technical jargon.
+- Explain technical ideas in language beginners can understand.
+- Make the content useful rather than promotional.
+- Do not make it sound like an examination.
+- Do not use childish language.
+- Do not use exaggerated marketing language.
+- Do not mention AI, Gemini, prompts or content generation.
+- Do not use hashtags.
+- Do not use unnecessary emojis.
+- Do not use phrases such as:
+  "Let's see who gets this!"
+  "Tech warriors!"
+  "Are you ready?"
+  "Test your brain!"
+  "Level up!"
+  "Crush this!"
+  or similar promotional phrases.
 
-"What is..."
-"Define..."
-"Which of the following defines..."
+QUESTION RULES:
 
-Instead, create a realistic everyday situation.
-
-Examples:
-
-A student receives a suspicious message.
-
-Someone connects a laptop to Wi-Fi but has no Internet.
-
-Someone is building a simple school website.
-
-A classroom wants lights to turn on automatically.
-
-A house has solar panels but the battery is not charging.
-
-RULES:
-
-- Use simple everyday English.
-- Keep the question short.
-- Make it practical.
-- Make it technically correct.
 - Exactly four options.
 - Only one correct answer.
-- Do not reveal the answer.
-- Avoid unnecessary jargon.
+- Do not reveal the answer in the question.
+- Avoid trick questions.
+- Avoid boring definition questions.
+- Do not begin every question with "What is..."
+- Prefer realistic situations.
 - Vary the scenarios.
-- Do not repeatedly use the same scenario.
 - Do not repeat previous questions.
 - Do not create a substantially similar question.
-- Make beginners comfortable answering.
-- Make the scenario realistic.
-- Encourage students to think before answering.
+- Make all four options plausible.
+- Make the correct answer technically accurate.
+- Make the question comfortable for beginners to attempt.
+
+Examples of useful scenarios:
+
+Cybersecurity:
+A staff member receives a suspicious email asking them
+to urgently confirm their account details.
+
+Software Engineering:
+A developer changes a piece of code and an existing feature
+stops working.
+
+Smart Home Automation:
+A homeowner wants the lights to turn on automatically when
+someone enters a room.
+
+Network Engineering:
+A laptop connects to Wi-Fi but cannot access the Internet.
+
+Solar PV:
+A solar system has adequate sunlight but the battery is
+not charging properly.
 
 PREVIOUS QUESTIONS:
 
@@ -455,7 +591,7 @@ PREVIOUS QUESTIONS:
 
 Return ONLY valid JSON.
 
-Use exactly:
+Use exactly this structure:
 
 {{
     "question": "...",
@@ -473,23 +609,9 @@ Use exactly:
         prompt
     )
 
-    text = response.text.strip()
-
-    # Remove Markdown code fences if Gemini adds them
-
-    if text.startswith("```"):
-
-        text = text.replace(
-            "```json",
-            ""
-        )
-
-        text = text.replace(
-            "```",
-            ""
-        )
-
-        text = text.strip()
+    text = clean_json_response(
+        response.text
+    )
 
     try:
 
@@ -500,7 +622,7 @@ Use exactly:
     except json.JSONDecodeError as error:
 
         print(
-            "❌ Gemini returned invalid JSON:"
+            "Gemini returned invalid JSON:"
         )
 
         print(text)
@@ -508,8 +630,6 @@ Use exactly:
         raise RuntimeError(
             f"Gemini returned invalid JSON: {error}"
         )
-
-    # Validate required fields
 
     required_fields = [
         "question",
@@ -529,6 +649,25 @@ Use exactly:
             raise RuntimeError(
                 f"Gemini response is missing: {field}"
             )
+
+    # Ensure correct_option is a valid integer.
+    try:
+
+        poll["correct_option"] = int(
+            poll["correct_option"]
+        )
+
+    except (TypeError, ValueError):
+
+        raise RuntimeError(
+            "correct_option must be an integer."
+        )
+
+    if poll["correct_option"] not in [1, 2, 3, 4]:
+
+        raise RuntimeError(
+            "correct_option must be between 1 and 4."
+        )
 
     return poll
 
@@ -562,6 +701,19 @@ PREVIOUS QUESTIONS:
 
 {previous}
 
+Determine whether the new question is substantially similar
+to any previous question.
+
+Consider:
+- meaning
+- scenario
+- learning objective
+- situation
+- expected reasoning
+
+Do not mark a question as duplicate merely because it covers
+the same general course.
+
 Return ONLY one word:
 
 DUPLICATE
@@ -569,12 +721,6 @@ DUPLICATE
 or
 
 UNIQUE
-
-Consider the meaning and scenario,
-not just identical wording.
-
-If the question is substantially similar
-to an old question, return DUPLICATE.
 """
 
     response = generate_with_retry(
@@ -583,7 +729,9 @@ to an old question, return DUPLICATE.
 
     result = response.text.strip().upper()
 
-    return "DUPLICATE" in result
+    return result == "DUPLICATE" or result.startswith(
+        "DUPLICATE"
+    )
 
 
 # ============================================================
@@ -595,24 +743,21 @@ def format_poll(
     poll
 ):
 
-    return f"""☀️ *KORLINK DAILY TECH POLL*
+    return f"""*KORLINK TECHNOLOGIES*
 
-🎓 *{track['name']}*
+*Daily Technical Question*
 
-👀 *Let's see who gets this!*
-
-👉 *Question:*
+*Track:* {track['name']}
 
 {poll['question']}
 
-1️⃣ {poll['option_1']}
-2️⃣ {poll['option_2']}
-3️⃣ {poll['option_3']}
-4️⃣ {poll['option_4']}
+1. {poll['option_1']}
+2. {poll['option_2']}
+3. {poll['option_3']}
+4. {poll['option_4']}
 
-👇 *Drop your answer number and thoughts below.*
-
-💡 _Don't be afraid to get it wrong. The goal is to learn!_
+Share the option you consider correct and, if possible,
+briefly explain your reasoning.
 """
 
 
@@ -622,9 +767,7 @@ def format_poll(
 
 def get_today_question():
 
-    today = str(
-        datetime.date.today()
-    )
+    today = today_string()
 
     questions = load_questions()
 
@@ -663,27 +806,27 @@ def format_answer(
         option_key
     ]
 
-    return f"""🌙 *KORLINK ANSWER*
+    return f"""*KORLINK TECHNOLOGIES*
 
-🎓 *{question['track']}*
+*Daily Question — Answer*
 
-❓ *Today's Question:*
+*Track:* {question['track']}
+
+*Question:*
 
 {question['question']}
 
-✅ *Correct Answer:*
+*Correct Answer:*
 
-{correct}️⃣ {correct_text}
+{correct}. {correct_text}
 
-🧠 *Why?*
+*Explanation:*
 
 {question['explanation']}
 
-🚀 *BONUS CHALLENGE:*
+*Practical Challenge:*
 
 {question['bonus_challenge']}
-
-🔥 _Keep learning. Keep practicing. Keep building!_
 """
 
 
@@ -694,35 +837,44 @@ def format_answer(
 def generate_saturday():
 
     prompt = """
-Create a short motivational message for
+You are writing the official Saturday message for
 Korlink Technologies Training Update.
+
+Create a short professional weekend message for technology
+students and aspiring professionals.
 
 Maximum 70 words.
 
 Focus on:
-
 - consistency
 - learning
 - practice
 - building projects
-- career growth
+- professional growth
 
-Use simple everyday English.
+STYLE:
 
-Do not use a famous quote.
-
-Make it personal, warm and encouraging.
-
-End with ONE short question that encourages
-students to reply.
+- Natural and authentic.
+- Warm but professional.
+- Sound like a real instructor or training organization.
+- Avoid exaggerated motivation.
+- Avoid clichés.
+- Do not use famous quotes.
+- Do not mention AI.
+- Do not use hashtags.
+- Use no more than one simple emoji, and only if it genuinely
+  improves the message.
+- End with ONE short question that encourages students to reply.
 
 Use this format:
 
-🚀 *SATURDAY MOTIVATION*
+*KORLINK TECHNOLOGIES*
+
+*Saturday Learning Note*
 
 [short message]
 
-💬 [short question]
+*Reflection:* [short question]
 """
 
     response = generate_with_retry(
@@ -739,16 +891,17 @@ Use this format:
 def generate_sunday():
 
     prompt = """
-Create a short Sunday inspirational message for
+You are writing the official Sunday message for
 Korlink Technologies Training Update.
+
+Create a short Sunday inspirational message for students.
 
 Maximum 90 words.
 
-The message should be inspired by a Gospel principle
-or short Bible reference.
+The message may be inspired by a Gospel principle or a short
+Bible reference.
 
-Connect it to:
-
+Connect the message naturally to:
 - learning
 - wisdom
 - discipline
@@ -756,23 +909,28 @@ Connect it to:
 - using skills to help others
 - preparing for a new week
 
-Keep it warm and encouraging.
+STYLE:
 
-Do NOT reproduce a long Bible passage.
-
-Do NOT preach harshly.
-
-End with ONE simple reflection question.
+- Warm and respectful.
+- Professional and authentic.
+- Suitable for a company training community.
+- Do not preach harshly.
+- Do not use excessive religious language.
+- Do not reproduce a long Bible passage.
+- Do not mention AI.
+- Do not use hashtags.
+- Avoid unnecessary emojis.
+- End with ONE simple reflection question.
 
 Use this format:
 
-✝️ *SUNDAY INSPIRATION*
+*KORLINK TECHNOLOGIES*
+
+*Sunday Reflection*
 
 [short message]
 
-💭 *Reflection:*
-
-[one short question]
+*Reflection:* [one short question]
 """
 
     response = generate_with_retry(
@@ -788,7 +946,7 @@ Use this format:
 
 def run_morning():
 
-    today = datetime.date.today()
+    today = nigeria_today()
 
     weekday = today.weekday()
 
@@ -803,8 +961,7 @@ def run_morning():
         )
 
     print(
-        f"🎓 Generating "
-        f"{track['name']} poll..."
+        f"Generating {track['name']} poll..."
     )
 
     poll = None
@@ -812,7 +969,8 @@ def run_morning():
     for attempt in range(3):
 
         print(
-            f"Attempt {attempt + 1}/3..."
+            f"Question generation attempt "
+            f"{attempt + 1}/3..."
         )
 
         candidate = generate_poll(
@@ -828,11 +986,11 @@ def run_morning():
             break
 
         print(
-            "⚠️ Similar question detected."
+            "A similar question was detected."
         )
 
         print(
-            "🔄 Generating another question..."
+            "Generating another question..."
         )
 
     if poll is None:
@@ -867,7 +1025,9 @@ def run_morning():
 
         "option_4": poll["option_4"],
 
-        "correct_option": poll["correct_option"],
+        "correct_option": poll[
+            "correct_option"
+        ],
 
         "explanation": poll[
             "simple_explanation"
@@ -878,6 +1038,10 @@ def run_morning():
         ],
     }
 
+    # Save the question before Telegram delivery.
+    # This ensures the evening engine can retrieve
+    # today's question even if the Telegram operation
+    # is delayed or interrupted.
     save_question(
         record
     )
@@ -897,7 +1061,7 @@ def run_morning():
     print()
     print("=" * 70)
     print(
-        "📱 MORNING TELEGRAM MESSAGE"
+        "MORNING TELEGRAM MESSAGE"
     )
     print("=" * 70)
 
@@ -905,7 +1069,7 @@ def run_morning():
 
     print()
     print(
-        "📤 Sending to Telegram..."
+        "Sending to Telegram..."
     )
 
     if not send_telegram_message(
@@ -918,7 +1082,7 @@ def run_morning():
 
     print()
     print(
-        "✅ Morning poll completed."
+        "Morning poll completed successfully."
     )
 
 
@@ -934,7 +1098,7 @@ def run_evening():
 
         raise RuntimeError(
             "No poll was found for today. "
-            "Make sure the 7:50 AM job ran successfully."
+            "The morning poll may not have completed successfully."
         )
 
     message = format_answer(
@@ -943,9 +1107,7 @@ def run_evening():
 
     save_post({
 
-        "date": str(
-            datetime.date.today()
-        ),
+        "date": today_string(),
 
         "type": "weekday_answer",
 
@@ -958,7 +1120,7 @@ def run_evening():
     print()
     print("=" * 70)
     print(
-        "📱 EVENING TELEGRAM MESSAGE"
+        "EVENING TELEGRAM MESSAGE"
     )
     print("=" * 70)
 
@@ -966,7 +1128,7 @@ def run_evening():
 
     print()
     print(
-        "📤 Sending to Telegram..."
+        "Sending to Telegram..."
     )
 
     if not send_telegram_message(
@@ -979,7 +1141,7 @@ def run_evening():
 
     print()
     print(
-        "✅ Evening answer completed."
+        "Evening answer completed successfully."
     )
 
 
@@ -989,12 +1151,12 @@ def run_evening():
 
 def run_weekend():
 
-    today = datetime.date.today()
+    today = nigeria_today()
 
     if today.weekday() == 5:
 
         print(
-            "🚀 Generating Saturday Motivation..."
+            "Generating Saturday learning message..."
         )
 
         message = generate_saturday()
@@ -1003,16 +1165,22 @@ def run_weekend():
             "saturday_motivation"
         )
 
-    else:
+    elif today.weekday() == 6:
 
         print(
-            "✝️ Generating Sunday Inspiration..."
+            "Generating Sunday reflection..."
         )
 
         message = generate_sunday()
 
         post_type = (
             "sunday_inspiration"
+        )
+
+    else:
+
+        raise RuntimeError(
+            "Weekend mode can only run on Saturday or Sunday."
         )
 
     save_post({
@@ -1028,7 +1196,7 @@ def run_weekend():
     print()
     print("=" * 70)
     print(
-        "📱 WEEKEND TELEGRAM MESSAGE"
+        "WEEKEND TELEGRAM MESSAGE"
     )
     print("=" * 70)
 
@@ -1036,7 +1204,7 @@ def run_weekend():
 
     print()
     print(
-        "📤 Sending to Telegram..."
+        "Sending to Telegram..."
     )
 
     if not send_telegram_message(
@@ -1049,7 +1217,7 @@ def run_weekend():
 
     print()
     print(
-        "✅ Weekend message completed."
+        "Weekend message completed successfully."
     )
 
 
@@ -1064,29 +1232,38 @@ def main():
         "morning"
     ).lower().strip()
 
-    today = datetime.date.today()
+    current_time = nigeria_now()
+
+    today = current_time.date()
 
     print()
     print("=" * 70)
     print(
-        "🚀 KORLINK TRAINING UPDATE AI"
+        "KORLINK TECHNOLOGIES"
+    )
+    print(
+        "Training Update AI"
     )
     print("=" * 70)
 
     print(
-        f"📅 Today: "
-        f"{today.strftime('%A, %d %B %Y')}"
+        f"Nigeria time: "
+        f"{current_time.strftime('%A, %d %B %Y %H:%M:%S WAT')}"
     )
 
     print(
-        f"🤖 Gemini model: {TEXT_MODEL}"
+        f"Gemini model: {TEXT_MODEL}"
     )
 
     print(
-        f"⚙️ Run mode: {mode}"
+        f"Run mode: {mode}"
     )
 
     print()
+
+    # --------------------------------------------------------
+    # WEEKDAY MORNING
+    # --------------------------------------------------------
 
     if mode == "morning":
 
@@ -1097,9 +1274,13 @@ def main():
         else:
 
             print(
-                "⏭️ Morning poll is only "
-                "for Monday-Friday."
+                "Morning weekday poll is not scheduled "
+                "for Saturday or Sunday."
             )
+
+    # --------------------------------------------------------
+    # WEEKDAY EVENING
+    # --------------------------------------------------------
 
     elif mode == "evening":
 
@@ -1110,9 +1291,13 @@ def main():
         else:
 
             print(
-                "⏭️ Evening answer is only "
-                "for Monday-Friday."
+                "Evening weekday answer is not scheduled "
+                "for Saturday or Sunday."
             )
+
+    # --------------------------------------------------------
+    # WEEKEND
+    # --------------------------------------------------------
 
     elif mode == "weekend":
 
@@ -1123,19 +1308,24 @@ def main():
         else:
 
             print(
-                "⏭️ Weekend mode is only "
-                "for Saturday/Sunday."
+                "Weekend mode is only available "
+                "on Saturday or Sunday."
             )
+
+    # --------------------------------------------------------
+    # INVALID MODE
+    # --------------------------------------------------------
 
     else:
 
         raise RuntimeError(
-            f"Unknown RUN_MODE: {mode}"
+            f"Unknown RUN_MODE: {mode}. "
+            f"Expected morning, evening or weekend."
         )
 
 
 # ============================================================
-# START
+# START APPLICATION
 # ============================================================
 
 if __name__ == "__main__":
