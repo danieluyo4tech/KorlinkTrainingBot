@@ -15,10 +15,6 @@ from google import genai
 # TRAINING UPDATE AI
 # ============================================================
 
-# Nigeria operates on West Africa Time (UTC+1).
-# GitHub Actions itself runs on UTC, but all content dates
-# and scheduling logic inside this application use Nigeria time.
-
 NIGERIA_TZ = ZoneInfo("Africa/Lagos")
 
 
@@ -208,8 +204,6 @@ def save_json(file_path, data):
             ensure_ascii=False
         )
 
-    # Replace the old file only after the new file
-    # has been written successfully.
     temporary_file.replace(
         file_path
     )
@@ -231,8 +225,6 @@ def save_question(question_data):
     questions = load_questions()
 
     # Prevent duplicate records for the same date.
-    # This is useful if a manual workflow is accidentally
-    # run twice on the same morning.
     questions = [
         item
         for item in questions
@@ -246,8 +238,7 @@ def save_question(question_data):
         question_data
     )
 
-    # Keep the history manageable while retaining
-    # enough information for duplicate checking.
+    # Retain enough history for duplicate checking.
     questions = questions[-100:]
 
     save_json(
@@ -270,7 +261,6 @@ def save_post(post_data):
         post_data
     )
 
-    # Keep the most recent 200 posts.
     posts = posts[-200:]
 
     save_json(
@@ -349,7 +339,7 @@ def generate_with_retry(
 ):
     """
     Generate Gemini content with automatic retries
-    for temporary API errors such as 429, 500 and 503.
+    for temporary API errors.
     """
 
     delays = [
@@ -461,9 +451,14 @@ def generate_with_retry(
 
 def clean_json_response(text):
 
+    if not text:
+        raise RuntimeError(
+            "Gemini returned an empty response."
+        )
+
     text = text.strip()
 
-    # Remove Markdown code fences if Gemini adds them.
+    # Remove Markdown code fences.
     if text.startswith("```"):
 
         lines = text.splitlines()
@@ -478,11 +473,124 @@ def clean_json_response(text):
             lines
         ).strip()
 
-    return text
+    # Handle accidental surrounding text by extracting
+    # the outermost JSON object.
+    if not text.startswith("{"):
+
+        start = text.find("{")
+        end = text.rfind("}")
+
+        if start != -1 and end != -1 and end > start:
+
+            text = text[
+                start:end + 1
+            ]
+
+    return text.strip()
 
 
 # ============================================================
-# GENERATE WEEKDAY POLL
+# VALIDATE GENERATED POLL
+# ============================================================
+
+def validate_poll(poll):
+
+    required_fields = [
+        "question",
+        "option_1",
+        "option_2",
+        "option_3",
+        "option_4",
+        "correct_option",
+        "simple_explanation",
+        "bonus_challenge"
+    ]
+
+    if not isinstance(
+        poll,
+        dict
+    ):
+
+        raise RuntimeError(
+            "Gemini response is not a JSON object."
+        )
+
+    for field in required_fields:
+
+        if field not in poll:
+
+            raise RuntimeError(
+                f"Gemini response is missing: {field}"
+            )
+
+        if poll[field] is None:
+
+            raise RuntimeError(
+                f"Gemini returned an empty field: {field}"
+            )
+
+    # Convert numeric strings such as "3" to integers.
+    try:
+
+        poll["correct_option"] = int(
+            poll["correct_option"]
+        )
+
+    except (
+        TypeError,
+        ValueError
+    ):
+
+        raise RuntimeError(
+            "correct_option must be a number from 1 to 4."
+        )
+
+    if poll["correct_option"] not in [
+        1,
+        2,
+        3,
+        4
+    ]:
+
+        raise RuntimeError(
+            "correct_option must be between 1 and 4."
+        )
+
+    # Ensure all text fields are strings.
+    text_fields = [
+        "question",
+        "option_1",
+        "option_2",
+        "option_3",
+        "option_4",
+        "simple_explanation",
+        "bonus_challenge"
+    ]
+
+    for field in text_fields:
+
+        if not isinstance(
+            poll[field],
+            str
+        ):
+
+            poll[field] = str(
+                poll[field]
+            )
+
+        poll[field] = poll[field].strip()
+
+        if not poll[field]:
+
+            raise RuntimeError(
+                f"Generated field is empty: {field}"
+            )
+
+    return poll
+
+
+# ============================================================
+# GENERATE WEEKDAY CHALLENGE
 # ============================================================
 
 def generate_poll(track):
@@ -497,12 +605,13 @@ def generate_poll(track):
     )
 
     prompt = f"""
-You are the official content editor and practical instructor
-for Korlink Technologies Training Update.
+You are the official content writer and practical instructor
+for Korlink Technologies.
 
-Korlink Technologies is a professional technology training
-company. Its training communication must sound authentic,
-clear and professional.
+Korlink Technologies runs a professional technology training
+community called "Korlink Daily Challenge".
+
+Your task is to create today's challenge for the community.
 
 TODAY'S TRAINING TRACK
 
@@ -512,97 +621,206 @@ School:
 Course:
 {track['name']}
 
-Focus:
+Training focus:
 {track['description']}
 
-Create ONE practical multiple-choice question for a Telegram
-learning community.
+PURPOSE
 
-The audience includes beginners and developing learners.
+The challenge should encourage people to stop, think and
+participate.
 
-The main purpose is STUDENT INTERACTION and practical learning.
+It must feel like something a knowledgeable human instructor
+would naturally post in a professional training community.
 
-EDITORIAL STYLE:
+The audience can include:
+- complete beginners
+- students
+- working professionals
+- people changing careers
+- technically experienced learners
 
-- Write like an experienced human instructor.
-- Use natural, professional English.
-- Keep the tone confident, approachable and educational.
-- Make the situation realistic.
-- Use practical examples from everyday life, work or training.
-- Keep the question reasonably short.
-- Avoid unnecessary technical jargon.
-- Explain technical ideas in language beginners can understand.
-- Make the content useful rather than promotional.
-- Do not make it sound like an examination.
-- Do not use childish language.
-- Do not use exaggerated marketing language.
-- Do not mention AI, Gemini, prompts or content generation.
-- Do not use hashtags.
-- Do not use unnecessary emojis.
-- Do not use phrases such as:
-  "Let's see who gets this!"
-  "Tech warriors!"
-  "Are you ready?"
-  "Test your brain!"
-  "Level up!"
-  "Crush this!"
-  or similar promotional phrases.
+Therefore, the challenge must be understandable even to someone
+who is not yet familiar with the technical subject.
 
-QUESTION RULES:
+CONTENT STYLE
 
-- Exactly four options.
-- Only one correct answer.
-- Do not reveal the answer in the question.
-- Avoid trick questions.
-- Avoid boring definition questions.
-- Do not begin every question with "What is..."
-- Prefer realistic situations.
-- Vary the scenarios.
-- Do not repeat previous questions.
-- Do not create a substantially similar question.
-- Make all four options plausible.
-- Make the correct answer technically accurate.
-- Make the question comfortable for beginners to attempt.
+Write in natural, clear English.
 
-Examples of useful scenarios:
+Make the challenge engaging without sounding childish.
+
+Use a realistic situation from everyday life, work, business,
+school, home or technology use.
+
+The scenario should provide enough context to make the question
+interesting, but it must not become a long story.
+
+The ideal question can normally be read in about 15 to 25 seconds.
+
+Do NOT make the question extremely short.
+
+Do NOT make the question excessively long.
+
+Aim for approximately 25 to 55 words for the question.
+
+OPTIONS
+
+Create exactly four options.
+
+Each option should normally be short enough to read quickly.
+
+All four options should be plausible.
+
+Only one option must be correct.
+
+The correct answer must be technically accurate.
+
+Avoid trick questions.
+
+LEARNING VALUE
+
+The challenge should test practical understanding rather than
+memorisation.
+
+Whenever possible, make the learner think about what they would
+actually do in a real situation.
+
+Avoid repeatedly asking simple definitions such as:
+"What is..."
+"Define..."
+"Which of these is..."
+
+A definition-based question is acceptable only when it is
+genuinely useful and presented in a practical context.
+
+EXAMPLES OF THE RIGHT STYLE
 
 Cybersecurity:
-A staff member receives a suspicious email asking them
-to urgently confirm their account details.
+
+A staff member receives an email claiming that their company
+account will be suspended unless they confirm their password
+through a link. What should they do before taking any action?
 
 Software Engineering:
-A developer changes a piece of code and an existing feature
-stops working.
+
+A developer adds a new feature to an application, but an older
+feature suddenly stops working. What should the developer check
+first?
 
 Smart Home Automation:
-A homeowner wants the lights to turn on automatically when
-someone enters a room.
+
+A homeowner wants the corridor light to turn on automatically
+when someone enters at night. Which device would best detect
+the person's movement?
 
 Network Engineering:
-A laptop connects to Wi-Fi but cannot access the Internet.
+
+A laptop connects successfully to the office Wi-Fi, but websites
+will not open while other devices are working normally. What is
+the most useful first check?
 
 Solar PV:
-A solar system has adequate sunlight but the battery is
-not charging properly.
 
-PREVIOUS QUESTIONS:
+A solar system receives good sunlight during the day, but the
+battery is not charging as expected. Which part of the system
+should be checked first?
+
+These examples show the desired level of detail. Do not copy
+them or create questions substantially similar to them.
+
+PROFESSIONAL STYLE
+
+Do:
+- Sound like an experienced instructor.
+- Be practical.
+- Be clear.
+- Be interesting.
+- Use natural language.
+- Make people curious enough to answer.
+- Make the content useful.
+
+Do not:
+- Mention AI.
+- Mention Gemini.
+- Mention prompts.
+- Use hashtags.
+- Use excessive emojis.
+- Use hype.
+- Use slang.
+- Use childish expressions.
+- Use exaggerated motivational phrases.
+- Use "Let's see who gets this!"
+- Use "Are you ready?"
+- Use "Tech warriors!"
+- Use "Test your brain!"
+- Use "Level up!"
+- Use "Crush this!"
+- Turn the question into an advertisement.
+
+EXPLANATION
+
+The explanation should be approximately 25 to 60 words.
+
+It should clearly explain why the correct answer is correct.
+
+Write it so that someone who selected the wrong answer can
+still learn something useful.
+
+BONUS CHALLENGE
+
+The bonus challenge should be one short practical question or
+task related to the same topic.
+
+It should encourage further thinking without becoming another
+long lesson.
+
+QUESTION HISTORY
+
+Do not repeat or substantially recreate any of these previous
+questions:
 
 {history}
 
-Return ONLY valid JSON.
+IMPORTANT JSON REQUIREMENTS
 
-Use exactly this structure:
+Your entire response MUST be valid JSON.
+
+Do not write anything before the JSON.
+
+Do not write anything after the JSON.
+
+Do not use Markdown code fences.
+
+The JSON must contain ALL of these fields:
 
 {{
-    "question": "...",
-    "option_1": "...",
-    "option_2": "...",
-    "option_3": "...",
-    "option_4": "...",
+    "question": "string",
+    "option_1": "string",
+    "option_2": "string",
+    "option_3": "string",
+    "option_4": "string",
     "correct_option": 1,
-    "simple_explanation": "...",
-    "bonus_challenge": "..."
+    "simple_explanation": "string",
+    "bonus_challenge": "string"
 }}
+
+"correct_option" MUST be a number, not a word and not a string.
+
+It MUST be exactly one of:
+
+1
+2
+3
+4
+
+Before returning the response, verify that:
+1. There are exactly four options.
+2. There is exactly one correct answer.
+3. correct_option matches the correct option.
+4. The question is realistic.
+5. The question is not too long.
+6. The explanation is useful but concise.
+7. The bonus challenge is short.
+8. The question is not substantially similar to the previous questions.
 """
 
     response = generate_with_retry(
@@ -631,45 +849,9 @@ Use exactly this structure:
             f"Gemini returned invalid JSON: {error}"
         )
 
-    required_fields = [
-        "question",
-        "option_1",
-        "option_2",
-        "option_3",
-        "option_4",
-        "correct_option",
-        "simple_explanation",
-        "bonus_challenge"
-    ]
-
-    for field in required_fields:
-
-        if field not in poll:
-
-            raise RuntimeError(
-                f"Gemini response is missing: {field}"
-            )
-
-    # Ensure correct_option is a valid integer.
-    try:
-
-        poll["correct_option"] = int(
-            poll["correct_option"]
-        )
-
-    except (TypeError, ValueError):
-
-        raise RuntimeError(
-            "correct_option must be an integer."
-        )
-
-    if poll["correct_option"] not in [1, 2, 3, 4]:
-
-        raise RuntimeError(
-            "correct_option must be between 1 and 4."
-        )
-
-    return poll
+    return validate_poll(
+        poll
+    )
 
 
 # ============================================================
@@ -691,28 +873,28 @@ def is_duplicate_question(
     )
 
     prompt = f"""
-Compare this new question with the previous questions.
+Compare this new training challenge with the previous challenges.
 
-NEW QUESTION:
+NEW CHALLENGE:
 
 {new_question}
 
-PREVIOUS QUESTIONS:
+PREVIOUS CHALLENGES:
 
 {previous}
 
-Determine whether the new question is substantially similar
-to any previous question.
+Determine whether the new challenge is substantially similar
+to any previous challenge.
 
 Consider:
-- meaning
-- scenario
-- learning objective
-- situation
-- expected reasoning
+- the scenario
+- the learning objective
+- the practical situation
+- the reasoning required
+- the subject being tested
 
-Do not mark a question as duplicate merely because it covers
-the same general course.
+Do not mark it as duplicate simply because it belongs to the
+same course.
 
 Return ONLY one word:
 
@@ -729,13 +911,13 @@ UNIQUE
 
     result = response.text.strip().upper()
 
-    return result == "DUPLICATE" or result.startswith(
+    return result.startswith(
         "DUPLICATE"
     )
 
 
 # ============================================================
-# MORNING POLL MESSAGE
+# MORNING CHALLENGE MESSAGE
 # ============================================================
 
 def format_poll(
@@ -745,7 +927,7 @@ def format_poll(
 
     return f"""*KORLINK TECHNOLOGIES*
 
-*Daily Challenge*
+*DAILY CHALLENGE*
 
 *Track:* {track['name']}
 
@@ -756,8 +938,7 @@ def format_poll(
 3. {poll['option_3']}
 4. {poll['option_4']}
 
-Share the option you consider correct and, if possible,
-briefly explain your reasoning.
+Share your answer and, if possible, tell us why you chose it.
 """
 
 
@@ -808,11 +989,12 @@ def format_answer(
 
     return f"""*KORLINK TECHNOLOGIES*
 
-*Daily Challenge — Answer*
+*DAILY CHALLENGE*
 
+*Answer & Explanation*
 *Track:* {question['track']}
 
-*Question:*
+*Today's Challenge*
 
 {question['question']}
 
@@ -831,50 +1013,50 @@ def format_answer(
 
 
 # ============================================================
-# SATURDAY MOTIVATION
+# SATURDAY BOOST
 # ============================================================
 
 def generate_saturday():
 
     prompt = """
-You are writing the official Saturday message for
-Korlink Technologies Training Update.
+Write the official Saturday message for Korlink Technologies'
+training community.
 
-Create a short professional weekend message for technology
-students and aspiring professionals.
+Programme:
+KORLINK DAILY CHALLENGE
 
-Maximum 70 words.
+Heading:
+Saturday Boost
 
-Focus on:
+Create a warm, professional message for students and aspiring
+technology professionals.
+
+Maximum 80 words.
+
+Focus naturally on:
 - consistency
-- learning
 - practice
+- learning
 - building projects
-- professional growth
+- professional development
 
-STYLE:
+The message should feel like it was written by an experienced
+training organisation, not an AI.
 
-- Natural and authentic.
-- Warm but professional.
-- Sound like a real instructor or training organization.
-- Avoid exaggerated motivation.
-- Avoid clichés.
-- Do not use famous quotes.
-- Do not mention AI.
-- Do not use hashtags.
-- Use no more than one simple emoji, and only if it genuinely
-  improves the message.
-- End with ONE short question that encourages students to reply.
+Avoid:
+- clichés
+- excessive motivation
+- exaggerated promises
+- hashtags
+- slang
+- childish language
+- unnecessary emojis
+- famous quotes
+- references to AI
 
-Use this format:
+End with one simple question that encourages students to reply.
 
-*KORLINK TECHNOLOGIES*
-
-*Saturday Inspiration Note*
-
-[short message]
-
-*Reflection:* [short question]
+Return only the final message.
 """
 
     response = generate_with_retry(
@@ -885,52 +1067,50 @@ Use this format:
 
 
 # ============================================================
-# SUNDAY INSPIRATION
+# SUNDAY REFLECTION
 # ============================================================
 
 def generate_sunday():
 
     prompt = """
-You are writing the official Sunday message for
-Korlink Technologies Training Update.
+Write the official Sunday message for Korlink Technologies'
+training community.
 
-Create a short Sunday inspirational message for students.
+Programme:
+KORLINK DAILY CHALLENGE
 
-Maximum 90 words.
+Heading:
+Sunday Reflection
+
+Create a short, respectful Sunday reflection.
+
+Maximum 100 words.
 
 The message may be inspired by a Gospel principle or a short
 Bible reference.
 
-Connect the message naturally to:
-- learning
+Connect the reflection naturally with:
 - wisdom
 - discipline
+- learning
 - purpose
-- using skills to help others
-- preparing for a new week
+- using skills responsibly
+- preparing for the coming week
 
-STYLE:
+The tone should be warm, professional and respectful.
 
-- Warm and respectful.
-- Professional and authentic.
-- Suitable for a company training community.
-- Do not preach harshly.
-- Do not use excessive religious language.
-- Do not reproduce a long Bible passage.
-- Do not mention AI.
-- Do not use hashtags.
-- Avoid unnecessary emojis.
-- End with ONE simple reflection question.
+Do not preach harshly.
 
-Use this format:
+Do not reproduce a long Bible passage.
 
-*KORLINK TECHNOLOGIES*
+Avoid excessive religious language, hashtags, slang,
+childish wording and unnecessary emojis.
 
-*Sunday Reflection*
+Do not mention AI.
 
-[short message]
+End with one simple reflection question.
 
-*Reflection:* [one short question]
+Return only the final message.
 """
 
     response = generate_with_retry(
@@ -961,7 +1141,7 @@ def run_morning():
         )
 
     print(
-        f"Generating {track['name']} poll..."
+        f"Generating {track['name']} challenge..."
     )
 
     poll = None
@@ -990,14 +1170,14 @@ def run_morning():
         )
 
         print(
-            "Generating another question..."
+            "Generating another challenge..."
         )
 
     if poll is None:
 
         raise RuntimeError(
             "Could not generate a unique "
-            "question after three attempts."
+            "challenge after three attempts."
         )
 
     message = format_poll(
@@ -1038,10 +1218,6 @@ def run_morning():
         ],
     }
 
-    # Save the question before Telegram delivery.
-    # This ensures the evening engine can retrieve
-    # today's question even if the Telegram operation
-    # is delayed or interrupted.
     save_question(
         record
     )
@@ -1082,7 +1258,7 @@ def run_morning():
 
     print()
     print(
-        "Morning poll completed successfully."
+        "Morning challenge completed successfully."
     )
 
 
@@ -1097,8 +1273,8 @@ def run_evening():
     if not question:
 
         raise RuntimeError(
-            "No poll was found for today. "
-            "The morning poll may not have completed successfully."
+            "No challenge was found for today. "
+            "The morning challenge may not have completed successfully."
         )
 
     message = format_answer(
@@ -1156,25 +1332,25 @@ def run_weekend():
     if today.weekday() == 5:
 
         print(
-            "Generating Saturday learning message..."
+            "Generating Saturday Boost..."
         )
 
         message = generate_saturday()
 
         post_type = (
-            "saturday_motivation"
+            "saturday_boost"
         )
 
     elif today.weekday() == 6:
 
         print(
-            "Generating Sunday reflection..."
+            "Generating Sunday Reflection..."
         )
 
         message = generate_sunday()
 
         post_type = (
-            "sunday_inspiration"
+            "sunday_reflection"
         )
 
     else:
@@ -1262,7 +1438,7 @@ def main():
     print()
 
     # --------------------------------------------------------
-    # WEEKDAY MORNING
+    # MORNING
     # --------------------------------------------------------
 
     if mode == "morning":
@@ -1274,12 +1450,12 @@ def main():
         else:
 
             print(
-                "Morning weekday poll is not scheduled "
+                "Morning weekday challenge is not scheduled "
                 "for Saturday or Sunday."
             )
 
     # --------------------------------------------------------
-    # WEEKDAY EVENING
+    # EVENING
     # --------------------------------------------------------
 
     elif mode == "evening":
