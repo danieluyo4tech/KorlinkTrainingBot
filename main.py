@@ -898,7 +898,8 @@ def format_poll(poll, track):
         f"2. {options[1]}\n"
         f"3. {options[2]}\n"
         f"4. {options[3]}\n\n"
-        "What would you do in this situation?"
+        "Don't be afraid to get it wrong.\n"
+        "The goal is to learn!\n"
     )
 
 
