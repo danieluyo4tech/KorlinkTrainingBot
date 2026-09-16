@@ -460,233 +460,273 @@ def gemini_generate(prompt, attempts=5):
 # DAILY CHALLENGE GENERATOR
 # ============================================================
 
-def generate_poll(track):
+def generate_poll(track, questions=None):
+
+    if questions is None:
+        questions = []
+
+    # Give Gemini enough recent context to avoid repeating the same
+    # concept, scenario or question structure.
+    recent_questions = []
+
+    for item in questions[-150:]:
+        if not isinstance(item, dict):
+            continue
+
+        if item.get("track") != track["name"]:
+            continue
+
+        question = item.get("question", "").strip()
+
+        if question:
+            recent_questions.append(question)
+
+    recent_questions_text = "\n".join(
+        f"- {question}"
+        for question in recent_questions[-50:]
+    )
+
+    if not recent_questions_text:
+        recent_questions_text = "No previous questions are available for this track."
 
     prompt = f"""
-You are the official content writer for Korlink Technologies Ltd.
+You are an experienced technical instructor and official content
+writer for Korlink Technologies Ltd.
 
-You are creating the daily learning challenge for the
-Korlink Training Update WhatsApp group.
+Create ONE daily multiple-choice learning challenge for the
+following training track:
 
-PROGRAM:
-Korlink Daily Challenge
+School: {track["school"]}
+Training Track: {track["name"]}
+Training Area: {track["description"]}
 
-SCHOOL:
-{track["school"]}
+The challenge will be posted to a professional technical training
+community containing beginners, intermediate learners and people
+with practical experience.
 
-TRAINING TRACK:
-{track["name"]}
+============================================================
+MOST IMPORTANT RULE: REAL VARIETY
+============================================================
 
-TOPIC AREA:
-{track["description"]}
+Do not use a predefined topic list.
 
-Create ONE engaging multiple-choice challenge.
+Do not follow a topic sequence.
 
-AUDIENCE:
+Do not choose from a fixed rotation.
 
-The group contains learners from different backgrounds and
-different levels of technical knowledge.
+Think independently about the whole training track and decide what
+would make a useful question today.
 
-Some are beginners.
-Some are currently learning.
-Some already have technical experience.
+Every day should feel like a different instructor question.
 
-The challenge must therefore be easy to understand while still
-testing a genuine technical idea.
+The question can come from any appropriate part of the subject.
+You decide the subject matter yourself.
 
-------------------------------------------------------------
-HOOK AND ENGAGEMENT
-------------------------------------------------------------
+Do not keep returning to the easiest or most familiar concept.
+Explore different knowledge, practical situations, decisions,
+problems, observations, configurations, troubleshooting cases,
+design considerations and real-world applications naturally.
 
-The challenge MUST start with a natural, interesting hook.
+============================================================
+AVOID REPEATING PREVIOUS QUESTIONS
+============================================================
 
-The hook should make the reader curious enough to continue.
+Here are recent questions already used for this same track:
 
-Use a realistic situation, observation or problem.
+{recent_questions_text}
 
-Examples of the STYLE we want:
+Read these before creating today's question.
 
-"You could be hacked without clicking a single link."
+Today's question must be meaningfully different from them.
 
-"Here's something many people overlook about Wi-Fi."
+Do not merely change:
+- names
+- numbers
+- locations
+- devices
+- a few words
+- the order of the sentences
 
-"One small change can make a working application fail."
+Do not create the same underlying question in a new form.
 
-"Imagine your house could respond automatically when you arrive."
+If a recent question already tested an idea, deliberately think of
+another idea instead.
 
-"Your solar system is receiving sunlight, but something is wrong."
+Conceptual variety is more important than exact wording variety.
 
-These are examples only.
+============================================================
+QUESTION CREATION
+============================================================
 
-Create a fresh hook that fits the day's subject.
+Use your own technical knowledge to create the question.
 
-DO NOT copy these examples.
+Do not tell the learner that the question was randomly selected.
+Do not mention this instruction.
 
-The hook must not be exaggerated clickbait.
+The question should test genuine understanding rather than simple
+memorisation whenever possible.
 
-------------------------------------------------------------
-IMPORTANT WRITING RULES
-------------------------------------------------------------
+It may be a practical situation, troubleshooting problem, system
+decision, technical observation, configuration decision, design
+question, cause-and-effect question, component choice, security
+situation, installation situation or direct technical question.
 
-The content must feel like it was written by a real instructor
-for a professional training community.
+Do not force one of these formats. Choose naturally.
 
-Do NOT make it sound like AI-generated social media content.
+============================================================
+SMART HOME AUTOMATION
+============================================================
 
-Avoid:
+When the track is Smart Home Automation, think broadly about the
+subject instead of repeatedly writing the same motion-sensor,
+smart-light or arrival-at-home scenario.
 
-- childish wording
-- excessive motivation
-- exaggerated hype
-- unnecessary emojis
-- long introductions
-- textbook definitions
-- complicated jargon
-- fake excitement
-- "Let's see who gets this!"
-- "Only geniuses can answer!"
-- "Are you ready?"
-- "Test your IQ!"
+Choose the subject yourself based on what would make a useful and
+different training question.
 
-Keep it professional, practical and interesting.
+The question could involve any suitable part of smart home
+technology, system behaviour, installation, automation logic,
+communication, devices, security, reliability, troubleshooting,
+power, networking or practical design, but do not treat this as a
+fixed list and do not try to cover the areas one by one.
 
-------------------------------------------------------------
+The choice must come from your own judgment each time.
+
+============================================================
+HOOK AND WRITING STYLE
+============================================================
+
+A natural hook is useful when appropriate, but it is NOT mandatory.
+
+Do not repeatedly start questions with:
+"Imagine your house..."
+"Imagine..."
+"Suppose..."
+"Here's a situation..."
+"You are working on..."
+
+Vary the opening naturally.
+Some questions can start directly with the technical issue.
+
+Avoid clickbait and exaggerated wording.
+
+Write like an experienced instructor, not like an AI social media
+content generator.
+
+============================================================
 LENGTH
-------------------------------------------------------------
+============================================================
 
-The complete challenge must be concise.
+Keep the question concise.
 
-Aim for approximately 20-40 words for the situation and question.
+Aim for approximately 20-45 words.
 
-One or two short paragraphs maximum.
+Do not write a long story.
+Do not write a mini-article.
+Do not explain the answer inside the question.
 
-It should take only a few seconds to read.
-
-DO NOT write a long story.
-
-DO NOT write a mini-article.
-
-DO NOT explain the answer inside the question.
-
-------------------------------------------------------------
-QUESTION STYLE
-------------------------------------------------------------
-
-Prefer realistic situations over direct definitions.
-
-For example, avoid:
-
-"What is a router?"
-
-Instead, create a practical situation where the learner needs
-to understand what a router does.
-
-The learner should need to think before choosing an answer.
-
-------------------------------------------------------------
+============================================================
 OPTIONS
-------------------------------------------------------------
+============================================================
 
 Provide exactly FOUR options.
 
-Each option should be short.
+All four options must be believable and technically plausible.
 
-All four options should sound believable.
+The incorrect options should represent realistic misunderstandings
+or alternative decisions.
 
-Avoid obviously ridiculous answers.
+Do not make the correct answer obvious because it is longer or more
+detailed than the other options.
 
-Do not make the correct answer too obvious.
+============================================================
+CORRECT ANSWER
+============================================================
 
-------------------------------------------------------------
-ANSWER
-------------------------------------------------------------
-
-correct_option MUST be a number:
+correct_option must be exactly one of:
 
 1
 2
 3
-or
 4
 
-------------------------------------------------------------
-EVENING EXPLANATION
-------------------------------------------------------------
+There must be only one clearly correct answer.
+
+============================================================
+EXPLANATION
+============================================================
 
 Write a useful explanation of approximately 30-55 words.
 
-Explain WHY the correct answer is correct.
+Explain why the correct answer is correct and teach the underlying
+technical idea briefly.
 
-Do not simply repeat the answer.
+Do not simply repeat the correct option.
 
-Make the explanation understandable to someone who did not know
-the concept before seeing the challenge.
-
-------------------------------------------------------------
+============================================================
 PRACTICAL CHALLENGE
-------------------------------------------------------------
+============================================================
 
-Add one short follow-up question that encourages the learner
-to think about the concept in real life.
+Add one short practical follow-up question connected to the concept.
 
-Keep it short.
+It should encourage the learner to think about applying the idea in
+a real environment.
 
-------------------------------------------------------------
-MORNING CLOSING
-------------------------------------------------------------
+============================================================
+KORLINK CORPORATE STYLE
+============================================================
 
-The morning post will end with:
+The final content represents Korlink Technologies Ltd.
 
-"What would you do in this situation?"
+Use:
+- professional language
+- natural business English
+- practical wording
+- clear technical reasoning
+- concise presentation
+- confident instructor tone
 
-Do NOT put this sentence inside the JSON question.
+Avoid:
+- excessive emojis
+- hype
+- childish wording
+- fake excitement
+- motivational clichés
+- unnecessary introductions
+- textbook-style definitions when a practical question would work
+- "Let's see who gets this!"
+- "Only experts can answer!"
+- "Are you ready?"
+- "Test your IQ!"
+- "Can you crack this?"
 
-------------------------------------------------------------
-CORPORATE TONE
-------------------------------------------------------------
+Do not sound like an AI-generated social media post.
 
-This is an official Korlink Technologies training community.
-
-The content should be:
-
-Professional
-Natural
-Practical
-Educational
-Confident
-Concise
-
-No emojis.
-
-No unnecessary formatting.
-
-------------------------------------------------------------
-OUTPUT
-------------------------------------------------------------
+============================================================
+OUTPUT FORMAT
+============================================================
 
 Return ONLY valid JSON.
 
 Use exactly this structure:
 
 {{
-  "question": "Engaging hook, realistic situation and question",
+  "question": "Question here",
   "options": [
-    "First option",
-    "Second option",
-    "Third option",
-    "Fourth option"
+    "Option one",
+    "Option two",
+    "Option three",
+    "Option four"
   ],
   "correct_option": 1,
-  "explanation": "Short practical explanation.",
-  "practical_challenge": "One short follow-up question."
+  "explanation": "Explanation here",
+  "practical_challenge": "Practical follow-up question here"
 }}
 
-Do not rename the fields.
-
-Do not omit any field.
-
-Do not put markdown around the JSON.
-
+Do not rename fields.
+Do not omit fields.
+Do not add fields.
+Do not use markdown.
 Do not write anything before or after the JSON.
 """
 
@@ -698,30 +738,29 @@ Do not write anything before or after the JSON.
         )
 
         try:
-
             raw = gemini_generate(
                 prompt,
                 attempts=5
             )
 
-            cleaned = clean_json_response(
-                raw
-            )
-
+            cleaned = clean_json_response(raw)
             poll = json.loads(cleaned)
+            poll = normalize_correct_option(poll)
+            poll = validate_poll(poll)
 
-            poll = normalize_correct_option(
-                poll
-            )
-
-            poll = validate_poll(
-                poll
-            )
+            if question_already_used(
+                poll["question"],
+                questions
+            ):
+                print(
+                    "Generated question already exists. "
+                    "Requesting another question."
+                )
+                continue
 
             return poll
 
         except Exception as error:
-
             print(
                 f"Invalid poll generated: {error}"
             )
@@ -730,8 +769,8 @@ Do not write anything before or after the JSON.
                 time.sleep(2)
 
     raise RuntimeError(
-        "Gemini failed to produce a valid "
-        "daily challenge."
+        "Gemini failed to produce a valid and unique "
+        f"{track['name']} daily challenge."
     )
 
 
@@ -744,8 +783,8 @@ def question_already_used(
     questions
 ):
 
-    normalized = (
-        question.strip().lower()
+    normalized = " ".join(
+        question.strip().lower().split()
     )
 
     for item in questions:
@@ -758,10 +797,11 @@ def question_already_used(
             ""
         )
 
-        if (
-            old_question.strip().lower()
-            == normalized
-        ):
+        old_normalized = " ".join(
+            old_question.strip().lower().split()
+        )
+
+        if old_normalized == normalized:
             return True
 
     return False
@@ -1096,7 +1136,8 @@ def run_morning():
         for attempt in range(1, 6):
 
             candidate = generate_poll(
-                track
+                track,
+                questions
             )
 
             if not question_already_used(
