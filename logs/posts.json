@@ -47,5 +47,12 @@
     "mode": "morning",
     "track": "Smart Home Automation",
     "question": "Your home internet connection goes down, yet your smart motion light turns on immediately when you walk past. Why?"
+  },
+  {
+    "timestamp": "2026-09-16T09:00:49.567241+01:00",
+    "date": "2026-09-16",
+    "mode": "evening",
+    "track": "Smart Home Automation",
+    "question": "Your home internet connection goes down, yet your smart motion light turns on immediately when you walk past. Why?"
   }
 ]
