@@ -1,17 +1,1 @@
-[
-  {
-    "question": "You set a smart plug to turn on your coffee machine every morning, but it stays off. What did you likely forget?",
-    "options": [
-      "Leaving the machine's physical switch on",
-      "Resetting your Wi-Fi router",
-      "Updating the plug's mobile app",
-      "Changing the smart plug battery"
-    ],
-    "correct_option": 1,
-    "explanation": "Smart plugs only control the power flow at the wall socket. For an appliance to turn on automatically when power is restored, its physical power switch must already be left in the ON position.",
-    "practical_challenge": "Check one appliance in your home to see if its power switch stays mechanically ON when unplugged.",
-    "bonus_challenge": "Identify one appliance in your home that has a mechanical ON/OFF toggle switch.",
-    "date": "2026-09-16",
-    "track": "Smart Home Automation"
-  }
-]
+
