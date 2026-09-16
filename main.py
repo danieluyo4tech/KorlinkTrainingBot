@@ -15,12 +15,25 @@ from google import genai
 # ============================================================
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "").strip()
-GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash").strip()
+GEMINI_MODEL = os.getenv(
+    "GEMINI_MODEL",
+    "gemini-2.5-flash"
+).strip()
 
-TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
-TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "").strip()
+TELEGRAM_BOT_TOKEN = os.getenv(
+    "TELEGRAM_BOT_TOKEN",
+    ""
+).strip()
 
-RUN_MODE = os.getenv("RUN_MODE", "morning").strip().lower()
+TELEGRAM_CHAT_ID = os.getenv(
+    "TELEGRAM_CHAT_ID",
+    ""
+).strip()
+
+RUN_MODE = os.getenv(
+    "RUN_MODE",
+    "morning"
+).strip().lower()
 
 NIGERIA_TZ = ZoneInfo("Africa/Lagos")
 
@@ -31,30 +44,17 @@ MAX_GENERATION_ATTEMPTS = 5
 
 
 # ============================================================
-# WEEKDAY TRACKS
+# TRAINING TRACKS
 # ============================================================
+# These are broad training areas only.
+# Gemini is free to choose the specific topic.
 
 TRACKS = {
-    0: {
-        "name": "Cybersecurity",
-        "focus": "safe cybersecurity awareness and everyday digital protection",
-    },
-    1: {
-        "name": "Software Engineering",
-        "focus": "everyday software, apps, websites and how they behave",
-    },
-    2: {
-        "name": "Smart Home Automation",
-        "focus": "smart devices, automation and connected-home situations",
-    },
-    3: {
-        "name": "Network Engineering",
-        "focus": "Wi-Fi, internet connectivity, routers and everyday networks",
-    },
-    4: {
-        "name": "Solar PV Design and Installation",
-        "focus": "safe everyday observation and understanding of solar power systems",
-    },
+    0: "Cybersecurity",
+    1: "Software Engineering",
+    2: "Smart Home Automation",
+    3: "Network Engineering",
+    4: "Solar PV Design and Installation",
 }
 
 
@@ -63,13 +63,22 @@ TRACKS = {
 # ============================================================
 
 def ensure_log_files():
-    QUESTIONS_FILE.parent.mkdir(parents=True, exist_ok=True)
+    QUESTIONS_FILE.parent.mkdir(
+        parents=True,
+        exist_ok=True
+    )
 
     if not QUESTIONS_FILE.exists():
-        QUESTIONS_FILE.write_text("[]", encoding="utf-8")
+        QUESTIONS_FILE.write_text(
+            "[]",
+            encoding="utf-8"
+        )
 
     if not POSTS_FILE.exists():
-        POSTS_FILE.write_text("[]", encoding="utf-8")
+        POSTS_FILE.write_text(
+            "[]",
+            encoding="utf-8"
+        )
 
 
 def load_json(path):
@@ -77,21 +86,29 @@ def load_json(path):
         if not path.exists():
             return []
 
-        content = path.read_text(encoding="utf-8").strip()
+        content = path.read_text(
+            encoding="utf-8"
+        ).strip()
 
         if not content:
             return []
 
         data = json.loads(content)
 
-        return data if isinstance(data, list) else []
+        if isinstance(data, list):
+            return data
+
+        return []
 
     except Exception:
         return []
 
 
 def save_json_atomic(path, data):
-    path.parent.mkdir(parents=True, exist_ok=True)
+    path.parent.mkdir(
+        parents=True,
+        exist_ok=True
+    )
 
     temp_path = path.with_suffix(".tmp")
 
@@ -99,16 +116,16 @@ def save_json_atomic(path, data):
         json.dumps(
             data,
             ensure_ascii=False,
-            indent=2,
+            indent=2
         ),
-        encoding="utf-8",
+        encoding="utf-8"
     )
 
     temp_path.replace(path)
 
 
 # ============================================================
-# ENVIRONMENT VALIDATION
+# ENVIRONMENT
 # ============================================================
 
 def validate_environment():
@@ -145,17 +162,22 @@ def get_gemini_client():
 # ============================================================
 
 def word_count(text):
-    return len(str(text).split())
+    return len(
+        str(text).split()
+    )
 
 
 def normalize_text(text):
     return " ".join(
-        str(text).lower().strip().split()
+        str(text)
+        .lower()
+        .strip()
+        .split()
     )
 
 
 def clean_json_response(text):
-    text = text.strip()
+    text = str(text).strip()
 
     if text.startswith("```"):
         lines = text.splitlines()
@@ -172,7 +194,7 @@ def clean_json_response(text):
 
 
 # ============================================================
-# POLL VALIDATION
+# DAILY CHALLENGE VALIDATION
 # ============================================================
 
 def validate_poll(poll):
@@ -207,14 +229,14 @@ def validate_poll(poll):
     practical_challenge = str(
         poll.get(
             "practical_challenge",
-            "",
+            ""
         )
     ).strip()
 
     bonus_challenge = str(
         poll.get(
             "bonus_challenge",
-            "",
+            ""
         )
     ).strip()
 
@@ -233,6 +255,7 @@ def validate_poll(poll):
             "Question is too long."
         )
 
+    # Prevent exam-style questions.
     forbidden_phrases = [
         "which of the following",
         "what is the correct answer",
@@ -278,7 +301,7 @@ def validate_poll(poll):
 
         if word_count(option) > 6:
             raise ValueError(
-                "Options must be short."
+                "Option is too long."
             )
 
         cleaned_options.append(option)
@@ -360,67 +383,87 @@ def generate_poll(track, recent_questions):
         recent_context.append({
             "question": item.get(
                 "question",
-                "",
+                ""
             ),
             "options": item.get(
                 "options",
-                [],
+                []
             ),
             "explanation": item.get(
                 "explanation",
-                "",
+                ""
             ),
             "practical_challenge": item.get(
                 "practical_challenge",
-                "",
+                ""
             ),
             "bonus_challenge": item.get(
                 "bonus_challenge",
-                "",
+                ""
             ),
         })
 
     history_text = json.dumps(
         recent_context,
         ensure_ascii=False,
-        indent=2,
+        indent=2
     )
 
     prompt = f"""
-You are writing the daily training challenge for Korlink Technologies Ltd.
+You are the daily training content instructor for
+Korlink Technologies Ltd.
 
-TRACK:
-{track["name"]}
+TODAY'S BROAD TRAINING TRACK:
+{track}
 
-TRAINING FOCUS:
-{track["focus"]}
+IMPORTANT:
 
-This is NOT an examination.
+The track above is ONLY the broad subject area.
 
-The challenge is for a general training group. Some members may have
-little or no technical background.
+You have full freedom to choose the specific topic.
 
-The question must therefore be based on a simple, realistic,
-everyday situation that almost anyone can understand.
+Do NOT use a fixed topic list.
 
-The technical learning should come mainly from the explanation.
+Do NOT follow a predefined sequence.
+
+Do NOT restrict yourself to examples from previous instructions.
+
+You may choose any appropriate concept, situation, technology,
+problem, behaviour, tool, process or real-world scenario that
+belongs naturally to the day's track.
+
+The goal is to expose learners to different parts of the subject
+naturally over time.
 
 ============================================================
-QUESTION
+THE DAILY CHALLENGE
 ============================================================
 
-Create ONE practical daily challenge.
+Create ONE short, practical daily challenge.
 
-The question must:
+This is NOT an exam.
 
-- sound natural
-- feel like a real-life situation
-- be interesting enough to make people want to answer
-- be understandable by a complete beginner
-- require simple thinking rather than memorisation
+It should feel like a situation a normal person could actually
+encounter in everyday life.
+
+The learner does not need to be a technical professional.
+
+A person with little or no technical background should still be
+able to understand the situation and make a reasonable choice.
+
+The challenge should:
+
+- be natural
+- be interesting
+- be practical
+- encourage people to think
+- be easy to read quickly
+- relate to real life
+- use simple language
 - be 8–22 words ideally
 - never exceed 25 words
-- NOT sound like an examination question
+
+The question should NOT test memorised definitions.
 
 Do not use:
 
@@ -432,202 +475,132 @@ Do not use:
 - Define
 - What does X mean
 - Which statement is true
-
-The question should feel like something that could happen at home,
-at work, in school, while using a phone, or while using everyday technology.
+- All of the above
+- None of the above
 
 ============================================================
 OPTIONS
 ============================================================
 
-Create exactly FOUR short options.
+Create exactly four options.
 
-Each option must:
+Options should be short.
 
-- be easy to read quickly
-- normally be 1–4 words
-- never exceed 6 words
-- be clearly different
-- sound natural
+Normally use 1–4 words.
 
-Do not put long explanations inside the options.
+Never exceed 6 words.
+
+The learner should be able to read all four options quickly.
+
+Do not put explanations inside the options.
 
 ============================================================
 EXPLANATION
 ============================================================
 
-After the learner answers, explain the correct answer clearly.
+The explanation is where the technical lesson should happen.
 
-The explanation should:
+Explain the correct answer in simple, natural language.
 
+It should:
+
+- teach something useful
+- explain why the answer makes sense
+- introduce the relevant technical idea naturally
+- be understandable to a beginner
+- sound like an experienced instructor
 - be 15–70 words
-- teach the technical idea in simple language
-- explain why the correct answer makes sense
-- be useful to someone with no technical background
-- sound like an experienced instructor explaining it to learners
 
-Do not make the explanation sound like a textbook.
+Do not make it sound like a textbook.
 
 ============================================================
-PRACTICAL FOLLOW-UP
+PRACTICAL CHALLENGE
 ============================================================
 
 Add ONE short practical follow-up.
 
-It should be something the learner can safely:
-
-- observe
-- check
-- compare
-- practise
-- or try
-
-It must connect directly to the lesson.
+It should allow learners to safely observe, check, compare,
+practise or try something related to the lesson.
 
 It must NOT be another multiple-choice question.
 
-Keep it short.
+Keep it simple.
 
 ============================================================
 BONUS CHALLENGE
 ============================================================
 
-Add ONE small bonus challenge for learners to try AFTER the answer
-is revealed in the evening.
+Add ONE small bonus challenge.
 
-The bonus challenge must:
+This bonus will NOT appear in the morning.
 
-- be simple
+It will be revealed with the answer in the evening.
+
+The bonus should give learners one additional simple thing to try.
+
+It must:
+
 - be practical
 - be safe
-- reinforce today's concept
-- be different from the practical follow-up
+- be connected to the day's lesson
+- be different from the practical challenge
 - ideally be 5–20 words
 - never exceed 25 words
 - be an action or observation
 - NOT be written as a question
-- NOT require special tools
+- NOT require special equipment
 - NOT require paid software
-- NOT require accessing another person's account
-- NOT involve hacking or offensive activity
-- NOT involve dangerous electrical work
+- NOT require another person's account
+- NOT involve offensive hacking
+- NOT involve dangerous activity
 
-For Solar PV Design and Installation, the bonus must be
-observation-only.
-
+For Solar PV, keep the bonus strictly observation-based.
 Learners must not touch wiring, terminals, batteries,
 exposed conductors or live electrical equipment.
 
 ============================================================
-TRACK GUIDANCE
+VARIETY
 ============================================================
 
-Cybersecurity:
+Use the recent challenges below to avoid repetition.
 
-Use safe awareness and protection situations.
+Do not simply change a few words from an old challenge.
 
-Examples:
+Avoid unnecessary repetition of:
 
-- suspicious messages
-- passwords
-- updates
-- links
-- account protection
-- device security
-- privacy
-- public Wi-Fi awareness
+- the same situation
+- the same concept
+- the same technology
+- the same action
+- the same learning point
+- the same scenario
+- the same question structure
+- the same practical activity
+- the same bonus activity
 
-Do not provide hacking instructions or offensive security activities.
+However, do NOT permanently exclude a subject simply because it
+appeared recently.
 
-Software Engineering:
+A concept can appear again when the new challenge approaches it
+from a genuinely different angle.
 
-Use familiar software situations.
+There is NO fixed topic sequence.
 
-Examples:
-
-- an app freezing
-- an app update
-- login problems
-- a website loading
-- search behaviour
-- saving information
-- notifications
-- restarting an app
-
-Smart Home Automation:
-
-Use familiar smart-home situations.
-
-Do not repeatedly use:
-
-- smart lights
-- motion sensors
-- arriving home
-- lights turning on
-- phone connection
-
-Use different situations involving:
-
-- smart plugs
-- appliances
-- schedules
-- voice control
-- sensors
-- automation routines
-- energy awareness
-- device communication
-
-Network Engineering:
-
-Use familiar connectivity situations.
-
-Examples:
-
-- weak Wi-Fi
-- router placement
-- devices connecting
-- internet interruptions
-- sharing a connection
-- network range
-- connected devices
-
-Solar PV Design and Installation:
-
-Keep activities safe and observation-based.
-
-Use everyday situations such as:
-
-- sunlight
-- energy use
-- panels
-- batteries
-- charging
-- daytime energy
-- basic system behaviour
-
-Do not ask learners to touch or inspect live electrical components.
+Choose naturally based on usefulness, freshness and learner interest.
 
 ============================================================
-AVOID REPETITION
+SAFETY
 ============================================================
 
-Do not repeat recent questions.
+Cybersecurity content must remain defensive, educational and safe.
 
-Do not simply change a few words from an old question.
+Do not give instructions for hacking, credential theft,
+bypassing security or attacking systems.
 
-Avoid repeating the same:
+Solar activities must remain safe and observation-based.
 
-- situation
-- device
-- action
-- learning point
-- scenario family
-- opening phrase
-- question structure
-- practical activity
-- bonus activity
-
-Create a genuinely different challenge.
+For all tracks, the learner activity must be appropriate for
+ordinary learners.
 
 ============================================================
 RECENT CHALLENGES
@@ -660,7 +633,7 @@ Use exactly this structure:
 
     response = client.models.generate_content(
         model=GEMINI_MODEL,
-        contents=prompt,
+        contents=prompt
     )
 
     raw_text = response.text or ""
@@ -701,16 +674,20 @@ def get_today_question(track):
         if not isinstance(item, dict):
             continue
 
-        if item.get("date") == today:
-            if item.get("track") == track["name"]:
-                if question_is_valid(item):
-                    return item
+        if item.get("date") != today:
+            continue
+
+        if item.get("track") != track:
+            continue
+
+        if question_is_valid(item):
+            return item
 
     recent_same_track = [
         item
         for item in questions
         if isinstance(item, dict)
-        and item.get("track") == track["name"]
+        and item.get("track") == track
     ]
 
     for attempt in range(
@@ -719,10 +696,10 @@ def get_today_question(track):
         try:
             poll = generate_poll(
                 track,
-                recent_same_track,
+                recent_same_track
             )
 
-            normalized_new_question = normalize_text(
+            new_question = normalize_text(
                 poll["question"]
             )
 
@@ -732,28 +709,28 @@ def get_today_question(track):
                 old_question = normalize_text(
                     old.get(
                         "question",
-                        "",
+                        ""
                     )
                 )
 
-                if (
-                    normalized_new_question
-                    == old_question
-                ):
+                if new_question == old_question:
                     duplicate = True
                     break
 
             if duplicate:
+                print(
+                    "Generated duplicate. Retrying..."
+                )
                 continue
 
             poll["date"] = today
-            poll["track"] = track["name"]
+            poll["track"] = track
 
             questions.append(poll)
 
             save_json_atomic(
                 QUESTIONS_FILE,
-                questions,
+                questions
             )
 
             return poll
@@ -791,12 +768,12 @@ def telegram_request(method, payload):
     request = urllib.request.Request(
         url,
         data=data,
-        method="POST",
+        method="POST"
     )
 
     with urllib.request.urlopen(
         request,
-        timeout=30,
+        timeout=30
     ) as response:
 
         raw = response.read().decode(
@@ -821,12 +798,12 @@ def send_message(text):
             "text": text,
             "parse_mode": "Markdown",
             "disable_web_page_preview": "true",
-        },
+        }
     )
 
 
 # ============================================================
-# MESSAGE FORMATTING
+# MORNING MESSAGE
 # ============================================================
 
 def format_poll(poll, track):
@@ -835,16 +812,19 @@ def format_poll(poll, track):
     return (
         "*KORLINK TECHNOLOGIES*\n\n"
         "*DAILY CHALLENGE*\n\n"
-        f"*Track:* {track['name']}\n\n"
+        f"*Track:* {track}\n\n"
         f"{poll['question']}\n\n"
         f"1. {options[0]}\n"
         f"2. {options[1]}\n"
         f"3. {options[2]}\n"
         f"4. {options[3]}\n\n"
-        "Don't be afraid to get it wrong.\n"
-        "The goal is to learn!\n"
+        "What would you do in this situation?"
     )
 
+
+# ============================================================
+# EVENING ANSWER
+# ============================================================
 
 def format_answer(poll, track):
     options = poll["options"]
@@ -863,12 +843,12 @@ def format_answer(poll, track):
 
     practical = poll.get(
         "practical_challenge",
-        "",
+        ""
     ).strip()
 
     bonus = poll.get(
         "bonus_challenge",
-        "",
+        ""
     ).strip()
 
     parts = [
@@ -876,7 +856,7 @@ def format_answer(poll, track):
         "",
         "*DAILY CHALLENGE — ANSWER*",
         "",
-        f"*Track:* {track['name']}",
+        f"*Track:* {track}",
         "",
         f"*Correct Answer:* {correct_answer}",
         "",
@@ -887,14 +867,14 @@ def format_answer(poll, track):
         parts.extend([
             "",
             "*Practical Challenge:*",
-            practical,
+            practical
         ])
 
     if bonus:
         parts.extend([
             "",
             "*Bonus Challenge:*",
-            bonus,
+            bonus
         ])
 
     return "\n".join(parts)
@@ -904,7 +884,10 @@ def format_answer(poll, track):
 # AI-GENERATED WEEKEND CONTENT
 # ============================================================
 
-def generate_weekend_message(day_type, recent_posts):
+def generate_weekend_message(
+    day_type,
+    recent_posts
+):
     client = get_gemini_client()
 
     recent_context = []
@@ -915,65 +898,73 @@ def generate_weekend_message(day_type, recent_posts):
 
         if item.get("mode") not in [
             "saturday",
-            "sunday",
+            "sunday"
         ]:
             continue
 
         recent_context.append({
             "date": item.get(
                 "date",
-                "",
+                ""
             ),
             "mode": item.get(
                 "mode",
-                "",
+                ""
             ),
             "message": item.get(
                 "message",
-                "",
+                ""
             ),
         })
 
     history_text = json.dumps(
         recent_context,
         ensure_ascii=False,
-        indent=2,
+        indent=2
     )
 
     if day_type == "saturday":
+
         prompt = f"""
 You are writing the Saturday message for
-Korlink Technologies Ltd training community.
+Korlink Technologies Ltd.
 
-Generate a fresh, natural and professional motivational message.
+Generate a fresh motivational message for the training community.
 
-The audience consists of people learning technology and developing
-their skills. The message should encourage:
+The audience consists of learners and people developing their
+technology skills.
 
-- consistency
-- learning
-- discipline
-- practical improvement
-- patience
-- personal development
-- career growth
+The message can naturally touch on learning, discipline,
+consistency, practical experience, personal development,
+career growth, patience or progress.
+
+You have freedom to choose the message and angle.
+
+Do not follow a fixed motivational template.
+
+Do not repeat previous messages.
+
+The message must:
+
+- sound like a real professional training organization
+- be sincere
+- be practical
+- be concise
+- be encouraging without exaggeration
+- use natural business English
 
 Do not sound like an AI.
 
-Do not use exaggerated motivational language.
+Avoid exaggerated motivational clichés.
 
-Do not use clichés such as:
+Avoid phrases such as:
+
 "Never give up"
 "You can achieve anything"
-"Sky is the limit"
+"The sky is the limit"
 "Believe in yourself and conquer the world"
 
 Do not make it childish.
-
-Keep it concise enough for a Telegram training group.
-
-The message should feel like something a real professional training
-organization would send to its learners on a Saturday.
 
 Do not use excessive emojis.
 
@@ -984,39 +975,51 @@ Return ONLY valid JSON:
   "message": "Short motivational message."
 }}
 
-Recent weekend messages to avoid repeating:
+Previous weekend messages:
 
 {history_text}
 """
 
     else:
+
         prompt = f"""
 You are writing the Sunday message for
-Korlink Technologies Ltd training community.
+Korlink Technologies Ltd.
 
 Generate a fresh Gospel-based inspiration for the NEW WEEK.
 
-The message should:
+The purpose is to encourage learners as they prepare for
+the coming week.
 
-- be Christian and faith-based
-- encourage wisdom, strength, diligence, peace and purposeful living
-- connect naturally with starting a new week
-- be respectful and suitable for a professional training community
+You have freedom to choose the Biblical theme and message.
+
+The message can naturally focus on themes such as wisdom,
+strength, diligence, faith, patience, purpose, guidance,
+peace, courage or responsibility, but do not follow a fixed
+topic list or template.
+
+Choose a suitable Bible passage yourself.
+
+The message must:
+
+- be genuinely Christian
+- include ONE Bible verse reference
+- connect naturally with the new week
 - be concise
-- sound natural and sincere
-- avoid excessive religious language
-- avoid sounding like an AI-generated sermon
+- be sincere
+- be respectful
+- be suitable for a professional training community
+- sound natural rather than AI-generated
 
-Include ONE Bible verse reference.
+Do not write a sermon.
 
 Do not reproduce a long Bible passage.
 
-You may briefly paraphrase the message of the verse in your own words.
-
-The message should encourage learners as they prepare for
-the coming week.
+Briefly paraphrase the lesson of the verse in your own words.
 
 Do not use excessive emojis.
+
+Do not repeat recent Sunday messages.
 
 Return ONLY valid JSON:
 
@@ -1026,14 +1029,14 @@ Return ONLY valid JSON:
   "message": "Short Gospel-based inspiration for the new week."
 }}
 
-Recent Sunday messages to avoid repeating:
+Previous weekend messages:
 
 {history_text}
 """
 
     response = client.models.generate_content(
         model=GEMINI_MODEL,
-        contents=prompt,
+        contents=prompt
     )
 
     raw_text = response.text or ""
@@ -1052,20 +1055,25 @@ Recent Sunday messages to avoid repeating:
     title = str(
         content.get(
             "title",
-            "",
+            ""
         )
     ).strip()
 
     message = str(
         content.get(
             "message",
-            "",
+            ""
         )
     ).strip()
 
-    if not title or not message:
+    if not title:
         raise ValueError(
-            "Weekend content is incomplete."
+            "Weekend title is empty."
+        )
+
+    if not message:
+        raise ValueError(
+            "Weekend message is empty."
         )
 
     if word_count(message) > 100:
@@ -1074,10 +1082,11 @@ Recent Sunday messages to avoid repeating:
         )
 
     if day_type == "sunday":
+
         verse_reference = str(
             content.get(
                 "verse_reference",
-                "",
+                ""
             )
         ).strip()
 
@@ -1089,17 +1098,17 @@ Recent Sunday messages to avoid repeating:
         return {
             "title": title,
             "verse_reference": verse_reference,
-            "message": message,
+            "message": message
         }
 
     return {
         "title": title,
-        "message": message,
+        "message": message
     }
 
 
 # ============================================================
-# WEEKEND MESSAGE FORMATTING
+# WEEKEND FORMATTING
 # ============================================================
 
 def format_saturday_message(content):
@@ -1130,7 +1139,7 @@ def log_post(
     mode,
     poll=None,
     track=None,
-    message=None,
+    message=None
 ):
     ensure_log_files()
 
@@ -1146,17 +1155,13 @@ def log_post(
         "timestamp": now.isoformat(),
         "date": now.date().isoformat(),
         "mode": mode,
-        "track": (
-            track["name"]
-            if track
-            else None
-        ),
+        "track": track
     }
 
     if poll:
         entry["question"] = poll.get(
             "question",
-            "",
+            ""
         )
 
     if message:
@@ -1166,12 +1171,12 @@ def log_post(
 
     save_json_atomic(
         POSTS_FILE,
-        posts,
+        posts
     )
 
 
 # ============================================================
-# WEEKDAY RUNS
+# WEEKDAY
 # ============================================================
 
 def get_today_track():
@@ -1201,20 +1206,21 @@ def run_morning():
 
     message = format_poll(
         poll,
-        track,
+        track
     )
 
-    send_message(message)
+    send_message(
+        message
+    )
 
     log_post(
         "morning",
         poll,
-        track,
+        track
     )
 
     print(
-        f"Morning challenge sent: "
-        f"{track['name']}"
+        f"Morning challenge sent: {track}"
     )
 
 
@@ -1233,25 +1239,26 @@ def run_evening():
 
     message = format_answer(
         poll,
-        track,
+        track
     )
 
-    send_message(message)
+    send_message(
+        message
+    )
 
     log_post(
         "evening",
         poll,
-        track,
+        track
     )
 
     print(
-        f"Evening answer sent: "
-        f"{track['name']}"
+        f"Evening answer sent: {track}"
     )
 
 
 # ============================================================
-# WEEKEND RUN
+# WEEKEND
 # ============================================================
 
 def run_weekend():
@@ -1260,10 +1267,6 @@ def run_weekend():
     )
 
     weekday = now.weekday()
-
-    posts = load_json(
-        POSTS_FILE
-    )
 
     if weekday == 5:
         day_type = "saturday"
@@ -1277,20 +1280,24 @@ def run_weekend():
         )
         return
 
+    posts = load_json(
+        POSTS_FILE
+    )
+
     for attempt in range(
         MAX_GENERATION_ATTEMPTS
     ):
         try:
+
             content = generate_weekend_message(
                 day_type,
-                posts,
+                posts
             )
 
             if day_type == "saturday":
                 message = format_saturday_message(
                     content
                 )
-
             else:
                 message = format_sunday_message(
                     content
@@ -1302,7 +1309,7 @@ def run_weekend():
 
             log_post(
                 day_type,
-                message=message,
+                message=message
             )
 
             print(
@@ -1313,6 +1320,7 @@ def run_weekend():
             return
 
         except Exception as exc:
+
             print(
                 f"{day_type.capitalize()} "
                 f"generation attempt "
@@ -1325,8 +1333,7 @@ def run_weekend():
                 time.sleep(2)
 
     raise RuntimeError(
-        f"Unable to generate "
-        f"{day_type} message."
+        f"Unable to generate {day_type} message."
     )
 
 
@@ -1335,8 +1342,11 @@ def run_weekend():
 # ============================================================
 
 def main():
+
     try:
+
         validate_environment()
+
         ensure_log_files()
 
         print(
@@ -1359,9 +1369,11 @@ def main():
             )
 
     except Exception as exc:
+
         print(
             f"ERROR: {exc}"
         )
+
         raise
 
 
