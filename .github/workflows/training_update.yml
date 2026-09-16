@@ -1,3 +1,4 @@
+
 name: Korlink Training Update AI
 
 on:
@@ -73,16 +74,24 @@ jobs:
       - name: Determine run mode
         id: mode
         shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          SCHEDULE: ${{ github.event.schedule }}
+          MANUAL_MODE: ${{ inputs.run_mode }}
         run: |
-          echo "Event: ${{ github.event_name }}"
+          set -e
+
+          echo "Event: $EVENT_NAME"
+
+          MODE=""
 
           # --------------------------------------------------------
           # MANUAL RUN
           # --------------------------------------------------------
 
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
 
-            MODE="${{ inputs.run_mode }}"
+            MODE="$MANUAL_MODE"
 
             echo "Manual workflow execution detected."
             echo "Selected mode: $MODE"
@@ -91,60 +100,40 @@ jobs:
           # SCHEDULED RUN
           # --------------------------------------------------------
 
+          elif [ "$EVENT_NAME" = "schedule" ]; then
+
+            echo "Scheduled workflow execution detected."
+            echo "Cron schedule: $SCHEDULE"
+
+            # Use the original cron expression.
+            # This prevents delayed GitHub Actions starts
+            # from causing a time-validation failure.
+
+            case "$SCHEDULE" in
+
+              "0 3 * * 1-5")
+                MODE="morning"
+                ;;
+
+              "0 15 * * 1-5")
+                MODE="evening"
+                ;;
+
+              "0 3 * * 6"|"0 3 * * 0")
+                MODE="weekend"
+                ;;
+
+              *)
+                echo "Unknown scheduled cron: $SCHEDULE"
+                exit 1
+                ;;
+
+            esac
+
           else
 
-            # GitHub Actions runs cron in UTC.
-            # Convert the runner time to Nigeria time explicitly.
-            DAY=$(TZ=Africa/Lagos date +%u)
-            HOUR=$(TZ=Africa/Lagos date +%H)
-            MINUTE=$(TZ=Africa/Lagos date +%M)
-
-            echo "Nigeria day: $DAY"
-            echo "Nigeria time: $HOUR:$MINUTE"
-
-            # Monday-Friday
-            if [ "$DAY" -ge 1 ] && [ "$DAY" -le 5 ]; then
-
-              # 4:00 AM WAT
-              if [ "$HOUR" = "04" ]; then
-
-                MODE="morning"
-
-              # 4:00 PM WAT
-              elif [ "$HOUR" = "16" ]; then
-
-                MODE="evening"
-
-              else
-
-                echo "Scheduled workflow started outside the expected weekday time."
-                echo "Nigeria time: $HOUR:$MINUTE"
-                exit 1
-
-              fi
-
-            # Saturday or Sunday
-            elif [ "$DAY" = "6" ] || [ "$DAY" = "7" ]; then
-
-              # 4:00 AM WAT
-              if [ "$HOUR" = "04" ]; then
-
-                MODE="weekend"
-
-              else
-
-                echo "Scheduled workflow started outside the expected weekend time."
-                echo "Nigeria time: $HOUR:$MINUTE"
-                exit 1
-
-              fi
-
-            else
-
-              echo "Unable to determine schedule."
-              exit 1
-
-            fi
+            echo "Unsupported event: $EVENT_NAME"
+            exit 1
 
           fi
 
@@ -215,7 +204,7 @@ jobs:
       # PUSH LOGS
       # ============================================================
 
-      - name: Push generated logs
+      - name: Push logs
         shell: bash
         run: |
           git push
