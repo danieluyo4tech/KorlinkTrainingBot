@@ -15,6 +15,7 @@ from google import genai
 # ============================================================
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "").strip()
+
 GEMINI_MODEL = os.getenv(
     "GEMINI_MODEL",
     "gemini-2.5-flash"
@@ -46,8 +47,10 @@ MAX_GENERATION_ATTEMPTS = 5
 # ============================================================
 # TRAINING TRACKS
 # ============================================================
-# These are broad training areas only.
-# Gemini is free to choose the specific topic.
+# These are BROAD training areas only.
+#
+# Gemini chooses the actual daily topic freely.
+# There is no fixed topic list or predefined sequence.
 
 TRACKS = {
     0: "Cybersecurity",
@@ -233,12 +236,9 @@ def validate_poll(poll):
         )
     ).strip()
 
-    bonus_challenge = str(
-        poll.get(
-            "bonus_challenge",
-            ""
-        )
-    ).strip()
+    # --------------------------------------------------------
+    # QUESTION
+    # --------------------------------------------------------
 
     if not question:
         raise ValueError(
@@ -255,7 +255,6 @@ def validate_poll(poll):
             "Question is too long."
         )
 
-    # Prevent exam-style questions.
     forbidden_phrases = [
         "which of the following",
         "what is the correct answer",
@@ -278,6 +277,10 @@ def validate_poll(poll):
             raise ValueError(
                 "Question sounds like an exam question."
             )
+
+    # --------------------------------------------------------
+    # OPTIONS
+    # --------------------------------------------------------
 
     if not isinstance(options, list):
         raise ValueError(
@@ -316,6 +319,10 @@ def validate_poll(poll):
             "Options must be unique."
         )
 
+    # --------------------------------------------------------
+    # CORRECT ANSWER
+    # --------------------------------------------------------
+
     try:
         correct_option = int(
             poll["correct_option"]
@@ -330,6 +337,10 @@ def validate_poll(poll):
             "correct_option must be between 1 and 4."
         )
 
+    # --------------------------------------------------------
+    # EXPLANATION
+    # --------------------------------------------------------
+
     if word_count(explanation) < 15:
         raise ValueError(
             "Explanation is too short."
@@ -340,29 +351,25 @@ def validate_poll(poll):
             "Explanation is too long."
         )
 
+    # --------------------------------------------------------
+    # PRACTICAL CHALLENGE
+    # --------------------------------------------------------
+
     if practical_challenge:
         if word_count(practical_challenge) > 30:
             raise ValueError(
                 "Practical challenge is too long."
             )
 
-    if bonus_challenge:
-        if word_count(bonus_challenge) > 25:
-            raise ValueError(
-                "Bonus challenge is too long."
-            )
-
-        if bonus_challenge.endswith("?"):
-            raise ValueError(
-                "Bonus challenge must be an action, not a question."
-            )
+    # --------------------------------------------------------
+    # CLEAN DATA
+    # --------------------------------------------------------
 
     poll["question"] = question
     poll["options"] = cleaned_options
     poll["correct_option"] = correct_option
     poll["explanation"] = explanation
     poll["practical_challenge"] = practical_challenge
-    poll["bonus_challenge"] = bonus_challenge
 
     return poll
 
@@ -397,10 +404,6 @@ def generate_poll(track, recent_questions):
                 "practical_challenge",
                 ""
             ),
-            "bonus_challenge": item.get(
-                "bonus_challenge",
-                ""
-            ),
         })
 
     history_text = json.dumps(
@@ -416,23 +419,28 @@ Korlink Technologies Ltd.
 TODAY'S BROAD TRAINING TRACK:
 {track}
 
-IMPORTANT:
+============================================================
+IMPORTANT — TOPIC FREEDOM
+============================================================
 
 The track above is ONLY the broad subject area.
 
-You have full freedom to choose the specific topic.
+You have FULL FREEDOM to choose today's specific topic.
 
 Do NOT use a fixed topic list.
 
 Do NOT follow a predefined sequence.
 
-Do NOT restrict yourself to examples from previous instructions.
+Do NOT limit yourself to topics mentioned in this prompt.
 
-You may choose any appropriate concept, situation, technology,
-problem, behaviour, tool, process or real-world scenario that
-belongs naturally to the day's track.
+Do NOT assume that previous topics determine what today's topic
+must be.
 
-The goal is to expose learners to different parts of the subject
+Choose any useful concept, situation, technology, problem,
+behaviour, tool, process or real-world scenario that naturally
+belongs to today's broad training track.
+
+The goal is to expose learners to different parts of the field
 naturally over time.
 
 ============================================================
@@ -441,29 +449,34 @@ THE DAILY CHALLENGE
 
 Create ONE short, practical daily challenge.
 
-This is NOT an exam.
+This is a learning-group challenge, NOT an examination.
 
-It should feel like a situation a normal person could actually
-encounter in everyday life.
+It should feel like something that could happen in real life.
 
 The learner does not need to be a technical professional.
 
-A person with little or no technical background should still be
-able to understand the situation and make a reasonable choice.
+Someone with little or no technical background should still
+understand the situation and make a reasonable choice.
 
-The challenge should:
+Make the challenge:
 
-- be natural
-- be interesting
-- be practical
-- encourage people to think
-- be easy to read quickly
-- relate to real life
-- use simple language
-- be 8–22 words ideally
-- never exceed 25 words
+- natural
+- interesting
+- practical
+- easy to understand
+- quick to read
+- relevant to everyday life
+- suitable for group discussion
+- simple enough for a beginner
+- technically meaningful underneath
 
-The question should NOT test memorised definitions.
+The question should normally be 8–22 words.
+
+Never exceed 25 words.
+
+Do NOT test memorised definitions.
+
+Avoid textbook-style questions.
 
 Do not use:
 
@@ -482,34 +495,39 @@ Do not use:
 OPTIONS
 ============================================================
 
-Create exactly four options.
+Create exactly FOUR options.
 
-Options should be short.
+Keep them very short.
 
 Normally use 1–4 words.
 
 Never exceed 6 words.
 
-The learner should be able to read all four options quickly.
+Make them easy to scan quickly.
 
 Do not put explanations inside the options.
+
+The options should represent realistic choices someone might make
+in the situation.
 
 ============================================================
 EXPLANATION
 ============================================================
 
-The explanation is where the technical lesson should happen.
+The technical teaching should mainly happen here.
 
-Explain the correct answer in simple, natural language.
+Explain the correct answer naturally.
 
-It should:
+The explanation should:
 
 - teach something useful
-- explain why the answer makes sense
-- introduce the relevant technical idea naturally
-- be understandable to a beginner
+- explain why the choice makes sense
+- introduce the technical concept naturally
+- be understandable to beginners
 - sound like an experienced instructor
-- be 15–70 words
+- connect the lesson to real life
+
+Keep it between 15 and 70 words.
 
 Do not make it sound like a textbook.
 
@@ -517,90 +535,124 @@ Do not make it sound like a textbook.
 PRACTICAL CHALLENGE
 ============================================================
 
-Add ONE short practical follow-up.
+Add ONE short practical challenge.
 
-It should allow learners to safely observe, check, compare,
-practise or try something related to the lesson.
+It will be shown in the evening together with the answer.
+
+It should allow learners to safely:
+
+- observe
+- check
+- compare
+- practise
+- test something in their own environment
+- or apply the lesson
+
+It must directly connect to today's lesson.
 
 It must NOT be another multiple-choice question.
 
-Keep it simple.
+Keep it realistic for ordinary learners.
+
+Do not require expensive equipment or paid software.
 
 ============================================================
-BONUS CHALLENGE
+CYBERSECURITY
 ============================================================
 
-Add ONE small bonus challenge.
+Cybersecurity is a broad learning track.
 
-This bonus will NOT appear in the morning.
+You may freely explore areas such as:
 
-It will be revealed with the answer in the evening.
+- cybersecurity
+- ethical hacking
+- penetration testing
+- offensive security concepts
+- vulnerability assessment
+- network security
+- application security
+- authentication
+- password security
+- social engineering
+- malware awareness
+- digital forensics
+- incident response
+- security monitoring
+- privacy
+- security awareness
+- defensive security
+- and other relevant cybersecurity subjects
 
-The bonus should give learners one additional simple thing to try.
+Do NOT treat this list as a fixed topic list.
 
-It must:
+It is only an indication of the breadth of the field.
 
-- be practical
-- be safe
-- be connected to the day's lesson
-- be different from the practical challenge
-- ideally be 5–20 words
-- never exceed 25 words
-- be an action or observation
-- NOT be written as a question
-- NOT require special equipment
-- NOT require paid software
-- NOT require another person's account
-- NOT involve offensive hacking
-- NOT involve dangerous activity
+Choose the actual topic yourself.
 
-For Solar PV, keep the bonus strictly observation-based.
-Learners must not touch wiring, terminals, batteries,
-exposed conductors or live electrical equipment.
+Offensive-security and ethical-hacking concepts may be used for
+educational purposes.
+
+Where a practical activity is included, keep it within a safe,
+authorised environment such as:
+
+- the learner's own device
+- a local lab
+- a deliberately vulnerable training environment
+- a simulated scenario
+- an authorised practice environment
+
+Do not provide instructions for attacking real systems,
+stealing credentials, compromising accounts, bypassing
+authentication, deploying malware, evading security controls,
+or accessing systems without permission.
+
+The learner-facing challenge should remain simple and
+understandable even when the underlying lesson is technical.
+
+============================================================
+OTHER TRAINING TRACKS
+============================================================
+
+For Software Engineering, Smart Home Automation, Network
+Engineering and Solar PV Design and Installation, also choose
+the specific topic freely.
+
+Do not follow a fixed topic sequence.
+
+The practical challenge should be appropriate to the chosen
+subject.
+
+For Solar PV Design and Installation, practical activities must
+remain observation-based and safe.
+
+Learners must not touch wiring, terminals, batteries, exposed
+conductors or live electrical equipment.
 
 ============================================================
 VARIETY
 ============================================================
 
-Use the recent challenges below to avoid repetition.
+Use the recent challenges below only to avoid unnecessary
+repetition.
 
-Do not simply change a few words from an old challenge.
+Do not simply rewrite an old challenge.
 
-Avoid unnecessary repetition of:
+Avoid repeating the same:
 
-- the same situation
-- the same concept
-- the same technology
-- the same action
-- the same learning point
-- the same scenario
-- the same question structure
-- the same practical activity
-- the same bonus activity
+- situation
+- concept
+- technology
+- learning point
+- question structure
+- practical activity
 
-However, do NOT permanently exclude a subject simply because it
-appeared recently.
+However, do NOT permanently exclude a concept because it appeared
+recently.
 
-A concept can appear again when the new challenge approaches it
+A concept may appear again if the new challenge approaches it
 from a genuinely different angle.
 
 There is NO fixed topic sequence.
-
-Choose naturally based on usefulness, freshness and learner interest.
-
-============================================================
-SAFETY
-============================================================
-
-Cybersecurity content must remain defensive, educational and safe.
-
-Do not give instructions for hacking, credential theft,
-bypassing security or attacking systems.
-
-Solar activities must remain safe and observation-based.
-
-For all tracks, the learner activity must be appropriate for
-ordinary learners.
 
 ============================================================
 RECENT CHALLENGES
@@ -614,6 +666,10 @@ OUTPUT
 
 Return ONLY valid JSON.
 
+Do not add Markdown.
+
+Do not add explanations outside the JSON.
+
 Use exactly this structure:
 
 {{
@@ -626,8 +682,7 @@ Use exactly this structure:
   ],
   "correct_option": 1,
   "explanation": "Short useful explanation.",
-  "practical_challenge": "Short safe practical follow-up.",
-  "bonus_challenge": "Short extra challenge learners can try."
+  "practical_challenge": "Short safe practical challenge."
 }}
 """
 
@@ -670,6 +725,10 @@ def get_today_question(track):
         NIGERIA_TZ
     ).date().isoformat()
 
+    # --------------------------------------------------------
+    # Reuse today's generated challenge
+    # --------------------------------------------------------
+
     for item in questions:
         if not isinstance(item, dict):
             continue
@@ -683,6 +742,10 @@ def get_today_question(track):
         if question_is_valid(item):
             return item
 
+    # --------------------------------------------------------
+    # Recent challenges from the same track
+    # --------------------------------------------------------
+
     recent_same_track = [
         item
         for item in questions
@@ -690,10 +753,15 @@ def get_today_question(track):
         and item.get("track") == track
     ]
 
+    # --------------------------------------------------------
+    # Generate new challenge
+    # --------------------------------------------------------
+
     for attempt in range(
         MAX_GENERATION_ATTEMPTS
     ):
         try:
+
             poll = generate_poll(
                 track,
                 recent_same_track
@@ -706,6 +774,7 @@ def get_today_question(track):
             duplicate = False
 
             for old in recent_same_track:
+
                 old_question = normalize_text(
                     old.get(
                         "question",
@@ -718,15 +787,19 @@ def get_today_question(track):
                     break
 
             if duplicate:
+
                 print(
                     "Generated duplicate. Retrying..."
                 )
+
                 continue
 
             poll["date"] = today
             poll["track"] = track
 
-            questions.append(poll)
+            questions.append(
+                poll
+            )
 
             save_json_atomic(
                 QUESTIONS_FILE,
@@ -736,6 +809,7 @@ def get_today_question(track):
             return poll
 
         except Exception as exc:
+
             print(
                 f"Generation attempt "
                 f"{attempt + 1} failed: {exc}"
@@ -756,6 +830,7 @@ def get_today_question(track):
 # ============================================================
 
 def telegram_request(method, payload):
+
     url = (
         f"https://api.telegram.org/bot"
         f"{TELEGRAM_BOT_TOKEN}/{method}"
@@ -780,9 +855,12 @@ def telegram_request(method, payload):
             "utf-8"
         )
 
-        result = json.loads(raw)
+        result = json.loads(
+            raw
+        )
 
         if not result.get("ok"):
+
             raise RuntimeError(
                 f"Telegram API error: {result}"
             )
@@ -791,6 +869,7 @@ def telegram_request(method, payload):
 
 
 def send_message(text):
+
     return telegram_request(
         "sendMessage",
         {
@@ -807,6 +886,7 @@ def send_message(text):
 # ============================================================
 
 def format_poll(poll, track):
+
     options = poll["options"]
 
     return (
@@ -827,6 +907,7 @@ def format_poll(poll, track):
 # ============================================================
 
 def format_answer(poll, track):
+
     options = poll["options"]
 
     correct_index = (
@@ -846,11 +927,6 @@ def format_answer(poll, track):
         ""
     ).strip()
 
-    bonus = poll.get(
-        "bonus_challenge",
-        ""
-    ).strip()
-
     parts = [
         "*KORLINK TECHNOLOGIES*",
         "",
@@ -864,20 +940,16 @@ def format_answer(poll, track):
     ]
 
     if practical:
+
         parts.extend([
             "",
             "*Practical Challenge:*",
             practical
         ])
 
-    if bonus:
-        parts.extend([
-            "",
-            "*Bonus Challenge:*",
-            bonus
-        ])
-
-    return "\n".join(parts)
+    return "\n".join(
+        parts
+    )
 
 
 # ============================================================
@@ -888,11 +960,13 @@ def generate_weekend_message(
     day_type,
     recent_posts
 ):
+
     client = get_gemini_client()
 
     recent_context = []
 
     for item in recent_posts[-30:]:
+
         if not isinstance(item, dict):
             continue
 
@@ -923,6 +997,10 @@ def generate_weekend_message(
         indent=2
     )
 
+    # ========================================================
+    # SATURDAY
+    # ========================================================
+
     if day_type == "saturday":
 
         prompt = f"""
@@ -934,11 +1012,11 @@ Generate a fresh motivational message for the training community.
 The audience consists of learners and people developing their
 technology skills.
 
-The message can naturally touch on learning, discipline,
-consistency, practical experience, personal development,
-career growth, patience or progress.
+You have complete freedom to choose the message, theme and angle.
 
-You have freedom to choose the message and angle.
+It may naturally address learning, discipline, consistency,
+practice, patience, personal development, career growth,
+professional development, progress or another relevant idea.
 
 Do not follow a fixed motivational template.
 
@@ -953,20 +1031,13 @@ The message must:
 - be encouraging without exaggeration
 - use natural business English
 
-Do not sound like an AI.
+Do not sound like AI-generated content.
 
 Avoid exaggerated motivational clichés.
 
-Avoid phrases such as:
+Avoid childish wording.
 
-"Never give up"
-"You can achieve anything"
-"The sky is the limit"
-"Believe in yourself and conquer the world"
-
-Do not make it childish.
-
-Do not use excessive emojis.
+Avoid excessive emojis.
 
 Return ONLY valid JSON:
 
@@ -980,6 +1051,10 @@ Previous weekend messages:
 {history_text}
 """
 
+    # ========================================================
+    # SUNDAY
+    # ========================================================
+
     else:
 
         prompt = f"""
@@ -991,16 +1066,15 @@ Generate a fresh Gospel-based inspiration for the NEW WEEK.
 The purpose is to encourage learners as they prepare for
 the coming week.
 
-You have freedom to choose the Biblical theme and message.
+You have complete freedom to choose the Biblical theme,
+Bible passage and message.
 
-The message can naturally focus on themes such as wisdom,
-strength, diligence, faith, patience, purpose, guidance,
-peace, courage or responsibility, but do not follow a fixed
-topic list or template.
+Do not follow a fixed topic list.
 
-Choose a suitable Bible passage yourself.
+Choose a suitable Bible verse that naturally supports
+the message.
 
-The message must:
+The message should:
 
 - be genuinely Christian
 - include ONE Bible verse reference
@@ -1029,7 +1103,7 @@ Return ONLY valid JSON:
   "message": "Short Gospel-based inspiration for the new week."
 }}
 
-Previous weekend messages:
+Previous Sunday messages:
 
 {history_text}
 """
@@ -1045,9 +1119,12 @@ Previous weekend messages:
         raw_text
     )
 
-    content = json.loads(cleaned)
+    content = json.loads(
+        cleaned
+    )
 
     if not isinstance(content, dict):
+
         raise ValueError(
             "Weekend response is not an object."
         )
@@ -1067,19 +1144,26 @@ Previous weekend messages:
     ).strip()
 
     if not title:
+
         raise ValueError(
             "Weekend title is empty."
         )
 
     if not message:
+
         raise ValueError(
             "Weekend message is empty."
         )
 
     if word_count(message) > 100:
+
         raise ValueError(
             "Weekend message is too long."
         )
+
+    # --------------------------------------------------------
+    # SUNDAY VALIDATION
+    # --------------------------------------------------------
 
     if day_type == "sunday":
 
@@ -1091,6 +1175,7 @@ Previous weekend messages:
         ).strip()
 
         if not verse_reference:
+
             raise ValueError(
                 "Sunday message has no Bible reference."
             )
@@ -1100,6 +1185,10 @@ Previous weekend messages:
             "verse_reference": verse_reference,
             "message": message
         }
+
+    # --------------------------------------------------------
+    # SATURDAY
+    # --------------------------------------------------------
 
     return {
         "title": title,
@@ -1112,6 +1201,7 @@ Previous weekend messages:
 # ============================================================
 
 def format_saturday_message(content):
+
     return (
         "*KORLINK TECHNOLOGIES*\n\n"
         "*SATURDAY NOTE*\n\n"
@@ -1121,6 +1211,7 @@ def format_saturday_message(content):
 
 
 def format_sunday_message(content):
+
     return (
         "*KORLINK TECHNOLOGIES*\n\n"
         "*SUNDAY INSPIRATION*\n\n"
@@ -1141,6 +1232,7 @@ def log_post(
     track=None,
     message=None
 ):
+
     ensure_log_files()
 
     posts = load_json(
@@ -1159,15 +1251,19 @@ def log_post(
     }
 
     if poll:
+
         entry["question"] = poll.get(
             "question",
             ""
         )
 
     if message:
+
         entry["message"] = message
 
-    posts.append(entry)
+    posts.append(
+        entry
+    )
 
     save_json_atomic(
         POSTS_FILE,
@@ -1180,6 +1276,7 @@ def log_post(
 # ============================================================
 
 def get_today_track():
+
     now = datetime.datetime.now(
         NIGERIA_TZ
     )
@@ -1192,12 +1289,15 @@ def get_today_track():
 
 
 def run_morning():
+
     track = get_today_track()
 
     if not track:
+
         print(
             "No weekday track is scheduled for today."
         )
+
         return
 
     poll = get_today_question(
@@ -1225,12 +1325,15 @@ def run_morning():
 
 
 def run_evening():
+
     track = get_today_track()
 
     if not track:
+
         print(
             "No weekday track is scheduled for today."
         )
+
         return
 
     poll = get_today_question(
@@ -1262,6 +1365,7 @@ def run_evening():
 # ============================================================
 
 def run_weekend():
+
     now = datetime.datetime.now(
         NIGERIA_TZ
     )
@@ -1269,15 +1373,19 @@ def run_weekend():
     weekday = now.weekday()
 
     if weekday == 5:
+
         day_type = "saturday"
 
     elif weekday == 6:
+
         day_type = "sunday"
 
     else:
+
         print(
             "Weekend mode can only run on Saturday or Sunday."
         )
+
         return
 
     posts = load_json(
@@ -1287,6 +1395,7 @@ def run_weekend():
     for attempt in range(
         MAX_GENERATION_ATTEMPTS
     ):
+
         try:
 
             content = generate_weekend_message(
@@ -1295,10 +1404,13 @@ def run_weekend():
             )
 
             if day_type == "saturday":
+
                 message = format_saturday_message(
                     content
                 )
+
             else:
+
                 message = format_sunday_message(
                     content
                 )
@@ -1330,6 +1442,7 @@ def run_weekend():
             if attempt < (
                 MAX_GENERATION_ATTEMPTS - 1
             ):
+
                 time.sleep(2)
 
     raise RuntimeError(
@@ -1355,15 +1468,19 @@ def main():
         )
 
         if RUN_MODE == "morning":
+
             run_morning()
 
         elif RUN_MODE == "evening":
+
             run_evening()
 
         elif RUN_MODE == "weekend":
+
             run_weekend()
 
         else:
+
             raise ValueError(
                 f"Unknown RUN_MODE: {RUN_MODE}"
             )
