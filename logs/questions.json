@@ -1,1 +1,19 @@
-
+[
+  {
+    "date": "2026-09-16",
+    "weekday": "Wednesday",
+    "school": "School of Technology",
+    "track": "Smart Home Automation",
+    "question": "Why do low-wattage LED bulbs often flicker or remain dimly illuminated when controlled by a smart switch installed in a two-wire (no-neutral) lighting circuit?",
+    "options": [
+      "The switch passes a small standby current through the bulb to power itself, charging the LED capacitor.",
+      "The smart switch's wireless radio induces high-frequency interference directly into the lighting wiring.",
+      "The absence of a neutral wire causes an unbalanced voltage drop below the LED driver operating threshold.",
+      "No-neutral switches periodically invert line and load polarity during wireless data transmission."
+    ],
+    "correct_option": 1,
+    "explanation": "Without a dedicated neutral wire, a smart switch must complete its circuit through the light fixture to maintain standby power. Low-draw LED drivers allow this small leakage current to charge their internal capacitors, causing the bulb to periodically pulse or glow faintly when turned off.",
+    "practical_challenge": "What component would you install across the light fixture load and neutral terminals to resolve this issue without rewiring the switch box?",
+    "created_at": "2026-09-16T07:55:19.735228+01:00"
+  }
+]
