@@ -1,1 +1,16 @@
-
+[
+  {
+    "question": "Your home internet connection goes down, yet your smart motion light turns on immediately when you walk past. Why?",
+    "options": [
+      "Stored cloud memory",
+      "Local automation processing",
+      "Cellular backup signal",
+      "Extra Wi-Fi bandwidth"
+    ],
+    "correct_option": 1,
+    "explanation": "Smart homes using local processing run routines directly on a local hub rather than relying on internet cloud servers. This keeps your automations fast, private, and fully functional even during a internet outage.",
+    "practical_challenge": "Check your smart home app settings to see if your routines are labeled as 'Local' or 'Cloud', or temporarily disconnect your router's internet cable to test which automations still work.",
+    "date": "2026-09-16",
+    "track": "Smart Home Automation"
+  }
+]
