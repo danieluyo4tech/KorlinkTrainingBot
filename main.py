@@ -299,6 +299,22 @@ def normalize_correct_option(poll):
 
 
 # ============================================================
+# TEXT HELPERS
+# ============================================================
+
+def word_count(text):
+    return len(
+        str(text).strip().split()
+    )
+
+
+def normalize_text(text):
+    return " ".join(
+        str(text).strip().lower().split()
+    )
+
+
+# ============================================================
 # POLL VALIDATION
 # ============================================================
 
@@ -323,6 +339,10 @@ def validate_poll(poll):
                 f"Gemini response is missing: {field}"
             )
 
+    # --------------------------------------------------------
+    # QUESTION
+    # --------------------------------------------------------
+
     if (
         not isinstance(poll["question"], str)
         or not poll["question"].strip()
@@ -330,6 +350,47 @@ def validate_poll(poll):
         raise ValueError(
             "Question is empty."
         )
+
+    question = poll["question"].strip()
+
+    # Practical challenges must be short.
+    if word_count(question) < 6:
+        raise ValueError(
+            "Challenge is too short."
+        )
+
+    if word_count(question) > 25:
+        raise ValueError(
+            "Challenge is too long."
+        )
+
+    # Reject common exam-style wording.
+    forbidden_phrases = [
+        "which of the following",
+        "what is the definition",
+        "define ",
+        "what does ",
+        "which protocol",
+        "which component",
+        "which technology",
+        "best describes",
+        "select the correct",
+        "choose the correct",
+        "what is meant by",
+        "according to the definition",
+    ]
+
+    lowered_question = question.lower()
+
+    for phrase in forbidden_phrases:
+        if phrase in lowered_question:
+            raise ValueError(
+                "Challenge sounds like an exam question."
+            )
+
+    # --------------------------------------------------------
+    # OPTIONS
+    # --------------------------------------------------------
 
     options = poll["options"]
 
@@ -343,6 +404,8 @@ def validate_poll(poll):
             "Exactly four options are required."
         )
 
+    normalized_options = []
+
     for option in options:
 
         if (
@@ -352,6 +415,31 @@ def validate_poll(poll):
             raise ValueError(
                 "Every option must contain text."
             )
+
+        clean_option = option.strip()
+
+        # Keep poll options short enough to scan quickly.
+        if word_count(clean_option) > 6:
+            raise ValueError(
+                "An option is too long."
+            )
+
+        normalized_option = normalize_text(
+            clean_option
+        )
+
+        if normalized_option in normalized_options:
+            raise ValueError(
+                "Duplicate poll options found."
+            )
+
+        normalized_options.append(
+            normalized_option
+        )
+
+    # --------------------------------------------------------
+    # CORRECT ANSWER
+    # --------------------------------------------------------
 
     try:
         correct_option = int(
@@ -370,6 +458,10 @@ def validate_poll(poll):
             "correct_option must be between 1 and 4."
         )
 
+    # --------------------------------------------------------
+    # EXPLANATION
+    # --------------------------------------------------------
+
     if (
         not isinstance(poll["explanation"], str)
         or not poll["explanation"].strip()
@@ -379,6 +471,22 @@ def validate_poll(poll):
             "Explanation is empty."
         )
 
+    explanation = poll["explanation"].strip()
+
+    if word_count(explanation) < 15:
+        raise ValueError(
+            "Explanation is too short."
+        )
+
+    if word_count(explanation) > 70:
+        raise ValueError(
+            "Explanation is too long."
+        )
+
+    # --------------------------------------------------------
+    # PRACTICAL CHALLENGE
+    # --------------------------------------------------------
+
     practical = poll.get(
         "practical_challenge",
         ""
@@ -387,8 +495,21 @@ def validate_poll(poll):
     if not isinstance(practical, str):
         practical = str(practical)
 
+    practical = practical.strip()
+
+    if practical and word_count(practical) > 30:
+        raise ValueError(
+            "Practical challenge is too long."
+        )
+
+    poll["question"] = question
+    poll["options"] = [
+        option.strip()
+        for option in options
+    ]
     poll["correct_option"] = correct_option
-    poll["practical_challenge"] = practical.strip()
+    poll["explanation"] = explanation
+    poll["practical_challenge"] = practical
 
     return poll
 
@@ -457,7 +578,7 @@ def gemini_generate(prompt, attempts=5):
 
 
 # ============================================================
-# DAILY CHALLENGE GENERATOR
+# DAILY PRACTICAL CHALLENGE GENERATOR
 # ============================================================
 
 def generate_poll(track, questions=None):
@@ -465,165 +586,197 @@ def generate_poll(track, questions=None):
     if questions is None:
         questions = []
 
-    # Give Gemini enough recent context to avoid repeating the same
-    # concept, scenario or question structure.
-    recent_questions = []
+    # --------------------------------------------------------
+    # RECENT HISTORY
+    # --------------------------------------------------------
+    #
+    # We send recent challenges from this track to Gemini.
+    # This helps it avoid repeating the same situation,
+    # concept or structure.
+    #
 
-    for item in questions[-150:]:
+    recent_items = []
+
+    for item in questions[-180:]:
+
         if not isinstance(item, dict):
             continue
 
         if item.get("track") != track["name"]:
             continue
 
-        question = item.get("question", "").strip()
+        question = item.get(
+            "question",
+            ""
+        ).strip()
 
-        if question:
-            recent_questions.append(question)
+        if not question:
+            continue
 
-    recent_questions_text = "\n".join(
-        f"- {question}"
-        for question in recent_questions[-50:]
-    )
+        recent_items.append(
+            {
+                "question": question,
+                "options": item.get(
+                    "options",
+                    []
+                ),
+                "explanation": item.get(
+                    "explanation",
+                    ""
+                ),
+            }
+        )
 
-    if not recent_questions_text:
-        recent_questions_text = "No previous questions are available for this track."
+    recent_items = recent_items[-60:]
+
+    if recent_items:
+
+        recent_challenges_text = []
+
+        for index, item in enumerate(
+            recent_items,
+            start=1
+        ):
+
+            options = item.get(
+                "options",
+                []
+            )
+
+            options_text = " | ".join(
+                str(option)
+                for option in options
+            )
+
+            recent_challenges_text.append(
+                f"{index}. "
+                f"{item['question']} "
+                f"[Options: {options_text}]"
+            )
+
+        recent_questions_text = "\n".join(
+            recent_challenges_text
+        )
+
+    else:
+
+        recent_questions_text = (
+            "No previous challenges are available "
+            "for this training track."
+        )
+
+    # --------------------------------------------------------
+    # PROMPT
+    # --------------------------------------------------------
 
     prompt = f"""
-You are an experienced technical instructor and official content
-writer for Korlink Technologies Ltd.
+You are the practical instructor and official daily training
+content writer for Korlink Technologies Ltd.
 
-Create ONE daily multiple-choice learning challenge for the
-following training track:
+Create ONE short multiple-choice DAILY CHALLENGE for:
 
 School: {track["school"]}
 Training Track: {track["name"]}
 Training Area: {track["description"]}
 
-The challenge will be posted to a professional technical training
-community containing beginners, intermediate learners and people
-with practical experience.
+The challenge will be posted in a professional Korlink training
+community.
 
 ============================================================
-MOST IMPORTANT RULE: REAL VARIETY
+CORE IDEA
 ============================================================
 
-Do not use a predefined topic list.
+THIS IS NOT AN EXAM.
 
-Do not follow a topic sequence.
+Do not write a textbook question.
 
-Do not choose from a fixed rotation.
+Do not write a classroom examination question.
 
-Think independently about the whole training track and decide what
-would make a useful question today.
+Create a small, realistic situation that people can understand
+quickly and relate to from everyday life.
 
-Every day should feel like a different instructor question.
+A person with little or no technical background should be able
+to understand the challenge without needing technical knowledge
+before reading the explanation.
 
-The question can come from any appropriate part of the subject.
-You decide the subject matter yourself.
+The challenge should make someone stop for a few seconds and
+think:
 
-Do not keep returning to the easiest or most familiar concept.
-Explore different knowledge, practical situations, decisions,
-problems, observations, configurations, troubleshooting cases,
-design considerations and real-world applications naturally.
+"What would I do?"
 
-============================================================
-AVOID REPEATING PREVIOUS QUESTIONS
-============================================================
+"What would I check?"
 
-Here are recent questions already used for this same track:
+"What makes sense here?"
 
-{recent_questions_text}
+"What would help?"
 
-Read these before creating today's question.
+"What should happen?"
 
-Today's question must be meaningfully different from them.
-
-Do not merely change:
-- names
-- numbers
-- locations
-- devices
-- a few words
-- the order of the sentences
-
-Do not create the same underlying question in a new form.
-
-If a recent question already tested an idea, deliberately think of
-another idea instead.
-
-Conceptual variety is more important than exact wording variety.
+The technical lesson should come mainly from the explanation.
 
 ============================================================
-QUESTION CREATION
+REAL-LIFE CHALLENGE
 ============================================================
 
-Use your own technical knowledge to create the question.
+Base the challenge on something that could genuinely happen in
+ordinary life.
 
-Do not tell the learner that the question was randomly selected.
-Do not mention this instruction.
+It can involve technology being used at home, at work, at school,
+in a small business or during normal daily activities.
 
-The question should test genuine understanding rather than simple
-memorisation whenever possible.
+Keep the situation simple.
 
-It may be a practical situation, troubleshooting problem, system
-decision, technical observation, configuration decision, design
-question, cause-and-effect question, component choice, security
-situation, installation situation or direct technical question.
+Do not create a long story.
 
-Do not force one of these formats. Choose naturally.
+Do not create a complicated technical setup.
 
-============================================================
-SMART HOME AUTOMATION
-============================================================
+Do not assume the learner is an engineer.
 
-When the track is Smart Home Automation, think broadly about the
-subject instead of repeatedly writing the same motion-sensor,
-smart-light or arrival-at-home scenario.
+Do not require specialist knowledge just to understand the
+question.
 
-Choose the subject yourself based on what would make a useful and
-different training question.
-
-The question could involve any suitable part of smart home
-technology, system behaviour, installation, automation logic,
-communication, devices, security, reliability, troubleshooting,
-power, networking or practical design, but do not treat this as a
-fixed list and do not try to cover the areas one by one.
-
-The choice must come from your own judgment each time.
+The learner should be able to read the challenge and options
+within a few seconds.
 
 ============================================================
-HOOK AND WRITING STYLE
+QUESTION STYLE
 ============================================================
 
-A natural hook is useful when appropriate, but it is NOT mandatory.
+Write ONE short challenge.
 
-Do not repeatedly start questions with:
-"Imagine your house..."
-"Imagine..."
-"Suppose..."
-"Here's a situation..."
-"You are working on..."
+Aim for approximately 8-22 words.
 
-Vary the opening naturally.
-Some questions can start directly with the technical issue.
+Maximum 25 words.
 
-Avoid clickbait and exaggerated wording.
+Use natural everyday language.
 
-Write like an experienced instructor, not like an AI social media
-content generator.
+Good style:
 
-============================================================
-LENGTH
-============================================================
+"Your phone connects to Wi-Fi, but nothing loads. What would you check?"
 
-Keep the question concise.
+"Your smart light stops responding. What would you check first?"
 
-Aim for approximately 20-45 words.
+"You receive a message saying your account will be blocked today. What should you do?"
 
-Do not write a long story.
-Do not write a mini-article.
-Do not explain the answer inside the question.
+"An app suddenly stops working after an update. What would you try?"
+
+"You want a light to come on automatically when someone enters. What could help?"
+
+Bad style:
+
+"Which protocol is responsible for..."
+
+"Which of the following best describes..."
+
+"What is the definition of..."
+
+"Which component is primarily responsible for..."
+
+"Select the correct answer."
+
+"According to networking principles..."
+
+Do not use examination language.
 
 ============================================================
 OPTIONS
@@ -631,79 +784,306 @@ OPTIONS
 
 Provide exactly FOUR options.
 
-All four options must be believable and technically plausible.
+Each option must normally be 1-4 words.
 
-The incorrect options should represent realistic misunderstandings
-or alternative decisions.
+Maximum 6 words.
 
-Do not make the correct answer obvious because it is longer or more
-detailed than the other options.
+Keep them extremely easy to scan.
+
+Do not write sentences as options.
+
+Do not make one option obviously longer or more technical than
+the others.
+
+Wrong answers should still make reasonable sense to an ordinary
+person.
+
+There must be ONE clearly correct answer.
+
+Example style:
+
+"Check Wi-Fi"
+"Change wallpaper"
+"Restart the clock"
+"Move the chair"
+
+Do not copy this example. Create options that actually fit
+today's challenge.
 
 ============================================================
-CORRECT ANSWER
+TECHNICAL LEARNING
 ============================================================
 
-correct_option must be exactly one of:
+The challenge itself should stay simple.
 
-1
-2
-3
-4
+The underlying technical idea can be meaningful and accurate.
 
-There must be only one clearly correct answer.
+Use the evening explanation to introduce the technical concept
+naturally.
+
+For example, a simple everyday situation can teach:
+
+- why a network connection matters
+- why software updates can affect an app
+- how a sensor supports automation
+- why account messages can be suspicious
+- how a battery and inverter behave
+- why a device may lose communication
+- why a system needs a particular condition before acting
+
+Do not force technical jargon into the challenge.
+
+============================================================
+VARIETY
+============================================================
+
+Do NOT use a fixed topic list.
+
+Do NOT follow a topic sequence.
+
+Do NOT create a rotation inside the training track.
+
+Think independently about the entire training track.
+
+Every day should feel genuinely different.
+
+Read the recent challenges below before creating today's one.
+
+Do not repeat:
+
+- the same situation
+- the same device
+- the same action
+- the same learning point
+- the same scenario family
+- the same opening
+- the same question structure
+
+Changing only a few words is NOT enough.
+
+If a recent challenge was about a device losing connection,
+do not simply create another device-loss question with a
+different device.
+
+If a recent challenge was about checking Wi-Fi, deliberately
+look for another useful concept.
+
+If recent challenges repeatedly use "What would you check
+first?", use a naturally different structure when appropriate.
+
+Variety is required.
+
+============================================================
+SMART HOME AUTOMATION
+============================================================
+
+For Smart Home Automation, DO NOT repeatedly write about:
+
+- smart lights
+- motion sensors
+- arriving home
+- lights turning on
+- phone connection
+
+Those are only examples and must not become a rotation.
+
+Think broadly and independently about Smart Home Automation.
+
+A challenge may naturally come from device behaviour,
+automation logic, communication, security, reliability,
+troubleshooting, comfort, energy use, sensors, controllers,
+scheduling or another relevant area.
+
+But do NOT try to cover these areas one by one.
+
+Choose a genuinely different idea each day.
+
+The learner should still understand the situation without
+specialist knowledge.
+
+============================================================
+OTHER TRACKS
+============================================================
+
+Cybersecurity:
+
+Use ordinary digital situations such as messages, accounts,
+passwords, links, devices, privacy or suspicious activity.
+
+Do not teach offensive hacking.
+
+Keep the challenge focused on safe awareness and protection.
+
+Software Engineering:
+
+Use everyday software behaviour such as an app failing,
+an update causing a problem, information not saving, repeated
+errors or a feature behaving unexpectedly.
+
+The challenge should not require programming knowledge just to
+understand it.
+
+Network Engineering:
+
+Use familiar connectivity situations involving phones,
+computers, Wi-Fi, internet access or connected devices.
+
+Keep networking concepts underneath the simple situation.
+
+Solar PV Design and Installation:
+
+Use safe everyday observations involving solar power, battery
+behaviour, charging, energy use, inverter behaviour or system
+performance.
+
+Do not ask learners to touch electrical wiring, terminals,
+batteries, exposed conductors or live equipment.
+
+Do not give dangerous installation instructions.
+
+============================================================
+HOOK
+============================================================
+
+The challenge itself should be the hook.
+
+Do not add unnecessary introductions such as:
+
+"Here is today's challenge..."
+
+"Are you ready?"
+
+"Let's test your knowledge!"
+
+"Only experts can answer!"
+
+"Can you crack this?"
+
+"Imagine..."
+
+"You are working as..."
+
+Avoid repeated "Imagine..." openings.
+
+Start naturally.
 
 ============================================================
 EXPLANATION
 ============================================================
 
-Write a useful explanation of approximately 30-55 words.
+Write a concise explanation of approximately 25-55 words.
 
-Explain why the correct answer is correct and teach the underlying
-technical idea briefly.
+Explain why the correct answer makes sense.
+
+Teach the underlying technical idea naturally.
 
 Do not simply repeat the correct option.
+
+Do not turn the explanation into a textbook.
+
+Write so that a beginner learns something useful.
 
 ============================================================
 PRACTICAL CHALLENGE
 ============================================================
 
-Add one short practical follow-up question connected to the concept.
+Add one short SAFE practical action or observation related to the
+lesson.
 
-It should encourage the learner to think about applying the idea in
-a real environment.
+It should be something the learner can safely notice, check,
+think through or practise in everyday life.
+
+It should NOT be another multiple-choice question.
+
+Examples of the style:
+
+"Check how many devices use your home Wi-Fi."
+
+"Look at one recent message and check who sent it."
+
+"Notice what happens when an app is reopened after closing."
+
+"Observe whether your smart device responds when its connection
+changes."
+
+For solar or electrical topics, keep this strictly observational.
+Do not instruct the learner to open, wire, touch or modify
+electrical equipment.
 
 ============================================================
 KORLINK CORPORATE STYLE
 ============================================================
 
-The final content represents Korlink Technologies Ltd.
+Write like an experienced instructor working for a real
+technology training organization.
 
 Use:
+
 - professional language
 - natural business English
-- practical wording
-- clear technical reasoning
+- simple wording
+- practical situations
 - concise presentation
+- clear technical reasoning
 - confident instructor tone
 
 Avoid:
+
 - excessive emojis
 - hype
 - childish wording
 - fake excitement
 - motivational clichés
-- unnecessary introductions
-- textbook-style definitions when a practical question would work
-- "Let's see who gets this!"
-- "Only experts can answer!"
-- "Are you ready?"
-- "Test your IQ!"
-- "Can you crack this?"
+- clickbait
+- long introductions
+- unnecessary technical jargon
+- AI-style social media language
 
-Do not sound like an AI-generated social media post.
+Do not say:
+
+"Let's see who gets this!"
+
+"Are you ready?"
+
+"Test your IQ!"
+
+"Only experts can answer!"
+
+"Can you crack this?"
+
+"Let's challenge your brain!"
 
 ============================================================
-OUTPUT FORMAT
+RECENT CHALLENGES
+============================================================
+
+These are recent challenges from this same training track:
+
+{recent_questions_text}
+
+Today's challenge MUST be meaningfully different from them.
+
+============================================================
+FINAL QUALITY CHECK
+============================================================
+
+Before returning the JSON, silently check:
+
+1. Can a non-technical person understand the challenge immediately?
+2. Is it based on a realistic everyday situation?
+3. Is the challenge short?
+4. Are all four options short?
+5. Is there only one clearly correct answer?
+6. Does the challenge avoid exam-style wording?
+7. Does it avoid repeating recent situations?
+8. Does it avoid repeating the same underlying concept?
+9. Is the explanation where the technical teaching happens?
+10. Is the practical follow-up safe and useful?
+
+If any answer is NO, rewrite the challenge before returning it.
+
+============================================================
+OUTPUT
 ============================================================
 
 Return ONLY valid JSON.
@@ -711,58 +1091,81 @@ Return ONLY valid JSON.
 Use exactly this structure:
 
 {{
-  "question": "Question here",
+  "question": "Short practical challenge",
   "options": [
-    "Option one",
-    "Option two",
-    "Option three",
-    "Option four"
+    "Short option",
+    "Short option",
+    "Short option",
+    "Short option"
   ],
   "correct_option": 1,
-  "explanation": "Explanation here",
-  "practical_challenge": "Practical follow-up question here"
+  "explanation": "Short useful explanation.",
+  "practical_challenge": "Short safe practical action or observation."
 }}
 
 Do not rename fields.
+
 Do not omit fields.
+
 Do not add fields.
+
 Do not use markdown.
+
 Do not write anything before or after the JSON.
 """
+
+    # --------------------------------------------------------
+    # GENERATE AND VALIDATE
+    # --------------------------------------------------------
 
     for generation_attempt in range(1, 4):
 
         print(
-            f"Question generation attempt "
+            f"Challenge generation attempt "
             f"{generation_attempt}/3..."
         )
 
         try:
+
             raw = gemini_generate(
                 prompt,
                 attempts=5
             )
 
-            cleaned = clean_json_response(raw)
-            poll = json.loads(cleaned)
-            poll = normalize_correct_option(poll)
-            poll = validate_poll(poll)
+            cleaned = clean_json_response(
+                raw
+            )
+
+            poll = json.loads(
+                cleaned
+            )
+
+            poll = normalize_correct_option(
+                poll
+            )
+
+            poll = validate_poll(
+                poll
+            )
 
             if question_already_used(
                 poll["question"],
                 questions
             ):
+
                 print(
-                    "Generated question already exists. "
-                    "Requesting another question."
+                    "Generated challenge already exists. "
+                    "Requesting another."
                 )
+
                 continue
 
             return poll
 
         except Exception as error:
+
             print(
-                f"Invalid poll generated: {error}"
+                f"Invalid challenge generated: {error}"
             )
 
             if generation_attempt < 3:
@@ -783,8 +1186,8 @@ def question_already_used(
     questions
 ):
 
-    normalized = " ".join(
-        question.strip().lower().split()
+    normalized = normalize_text(
+        question
     )
 
     for item in questions:
@@ -797,8 +1200,8 @@ def question_already_used(
             ""
         )
 
-        old_normalized = " ".join(
-            old_question.strip().lower().split()
+        old_normalized = normalize_text(
+            old_question
         )
 
         if old_normalized == normalized:
@@ -826,10 +1229,24 @@ def question_is_valid(item):
         return False
 
     if (
+        not isinstance(item["question"], str)
+        or not item["question"].strip()
+    ):
+        return False
+
+    if (
         not isinstance(item["options"], list)
         or len(item["options"]) != 4
     ):
         return False
+
+    for option in item["options"]:
+
+        if (
+            not isinstance(option, str)
+            or not option.strip()
+        ):
+            return False
 
     try:
         answer = int(
@@ -840,6 +1257,12 @@ def question_is_valid(item):
         return False
 
     if answer not in (1, 2, 3, 4):
+        return False
+
+    if (
+        not isinstance(item["explanation"], str)
+        or not item["explanation"].strip()
+    ):
         return False
 
     return True
@@ -859,7 +1282,7 @@ def get_today_question(questions):
             return item
 
         print(
-            "Ignoring incomplete question "
+            "Ignoring incomplete challenge "
             "record found in today's log."
         )
 
@@ -953,8 +1376,7 @@ def format_poll(
         f"2. {options[1]}\n"
         f"3. {options[2]}\n"
         f"4. {options[3]}\n\n"
-        "What would you do in this situation?\n\n"
-        "Don't be afraid to get it wrong. The goal is to learn!\n"
+        "What would you do in this situation?\n"
     )
 
 
@@ -1111,7 +1533,7 @@ def run_morning():
 
     print(
         f"Generating {track['name']} "
-        "challenge..."
+        "daily challenge..."
     )
 
     questions = load_questions()
@@ -1211,7 +1633,7 @@ def run_morning():
     )
 
     print(
-        "Morning challenge sent successfully."
+        "Morning daily challenge sent successfully."
     )
 
 
