@@ -19,5 +19,12 @@
     "mode": "morning",
     "track": "Smart Home Automation",
     "question": "You set a smart plug to turn on your coffee machine every morning, but it stays off. What did you likely forget?"
+  },
+  {
+    "timestamp": "2026-09-16T08:36:11.336992+01:00",
+    "date": "2026-09-16",
+    "mode": "morning",
+    "track": "Smart Home Automation",
+    "question": "Your smart bedroom light suddenly turns on at full brightness after a brief midnight power outage. What setting prevents this?"
   }
 ]

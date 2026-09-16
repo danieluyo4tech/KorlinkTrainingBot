@@ -1,1 +1,17 @@
-
+[
+  {
+    "question": "Your smart bedroom light suddenly turns on at full brightness after a brief midnight power outage. What setting prevents this?",
+    "options": [
+      "Increase Wi-Fi signal",
+      "Adjust power-on state",
+      "Disable smart scenes",
+      "Lower motion sensitivity"
+    ],
+    "correct_option": 1,
+    "explanation": "Smart bulbs usually default to turning on at 100% brightness when power is restored so they work like traditional switches. In your smart home app, changing the light's power-on behavior to 'Last Status' or 'Off' prevents unexpected wake-up calls after sudden power cuts.",
+    "practical_challenge": "Open your smart home app, select a smart light, and check its power restoration settings.",
+    "bonus_challenge": "Set a smart bulb's power-on state to off and test it by toggling its wall switch.",
+    "date": "2026-09-16",
+    "track": "Smart Home Automation"
+  }
+]
