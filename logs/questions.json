@@ -1,1 +1,16 @@
-
+[
+  {
+    "question": "Your smart motion sensor in the garden shed keeps dropping connection to your hub. What is the easiest fix?",
+    "options": [
+      "Replace the hub",
+      "Add a smart plug halfway",
+      "Switch to Wi-Fi bulbs",
+      "Move the hub outside"
+    ],
+    "correct_option": 1,
+    "explanation": "Many smart home devices use mesh networks like Zigbee or Z-Wave. Battery-powered sensors don't repeat signals to save power, but mains-powered devices like smart plugs act as repeaters. Adding a smart plug midway extends the mesh network range without needing a new hub.",
+    "practical_challenge": "Open your smart home app and identify which of your connected devices run on batteries versus wall power.",
+    "date": "2026-09-16",
+    "track": "Smart Home Automation"
+  }
+]
