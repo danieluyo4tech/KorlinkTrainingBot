@@ -15,5 +15,22 @@
     "explanation": "Standard PIR sensors only detect large movements across infrared zones. If you sit still, motion detection stops. mmWave presence sensors use radar to detect tiny movements like breathing, keeping automations active while you are seated.",
     "practical_challenge": "Where in a home would a standard PIR motion sensor be a better choice than a presence sensor?",
     "created_at": "2026-09-09T04:27:02.349599+01:00"
+  },
+  {
+    "date": "2026-09-16",
+    "weekday": "Wednesday",
+    "school": "School of Technology",
+    "track": "Smart Home Automation",
+    "question": "Your smart lights turn off while you are still in the room reading a book. Standard PIR motion sensors fail to detect static occupancy. Which technology best solves this problem?",
+    "options": [
+      "High-sensitivity PIR sensor",
+      "Millimeter-wave radar sensor",
+      "Ambient light sensor",
+      "Ultrasonic range sensor"
+    ],
+    "correct_option": 2,
+    "explanation": "PIR sensors rely on noticeable heat movement across their field of view. When someone sits still, no movement occurs. Millimeter-wave radar detects micro-movements like breathing, ensuring the smart controller keeps lights active while a space is occupied.",
+    "practical_challenge": "Identify one room in your home where replacing a standard motion sensor with a presence sensor would prevent accidental light cutoffs.",
+    "created_at": "2026-09-16T07:29:35.254303+01:00"
   }
 ]
