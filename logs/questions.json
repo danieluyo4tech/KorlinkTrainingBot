@@ -1,1 +1,19 @@
-
+[
+  {
+    "date": "2026-09-16",
+    "weekday": "Wednesday",
+    "school": "School of Technology",
+    "track": "Smart Home Automation",
+    "question": "When installing a smart light switch in a wall box that lacks a neutral wire, why is a bypass capacitor often installed across the lighting fixture?",
+    "options": [
+      "To provide a small continuous current path that powers the switch without causing the light bulb to flicker or glow.",
+      "To absorb transient voltage spikes caused by manual toggling and prevent damaging the switch's internal microchip.",
+      "To isolate the switch from high-frequency radio interference transmitted by nearby Wi-Fi or Zigbee routers.",
+      "To step down high-voltage alternating current so low-power smart bulbs can operate safely on the circuit."
+    ],
+    "correct_option": 1,
+    "explanation": "No-neutral smart switches pass a tiny standby current through the lighting load to power their internal radios and microcontrollers. Because energy-efficient LEDs have high resistance, this leakage current can cause faint glowing or flickering. A bypass capacitor provides an alternate pathway for this standby current.",
+    "practical_challenge": "If a newly installed no-neutral smart switch causes an LED light fixture to flash intermittently every few seconds while switched off, what practical steps would you take to fix it?",
+    "created_at": "2026-09-16T07:45:05.767769+01:00"
+  }
+]
