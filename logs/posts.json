@@ -75,5 +75,12 @@
     "mode": "morning",
     "track": "Network Engineering",
     "question": "Your Wi-Fi keeps dropping in the garden far from your router. Which network band gives you a more stable connection?"
+  },
+  {
+    "timestamp": "2026-09-17T19:49:19.394733+01:00",
+    "date": "2026-09-17",
+    "mode": "evening",
+    "track": "Network Engineering",
+    "question": "Your Wi-Fi keeps dropping in the garden far from your router. Which network band gives you a more stable connection?"
   }
 ]
