@@ -61,5 +61,12 @@
     "mode": "morning",
     "track": "Smart Home Automation",
     "question": "Your home internet connection goes down, yet your smart motion light turns on immediately when you walk past. Why?"
+  },
+  {
+    "timestamp": "2026-09-17T08:00:34.722291+01:00",
+    "date": "2026-09-17",
+    "mode": "morning",
+    "track": "Network Engineering",
+    "question": "Your Wi-Fi keeps dropping in the garden far from your router. Which network band gives you a more stable connection?"
   }
 ]
