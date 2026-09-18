@@ -82,5 +82,12 @@
     "mode": "evening",
     "track": "Network Engineering",
     "question": "Your Wi-Fi keeps dropping in the garden far from your router. Which network band gives you a more stable connection?"
+  },
+  {
+    "timestamp": "2026-09-18T19:05:18.329306+01:00",
+    "date": "2026-09-18",
+    "mode": "evening",
+    "track": "Solar PV Design and Installation",
+    "question": "A single tree branch casts a narrow shadow across just one panel in a series string. What happens?"
   }
 ]

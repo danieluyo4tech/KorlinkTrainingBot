@@ -26,5 +26,19 @@
     "practical_challenge": "Walk to the furthest room from your router and check your phone or laptop network settings to see whether you are connected to a 2.4 GHz or 5 GHz network.",
     "date": "2026-09-17",
     "track": "Network Engineering"
+  },
+  {
+    "question": "A single tree branch casts a narrow shadow across just one panel in a series string. What happens?",
+    "options": [
+      "Only that panel slows",
+      "Entire string output drops",
+      "System power increases",
+      "Inverter turns off"
+    ],
+    "correct_option": 1,
+    "explanation": "In a series connection, solar panels act like a single water pipe. If shade blocks current in one panel, it chokes the electrical flow for the entire string. Even partial shading on one panel can drastically reduce the energy produced by all connected panels.",
+    "practical_challenge": "Walk around your building during morning and afternoon to observe if nearby trees or walls cast shadows on your roof space.",
+    "date": "2026-09-18",
+    "track": "Solar PV Design and Installation"
   }
 ]
