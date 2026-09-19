@@ -89,5 +89,12 @@
     "mode": "evening",
     "track": "Solar PV Design and Installation",
     "question": "A single tree branch casts a narrow shadow across just one panel in a series string. What happens?"
+  },
+  {
+    "timestamp": "2026-09-19T08:57:23.204467+01:00",
+    "date": "2026-09-19",
+    "mode": "saturday",
+    "track": null,
+    "message": "*KORLINK TECHNOLOGIES*\n\n*SATURDAY NOTE*\n\n*Beyond the Tutorials*\n\nTrue technical competence isn't built by rushing through course modules—it's forged when you sit with an unexpected error and work through it logically. Use this weekend to step away from guided lessons for a short while. Try building a small feature from scratch, or refactor an earlier project without relying on step-by-step instructions. The quiet moments you spend solving problems independently are what turn familiar concepts into genuine capability."
   }
 ]
