@@ -40,5 +40,19 @@
     "practical_challenge": "Walk around your building during morning and afternoon to observe if nearby trees or walls cast shadows on your roof space.",
     "date": "2026-09-18",
     "track": "Solar PV Design and Installation"
+  },
+  {
+    "question": "You find an unlabeled USB flash drive on the floor near your office reception desk. What is your safest immediate action?",
+    "options": [
+      "Plug it in to inspect",
+      "Hand it to IT security",
+      "Leave it on desk",
+      "Throw it away"
+    ],
+    "correct_option": 1,
+    "explanation": "Unattended USB drives can be planted intentionally by attackers using malicious hardware like USB Rubber Duckies that simulate keyboards to execute dangerous code automatically. Plugging an unknown drive into a company computer exposes the network to malware or remote access. Always hand stray storage devices to your IT security team to inspect safely in an isolated environment.",
+    "practical_challenge": "Check if your computer has AutoPlay or AutoRun enabled by opening your operating system's storage or drive settings and verifying automatic execution is turned off.",
+    "date": "2026-09-21",
+    "track": "Cybersecurity"
   }
 ]
