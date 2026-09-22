@@ -54,5 +54,19 @@
     "practical_challenge": "Check if your computer has AutoPlay or AutoRun enabled by opening your operating system's storage or drive settings and verifying automatic execution is turned off.",
     "date": "2026-09-21",
     "track": "Cybersecurity"
+  },
+  {
+    "question": "Your team wants to safely test a new feature with just 5% of app users before rolling it out to everyone.",
+    "options": [
+      "Create a separate app",
+      "Enable a feature flag",
+      "Delay the main release",
+      "Ask users to upgrade"
+    ],
+    "correct_option": 1,
+    "explanation": "Feature flags let software teams turn features on or off for specific users without deploying new code. This allows safe real-world testing and instant rollbacks if something breaks.",
+    "practical_challenge": "Open an app like YouTube, Spotify, or your web browser settings, and look for 'Experimental Features' or 'Beta' options to see real-world feature toggles.",
+    "date": "2026-09-22",
+    "track": "Software Engineering"
   }
 ]

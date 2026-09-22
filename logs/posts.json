@@ -131,5 +131,12 @@
     "mode": "evening",
     "track": "Cybersecurity",
     "question": "You find an unlabeled USB flash drive on the floor near your office reception desk. What is your safest immediate action?"
+  },
+  {
+    "timestamp": "2026-09-22T06:54:29.554452+01:00",
+    "date": "2026-09-22",
+    "mode": "morning",
+    "track": "Software Engineering",
+    "question": "Your team wants to safely test a new feature with just 5% of app users before rolling it out to everyone."
   }
 ]
