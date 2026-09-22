@@ -145,5 +145,12 @@
     "mode": "morning",
     "track": "Software Engineering",
     "question": "Your team wants to safely test a new feature with just 5% of app users before rolling it out to everyone."
+  },
+  {
+    "timestamp": "2026-09-22T19:30:23.375277+01:00",
+    "date": "2026-09-22",
+    "mode": "evening",
+    "track": "Software Engineering",
+    "question": "Your team wants to safely test a new feature with just 5% of app users before rolling it out to everyone."
   }
 ]
