@@ -159,5 +159,12 @@
     "mode": "morning",
     "track": "Smart Home Automation",
     "question": "Your smart door lock battery died completely while you are outside. How can you power it to unlock?"
+  },
+  {
+    "timestamp": "2026-09-23T09:15:56.435178+01:00",
+    "date": "2026-09-23",
+    "mode": "morning",
+    "track": "Smart Home Automation",
+    "question": "Your smart door lock battery died completely while you are outside. How can you power it to unlock?"
   }
 ]
