@@ -68,5 +68,19 @@
     "practical_challenge": "Open an app like YouTube, Spotify, or your web browser settings, and look for 'Experimental Features' or 'Beta' options to see real-world feature toggles.",
     "date": "2026-09-22",
     "track": "Software Engineering"
+  },
+  {
+    "question": "Your smart door lock battery died completely while you are outside. How can you power it to unlock?",
+    "options": [
+      "Press router reset button",
+      "Hold 9V battery underneath",
+      "Wait for auto-recharge",
+      "Send SMS unlock command"
+    ],
+    "correct_option": 1,
+    "explanation": "Most smart keypad locks include external power contacts on the bottom. Holding a standard 9V battery against these terminals temporarily powers the lock so you can enter your code and unlock the door.",
+    "practical_challenge": "Inspect the underside of a smart lock or smart padlock around your home or workplace to locate its emergency power terminals or backup port.",
+    "date": "2026-09-23",
+    "track": "Smart Home Automation"
   }
 ]
