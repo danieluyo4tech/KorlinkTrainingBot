@@ -82,5 +82,19 @@
     "practical_challenge": "Inspect the underside of a smart lock or smart padlock around your home or workplace to locate its emergency power terminals or backup port.",
     "date": "2026-09-23",
     "track": "Smart Home Automation"
+  },
+  {
+    "question": "Your video call keeps lagging whenever someone downloads a large file. Which router setting prioritises your call's traffic?",
+    "options": [
+      "Wi-Fi password",
+      "Quality of Service",
+      "MAC filtering",
+      "Guest network"
+    ],
+    "correct_option": 1,
+    "explanation": "Quality of Service (QoS) lets your router prioritise time-sensitive data, like video calls and online audio, over background downloads. When bandwidth is shared, QoS prevents heavy downloads from causing lag during live communication.",
+    "practical_challenge": "Log into your home router's admin interface from a browser and look for QoS or Traffic Prioritisation under the advanced network settings.",
+    "date": "2026-09-24",
+    "track": "Network Engineering"
   }
 ]

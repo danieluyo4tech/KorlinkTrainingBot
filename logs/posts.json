@@ -173,5 +173,12 @@
     "mode": "evening",
     "track": "Smart Home Automation",
     "question": "Your smart door lock battery died completely while you are outside. How can you power it to unlock?"
+  },
+  {
+    "timestamp": "2026-09-24T07:39:51.454424+01:00",
+    "date": "2026-09-24",
+    "mode": "morning",
+    "track": "Network Engineering",
+    "question": "Your video call keeps lagging whenever someone downloads a large file. Which router setting prioritises your call's traffic?"
   }
 ]
