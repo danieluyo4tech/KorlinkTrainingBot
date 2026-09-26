@@ -194,5 +194,12 @@
     "mode": "evening",
     "track": "Network Engineering",
     "question": "Your video call keeps lagging whenever someone downloads a large file. Which router setting prioritises your call's traffic?"
+  },
+  {
+    "timestamp": "2026-09-26T06:47:17.122126+01:00",
+    "date": "2026-09-26",
+    "mode": "saturday",
+    "track": null,
+    "message": "*KORLINK TECHNOLOGIES*\n\n*SATURDAY NOTE*\n\n*Depth Over Speed*\n\nIn technology, tools and frameworks evolve quickly, but core principles—logic, data structure, and system architecture—remain remarkably constant. When learning feels overwhelming, step back and focus on the fundamentals. A strong grasp of the basics makes adapting to new tools far easier and builds lasting confidence in your work. Take time this weekend to review a foundational concept you may have rushed through earlier. Deep understanding will always carry you further than speed."
   }
 ]
