@@ -201,5 +201,12 @@
     "mode": "saturday",
     "track": null,
     "message": "*KORLINK TECHNOLOGIES*\n\n*SATURDAY NOTE*\n\n*Depth Over Speed*\n\nIn technology, tools and frameworks evolve quickly, but core principles—logic, data structure, and system architecture—remain remarkably constant. When learning feels overwhelming, step back and focus on the fundamentals. A strong grasp of the basics makes adapting to new tools far easier and builds lasting confidence in your work. Take time this weekend to review a foundational concept you may have rushed through earlier. Deep understanding will always carry you further than speed."
+  },
+  {
+    "timestamp": "2026-09-26T09:29:29.035852+01:00",
+    "date": "2026-09-26",
+    "mode": "saturday",
+    "track": null,
+    "message": "*KORLINK TECHNOLOGIES*\n\n*SATURDAY NOTE*\n\n*Learning to Read the Feedback*\n\nWhen code fails or a build errors out, it is easy to view the obstacle as a setback. In reality, error messages are simply objective feedback guiding your next step. Developing the patience to read logs carefully—rather than making quick, unguided fixes—is one of the most practical habits you can build in tech. Use this weekend to slow down your troubleshooting process. When you approach technical roadblocks with curiosity instead of frustration, problem-solving becomes structured, repeatable, and far less overwhelming."
   }
 ]
