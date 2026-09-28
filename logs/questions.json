@@ -96,5 +96,19 @@
     "practical_challenge": "Log into your home router's admin interface from a browser and look for QoS or Traffic Prioritisation under the advanced network settings.",
     "date": "2026-09-24",
     "track": "Network Engineering"
+  },
+  {
+    "question": "You receive an urgent email asking you to sign in via micros0ft.com. What should you do?",
+    "options": [
+      "Click the link quickly",
+      "Delete and report it",
+      "Reply asking for help",
+      "Forward to your friends"
+    ],
+    "correct_option": 1,
+    "explanation": "Attackers use look-alike web addresses, known as typosquatting, by swapping letters for visually similar characters like '0' instead of 'O'. They rely on speed to trick you into entering credentials. Always inspect domain spellings closely or navigate directly to the official site instead of clicking email links.",
+    "practical_challenge": "Hover your mouse cursor over any link in an old email without clicking it to preview the actual destination web address.",
+    "date": "2026-09-28",
+    "track": "Cybersecurity"
   }
 ]
