@@ -250,5 +250,12 @@
     "mode": "evening",
     "track": "Cybersecurity",
     "question": "You receive an urgent email asking you to sign in via micros0ft.com. What should you do?"
+  },
+  {
+    "timestamp": "2026-09-29T20:47:37.668215+01:00",
+    "date": "2026-09-29",
+    "mode": "evening",
+    "track": "Software Engineering",
+    "question": "How do you stop a user from crashing your website by submitting a contact form thousands of times per minute?"
   }
 ]

@@ -110,5 +110,19 @@
     "practical_challenge": "Hover your mouse cursor over any link in an old email without clicking it to preview the actual destination web address.",
     "date": "2026-09-28",
     "track": "Cybersecurity"
+  },
+  {
+    "question": "How do you stop a user from crashing your website by submitting a contact form thousands of times per minute?",
+    "options": [
+      "Disable the form",
+      "Apply rate limiting",
+      "Upgrade server size",
+      "Delete new submissions"
+    ],
+    "correct_option": 1,
+    "explanation": "Rate limiting restricts how many requests a user or device can make within a set timeframe. This prevents automated scripts from overwhelming your server while keeping the service available for genuine users.",
+    "practical_challenge": "Enter an incorrect password 3 times on your phone's lock screen or a secure app to see how rate limiting temporarily pauses login attempts.",
+    "date": "2026-09-29",
+    "track": "Software Engineering"
   }
 ]
