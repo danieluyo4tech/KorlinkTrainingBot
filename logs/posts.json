@@ -257,5 +257,12 @@
     "mode": "evening",
     "track": "Software Engineering",
     "question": "How do you stop a user from crashing your website by submitting a contact form thousands of times per minute?"
+  },
+  {
+    "timestamp": "2026-09-30T10:18:23.318532+01:00",
+    "date": "2026-09-30",
+    "mode": "morning",
+    "track": "Smart Home Automation",
+    "question": "Your smart motion sensor in the back hallway keeps going offline. How can you easily extend its connection range?"
   }
 ]

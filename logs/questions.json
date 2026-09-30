@@ -124,5 +124,19 @@
     "practical_challenge": "Enter an incorrect password 3 times on your phone's lock screen or a secure app to see how rate limiting temporarily pauses login attempts.",
     "date": "2026-09-29",
     "track": "Software Engineering"
+  },
+  {
+    "question": "Your smart motion sensor in the back hallway keeps going offline. How can you easily extend its connection range?",
+    "options": [
+      "Upgrade home internet plan",
+      "Add mains-powered smart plug",
+      "Reboot your internet router",
+      "Replace sensor with camera"
+    ],
+    "correct_option": 1,
+    "explanation": "Mains-powered smart devices like smart plugs act as repeaters in Zigbee or Z-Wave mesh networks. Placing one halfway between your hub and a distant sensor bounces the signal, expanding coverage without needing a bigger router or internet upgrade.",
+    "practical_challenge": "Open your smart home app and check if your plug-in smart devices are using mesh technology like Zigbee, Z-Wave, or Thread to relay network signals.",
+    "date": "2026-09-30",
+    "track": "Smart Home Automation"
   }
 ]
