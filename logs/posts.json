@@ -264,5 +264,12 @@
     "mode": "morning",
     "track": "Smart Home Automation",
     "question": "Your smart motion sensor in the back hallway keeps going offline. How can you easily extend its connection range?"
+  },
+  {
+    "timestamp": "2026-09-30T20:50:59.525859+01:00",
+    "date": "2026-09-30",
+    "mode": "evening",
+    "track": "Smart Home Automation",
+    "question": "Your smart motion sensor in the back hallway keeps going offline. How can you easily extend its connection range?"
   }
 ]
