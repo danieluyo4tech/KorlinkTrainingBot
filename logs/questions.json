@@ -138,5 +138,19 @@
     "practical_challenge": "Open your smart home app and check if your plug-in smart devices are using mesh technology like Zigbee, Z-Wave, or Thread to relay network signals.",
     "date": "2026-09-30",
     "track": "Smart Home Automation"
+  },
+  {
+    "question": "Your phone suddenly displays multiple push notifications asking to approve a sign-in you didn't initiate. What should you do?",
+    "options": [
+      "Approve to dismiss it",
+      "Deny and change password",
+      "Turn off your phone",
+      "Restart your device"
+    ],
+    "correct_option": 1,
+    "explanation": "Repeated login prompts often mean an attacker has stolen your password and is trying to exhaust you into tapping 'Approve'—a tactic called MFA fatigue. Denying the request blocks their entry, but you must immediately change your password, as your credentials have already been compromised.",
+    "practical_challenge": "Open your primary email or work account settings and review the active devices or logged-in sessions to ensure you recognize every device.",
+    "date": "2026-10-05",
+    "track": "Cybersecurity"
   }
 ]
