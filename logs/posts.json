@@ -292,5 +292,12 @@
     "mode": "morning",
     "track": "Cybersecurity",
     "question": "Your phone suddenly displays multiple push notifications asking to approve a sign-in you didn't initiate. What should you do?"
+  },
+  {
+    "timestamp": "2026-10-05T21:21:58.452687+01:00",
+    "date": "2026-10-05",
+    "mode": "evening",
+    "track": "Cybersecurity",
+    "question": "Your phone suddenly displays multiple push notifications asking to approve a sign-in you didn't initiate. What should you do?"
   }
 ]
