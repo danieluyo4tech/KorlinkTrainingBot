@@ -306,5 +306,12 @@
     "mode": "evening",
     "track": "Cybersecurity",
     "question": "Your phone suddenly displays multiple push notifications asking to approve a sign-in you didn't initiate. What should you do?"
+  },
+  {
+    "timestamp": "2026-10-07T10:46:36.456669+01:00",
+    "date": "2026-10-07",
+    "mode": "morning",
+    "track": "Smart Home Automation",
+    "question": "You open your light switch wall box and find only two wires, without a neutral wire. What type of switch is required?"
   }
 ]

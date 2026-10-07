@@ -152,5 +152,19 @@
     "practical_challenge": "Open your primary email or work account settings and review the active devices or logged-in sessions to ensure you recognize every device.",
     "date": "2026-10-05",
     "track": "Cybersecurity"
+  },
+  {
+    "question": "You open your light switch wall box and find only two wires, without a neutral wire. What type of switch is required?",
+    "options": [
+      "Standard Wi-Fi switch",
+      "No-neutral smart switch",
+      "High-voltage switch",
+      "Ethernet wall switch"
+    ],
+    "correct_option": 1,
+    "explanation": "Traditional switches simply break the live wire, but smart switches need constant electrical power for their internal radios. Homes lacking a neutral wire inside the switch box require specialized 'no-neutral' smart switches, which trickle small amounts of power through the lighting circuit to stay connected.",
+    "practical_challenge": "Check the specifications or user manual of a smart switch in your home or online to see whether it requires a neutral wire for installation.",
+    "date": "2026-10-07",
+    "track": "Smart Home Automation"
   }
 ]
