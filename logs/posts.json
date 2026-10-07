@@ -313,5 +313,12 @@
     "mode": "morning",
     "track": "Smart Home Automation",
     "question": "You open your light switch wall box and find only two wires, without a neutral wire. What type of switch is required?"
+  },
+  {
+    "timestamp": "2026-10-07T21:24:55.202114+01:00",
+    "date": "2026-10-07",
+    "mode": "evening",
+    "track": "Smart Home Automation",
+    "question": "You open your light switch wall box and find only two wires, without a neutral wire. What type of switch is required?"
   }
 ]
