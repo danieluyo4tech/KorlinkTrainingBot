@@ -320,5 +320,12 @@
     "mode": "evening",
     "track": "Smart Home Automation",
     "question": "You open your light switch wall box and find only two wires, without a neutral wire. What type of switch is required?"
+  },
+  {
+    "timestamp": "2026-10-08T21:31:05.335246+01:00",
+    "date": "2026-10-08",
+    "mode": "evening",
+    "track": "Network Engineering",
+    "question": "You can open websites using their IP address, but typing website names fails. Which network service is likely failing?"
   }
 ]

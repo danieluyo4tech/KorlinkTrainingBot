@@ -166,5 +166,19 @@
     "practical_challenge": "Check the specifications or user manual of a smart switch in your home or online to see whether it requires a neutral wire for installation.",
     "date": "2026-10-07",
     "track": "Smart Home Automation"
+  },
+  {
+    "question": "You can open websites using their IP address, but typing website names fails. Which network service is likely failing?",
+    "options": [
+      "DHCP server",
+      "DNS server",
+      "Default gateway",
+      "Network switch"
+    ],
+    "correct_option": 1,
+    "explanation": "DNS (Domain Name System) works like a digital phonebook, translating human-friendly names into numeric IP addresses that devices use. If DNS fails, your Internet connection remains active, but your browser cannot automatically turn web names into the IP addresses required to reach those websites.",
+    "practical_challenge": "Open your web browser, type 1.1.1.1 into the address bar, and press Enter to see a webpage load directly via its numeric IP address.",
+    "date": "2026-10-08",
+    "track": "Network Engineering"
   }
 ]
