@@ -180,5 +180,19 @@
     "practical_challenge": "Open your web browser, type 1.1.1.1 into the address bar, and press Enter to see a webpage load directly via its numeric IP address.",
     "date": "2026-10-08",
     "track": "Network Engineering"
+  },
+  {
+    "question": "A printed QR code on a coffee shop table has a sticker pasted over it. What should you do?",
+    "options": [
+      "Scan it to check",
+      "Avoid scanning the sticker",
+      "Ask a stranger nearby",
+      "Rip the sticker off"
+    ],
+    "correct_option": 1,
+    "explanation": "Physical QR codes are easily overwritten with stickers directing to malicious links—a tactic called 'quishing'. Scanning tampered codes can take you to fake login pages designed to steal credentials. Always verify altered codes with staff or manually type the URL into your browser.",
+    "practical_challenge": "Open your phone camera settings and check if QR code scanning displays a link preview before opening websites automatically.",
+    "date": "2026-10-12",
+    "track": "Cybersecurity"
   }
 ]
