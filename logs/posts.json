@@ -376,5 +376,12 @@
     "mode": "morning",
     "track": "Software Engineering",
     "question": "Your app takes ten seconds to find a customer record among millions of rows. What should you add?"
+  },
+  {
+    "timestamp": "2026-10-13T21:30:32.295198+01:00",
+    "date": "2026-10-13",
+    "mode": "evening",
+    "track": "Software Engineering",
+    "question": "Your app takes ten seconds to find a customer record among millions of rows. What should you add?"
   }
 ]
