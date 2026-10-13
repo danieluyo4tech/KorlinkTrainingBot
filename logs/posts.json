@@ -369,5 +369,12 @@
     "mode": "evening",
     "track": "Cybersecurity",
     "question": "A printed QR code on a coffee shop table has a sticker pasted over it. What should you do?"
+  },
+  {
+    "timestamp": "2026-10-13T11:04:50.965214+01:00",
+    "date": "2026-10-13",
+    "mode": "morning",
+    "track": "Software Engineering",
+    "question": "Your app takes ten seconds to find a customer record among millions of rows. What should you add?"
   }
 ]

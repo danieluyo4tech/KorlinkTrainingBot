@@ -194,5 +194,19 @@
     "practical_challenge": "Open your phone camera settings and check if QR code scanning displays a link preview before opening websites automatically.",
     "date": "2026-10-12",
     "track": "Cybersecurity"
+  },
+  {
+    "question": "Your app takes ten seconds to find a customer record among millions of rows. What should you add?",
+    "options": [
+      "More server memory",
+      "A database index",
+      "Faster internet cables",
+      "Shorter user passwords"
+    ],
+    "correct_option": 1,
+    "explanation": "A database index works like the index at the back of a textbook. Instead of checking every single row one by one, the database uses the index to find the exact record almost instantly.",
+    "practical_challenge": "Open a long PDF or eBook on your device. Compare how long it takes to find a word by scrolling page by page versus using the search bar.",
+    "date": "2026-10-13",
+    "track": "Software Engineering"
   }
 ]
