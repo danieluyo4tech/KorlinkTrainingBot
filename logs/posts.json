@@ -383,5 +383,12 @@
     "mode": "evening",
     "track": "Software Engineering",
     "question": "Your app takes ten seconds to find a customer record among millions of rows. What should you add?"
+  },
+  {
+    "timestamp": "2026-10-17T08:40:33.508962+01:00",
+    "date": "2026-10-17",
+    "mode": "saturday",
+    "track": null,
+    "message": "*KORLINK TECHNOLOGIES*\n\n*SATURDAY NOTE*\n\n*Navigating Technical Friction*\n\nWhen acquiring complex technical skills, feeling stuck or confused is rarely a sign that you lack aptitude. In technology, mental friction is simply the natural state of encountering unfamiliar logic. Strong technical professionals do not experience less confusion; they have simply developed a higher tolerance for it. Instead of rushing to eliminate the discomfort immediately, allow yourself time to sit with challenging concepts and work through them methodically. Learning to navigate technical ambiguity with calm patience is one of the most practical skills you can build for your long-term career."
   }
 ]
