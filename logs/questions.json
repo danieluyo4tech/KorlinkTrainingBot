@@ -208,5 +208,19 @@
     "practical_challenge": "Open a long PDF or eBook on your device. Compare how long it takes to find a word by scrolling page by page versus using the search bar.",
     "date": "2026-10-13",
     "track": "Software Engineering"
+  },
+  {
+    "question": "A new browser extension asks for permission to read and change all your data on websites you visit. What should you do?",
+    "options": [
+      "Grant full permission",
+      "Cancel the installation",
+      "Restart the browser",
+      "Turn off Wi-Fi"
+    ],
+    "correct_option": 1,
+    "explanation": "Extensions requesting access to all web data can intercept passwords, session cookies, and personal information across every site you open. If an extension doesn't strictly require such broad permissions to function, cancel the install to avoid installing potential spyware or malicious add-ons.",
+    "practical_challenge": "Open your browser's extension manager and review the permissions of your active extensions, removing any you no longer use or trust.",
+    "date": "2026-10-19",
+    "track": "Cybersecurity"
   }
 ]
