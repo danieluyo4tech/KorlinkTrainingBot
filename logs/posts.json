@@ -404,5 +404,12 @@
     "mode": "morning",
     "track": "Cybersecurity",
     "question": "A new browser extension asks for permission to read and change all your data on websites you visit. What should you do?"
+  },
+  {
+    "timestamp": "2026-10-19T21:22:19.700345+01:00",
+    "date": "2026-10-19",
+    "mode": "evening",
+    "track": "Cybersecurity",
+    "question": "A new browser extension asks for permission to read and change all your data on websites you visit. What should you do?"
   }
 ]
