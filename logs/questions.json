@@ -222,5 +222,19 @@
     "practical_challenge": "Open your browser's extension manager and review the permissions of your active extensions, removing any you no longer use or trust.",
     "date": "2026-10-19",
     "track": "Cybersecurity"
+  },
+  {
+    "question": "Your smart bathroom light turns off while you are sitting completely still reading. What sensor upgrade fixes this?",
+    "options": [
+      "Passive infrared sensor",
+      "Millimeter-wave radar sensor",
+      "Higher resolution camera",
+      "Louder audio sensor"
+    ],
+    "correct_option": 1,
+    "explanation": "Traditional motion sensors use Passive Infrared (PIR), which only detects movement across its field of view. Millimeter-wave (mmWave) presence sensors detect micro-movements like breathing, keeping smart lights on even when you sit completely still.",
+    "practical_challenge": "Observe how long a motion sensor light in your home or workplace stays on after you stop moving completely.",
+    "date": "2026-10-21",
+    "track": "Smart Home Automation"
   }
 ]

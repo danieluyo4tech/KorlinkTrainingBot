@@ -411,5 +411,12 @@
     "mode": "evening",
     "track": "Cybersecurity",
     "question": "A new browser extension asks for permission to read and change all your data on websites you visit. What should you do?"
+  },
+  {
+    "timestamp": "2026-10-21T20:07:13.957780+01:00",
+    "date": "2026-10-21",
+    "mode": "evening",
+    "track": "Smart Home Automation",
+    "question": "Your smart bathroom light turns off while you are sitting completely still reading. What sensor upgrade fixes this?"
   }
 ]
