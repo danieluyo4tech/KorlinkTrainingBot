@@ -425,5 +425,12 @@
     "mode": "morning",
     "track": "Network Engineering",
     "question": "You accidentally plug both ends of an Ethernet cable into the same switch, freezing the network. What caused this failure?"
+  },
+  {
+    "timestamp": "2026-10-22T20:03:11.663906+01:00",
+    "date": "2026-10-22",
+    "mode": "evening",
+    "track": "Network Engineering",
+    "question": "You accidentally plug both ends of an Ethernet cable into the same switch, freezing the network. What caused this failure?"
   }
 ]
