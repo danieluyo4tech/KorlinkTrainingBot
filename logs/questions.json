@@ -236,5 +236,19 @@
     "practical_challenge": "Observe how long a motion sensor light in your home or workplace stays on after you stop moving completely.",
     "date": "2026-10-21",
     "track": "Smart Home Automation"
+  },
+  {
+    "question": "You accidentally plug both ends of an Ethernet cable into the same switch, freezing the network. What caused this failure?",
+    "options": [
+      "Power surge",
+      "Network loop",
+      "Cable overload",
+      "IP address conflict"
+    ],
+    "correct_option": 1,
+    "explanation": "Plugging a cable back into the same switch creates a network loop. Data packets circulate endlessly, multiplying rapidly and creating a broadcast storm. This overloads the switch and consumes all available bandwidth, completely freezing network communications for connected devices.",
+    "practical_challenge": "Locate a network switch or router in your home or office and trace one Ethernet cable to verify its two ends connect to separate devices.",
+    "date": "2026-10-22",
+    "track": "Network Engineering"
   }
 ]
