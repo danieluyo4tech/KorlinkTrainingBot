@@ -250,5 +250,19 @@
     "practical_challenge": "Locate a network switch or router in your home or office and trace one Ethernet cable to verify its two ends connect to separate devices.",
     "date": "2026-10-22",
     "track": "Network Engineering"
+  },
+  {
+    "question": "On an extremely hot, sunny afternoon, your solar system generates less power than expected. What is the main cause?",
+    "options": [
+      "Sunlight is too bright",
+      "Heat reduces panel efficiency",
+      "Inverter is cooling down",
+      "Grid power is off"
+    ],
+    "correct_option": 1,
+    "explanation": "Solar panels need light, not heat. As panels get extremely hot, their semiconductor material becomes less efficient, causing output voltage to drop. This is why a bright, cool afternoon often generates more solar power than a hot summer day.",
+    "practical_challenge": "Place a thermometer in direct sunlight on a dark surface and another in the shade to observe how hot solar equipment gets under the sun.",
+    "date": "2026-10-23",
+    "track": "Solar PV Design and Installation"
   }
 ]

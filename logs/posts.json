@@ -432,5 +432,12 @@
     "mode": "evening",
     "track": "Network Engineering",
     "question": "You accidentally plug both ends of an Ethernet cable into the same switch, freezing the network. What caused this failure?"
+  },
+  {
+    "timestamp": "2026-10-23T09:14:43.654564+01:00",
+    "date": "2026-10-23",
+    "mode": "morning",
+    "track": "Solar PV Design and Installation",
+    "question": "On an extremely hot, sunny afternoon, your solar system generates less power than expected. What is the main cause?"
   }
 ]
