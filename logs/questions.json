@@ -264,5 +264,19 @@
     "practical_challenge": "Place a thermometer in direct sunlight on a dark surface and another in the shade to observe how hot solar equipment gets under the sun.",
     "date": "2026-10-23",
     "track": "Solar PV Design and Installation"
+  },
+  {
+    "question": "You plug your phone into a public USB charging kiosk and it asks to 'Trust this computer'. What should you do?",
+    "options": [
+      "Tap 'Trust' to charge",
+      "Tap 'Don't Trust' immediately",
+      "Leave it plugged in",
+      "Restart your phone"
+    ],
+    "correct_option": 1,
+    "explanation": "Public USB charging ports can transfer data, not just power. If a station asks to trust the connected device, an attacker may be trying to access your photos, files, or install malware—a threat known as juice jacking. Choosing 'Don't Trust' or using a data-blocking USB adapter keeps your device safe while charging.",
+    "practical_challenge": "Plug your phone into a laptop or PC using your cable and observe the prompt asking whether to allow data access.",
+    "date": "2026-10-26",
+    "track": "Cybersecurity"
   }
 ]
