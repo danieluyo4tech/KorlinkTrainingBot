@@ -278,5 +278,19 @@
     "practical_challenge": "Plug your phone into a laptop or PC using your cable and observe the prompt asking whether to allow data access.",
     "date": "2026-10-26",
     "track": "Cybersecurity"
+  },
+  {
+    "question": "Your app needs a secret API key to send emails. How should you store it safely without leaking it in public code?",
+    "options": [
+      "Hardcoded in source code",
+      "Use environment variables",
+      "Inside the app UI",
+      "In public documentation"
+    ],
+    "correct_option": 1,
+    "explanation": "Environment variables keep sensitive credentials, like API keys and database passwords, separate from your source code. This prevents accidental leaks when sharing code on platforms like GitHub while allowing different settings for development and production environments.",
+    "practical_challenge": "Search for an open-source project on GitHub and look for a file named '.env.example' to see how developers share configuration templates safely.",
+    "date": "2026-10-27",
+    "track": "Software Engineering"
   }
 ]

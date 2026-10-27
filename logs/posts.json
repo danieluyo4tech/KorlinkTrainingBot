@@ -467,5 +467,12 @@
     "mode": "evening",
     "track": "Cybersecurity",
     "question": "You plug your phone into a public USB charging kiosk and it asks to 'Trust this computer'. What should you do?"
+  },
+  {
+    "timestamp": "2026-10-27T09:37:46.506415+01:00",
+    "date": "2026-10-27",
+    "mode": "morning",
+    "track": "Software Engineering",
+    "question": "Your app needs a secret API key to send emails. How should you store it safely without leaking it in public code?"
   }
 ]
