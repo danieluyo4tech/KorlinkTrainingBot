@@ -474,5 +474,12 @@
     "mode": "morning",
     "track": "Software Engineering",
     "question": "Your app needs a secret API key to send emails. How should you store it safely without leaking it in public code?"
+  },
+  {
+    "timestamp": "2026-10-27T20:49:25.043913+01:00",
+    "date": "2026-10-27",
+    "mode": "evening",
+    "track": "Software Engineering",
+    "question": "Your app needs a secret API key to send emails. How should you store it safely without leaking it in public code?"
   }
 ]
