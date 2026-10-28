@@ -488,5 +488,12 @@
     "mode": "morning",
     "track": "Smart Home Automation",
     "question": "A water leak starts under your sink while you are at work. What device automatically cuts off the water supply?"
+  },
+  {
+    "timestamp": "2026-10-28T21:05:14.496139+01:00",
+    "date": "2026-10-28",
+    "mode": "evening",
+    "track": "Smart Home Automation",
+    "question": "A water leak starts under your sink while you are at work. What device automatically cuts off the water supply?"
   }
 ]
