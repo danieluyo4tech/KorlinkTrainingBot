@@ -292,5 +292,19 @@
     "practical_challenge": "Search for an open-source project on GitHub and look for a file named '.env.example' to see how developers share configuration templates safely.",
     "date": "2026-10-27",
     "track": "Software Engineering"
+  },
+  {
+    "question": "A water leak starts under your sink while you are at work. What device automatically cuts off the water supply?",
+    "options": [
+      "Smart power plug",
+      "Smart water shutoff valve",
+      "Smart pressure monitor",
+      "Smart security camera"
+    ],
+    "correct_option": 1,
+    "explanation": "A smart water shutoff valve installs on your main water line or valve handle. When paired with wireless leak sensors, it receives a signal to mechanically close the water valve immediately, preventing costly flood damage even when no one is home.",
+    "practical_challenge": "Locate your home's main water shutoff valve or check under sinks to identify potential spots where a leak sensor could be placed.",
+    "date": "2026-10-28",
+    "track": "Smart Home Automation"
   }
 ]

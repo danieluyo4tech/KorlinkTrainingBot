@@ -481,5 +481,12 @@
     "mode": "evening",
     "track": "Software Engineering",
     "question": "Your app needs a secret API key to send emails. How should you store it safely without leaking it in public code?"
+  },
+  {
+    "timestamp": "2026-10-28T10:18:10.511613+01:00",
+    "date": "2026-10-28",
+    "mode": "morning",
+    "track": "Smart Home Automation",
+    "question": "A water leak starts under your sink while you are at work. What device automatically cuts off the water supply?"
   }
 ]
