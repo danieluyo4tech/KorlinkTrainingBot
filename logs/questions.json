@@ -306,5 +306,19 @@
     "practical_challenge": "Locate your home's main water shutoff valve or check under sinks to identify potential spots where a leak sensor could be placed.",
     "date": "2026-10-28",
     "track": "Smart Home Automation"
+  },
+  {
+    "question": "You need to install an IP security camera on a ceiling with no nearby electrical socket. How can you power it?",
+    "options": [
+      "USB extension cable",
+      "Power over Ethernet",
+      "High-gain antenna",
+      "Fiber optic cable"
+    ],
+    "correct_option": 1,
+    "explanation": "Power over Ethernet (PoE) allows a single network cable to deliver both electrical power and data to devices like cameras, IP phones, and access points. This eliminates the need to install separate power outlets near network equipment, simplifying deployment and lowering installation costs.",
+    "practical_challenge": "Check the power adapter of your router, smart hub, or internet phone to see if it plugs into a wall socket or receives power directly through the Ethernet cable.",
+    "date": "2026-10-29",
+    "track": "Network Engineering"
   }
 ]

@@ -495,5 +495,12 @@
     "mode": "evening",
     "track": "Smart Home Automation",
     "question": "A water leak starts under your sink while you are at work. What device automatically cuts off the water supply?"
+  },
+  {
+    "timestamp": "2026-10-29T10:18:21.600549+01:00",
+    "date": "2026-10-29",
+    "mode": "morning",
+    "track": "Network Engineering",
+    "question": "You need to install an IP security camera on a ceiling with no nearby electrical socket. How can you power it?"
   }
 ]
