@@ -320,5 +320,19 @@
     "practical_challenge": "Check the power adapter of your router, smart hub, or internet phone to see if it plugs into a wall socket or receives power directly through the Ethernet cable.",
     "date": "2026-10-29",
     "track": "Network Engineering"
+  },
+  {
+    "question": "Your solar panels are installed far away on a garden shed. Why are thicker electrical cables necessary?",
+    "options": [
+      "Absorbs extra solar heat",
+      "Reduces power loss over distance",
+      "Keeps panels cooler",
+      "Increases battery capacity"
+    ],
+    "correct_option": 1,
+    "explanation": "Electricity flowing through wires meets natural resistance, which wastes energy as heat over long distances. Thicker copper cables lower this resistance, ensuring voltage doesn't drop significantly before reaching your inverter or batteries.",
+    "practical_challenge": "Observe various household appliance cords and compare how high-power devices like electric kettles or heaters use noticeably thicker cables than low-power lamps.",
+    "date": "2026-10-30",
+    "track": "Solar PV Design and Installation"
   }
 ]

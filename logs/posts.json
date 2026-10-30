@@ -509,5 +509,12 @@
     "mode": "evening",
     "track": "Network Engineering",
     "question": "You need to install an IP security camera on a ceiling with no nearby electrical socket. How can you power it?"
+  },
+  {
+    "timestamp": "2026-10-30T10:34:53.323531+01:00",
+    "date": "2026-10-30",
+    "mode": "morning",
+    "track": "Solar PV Design and Installation",
+    "question": "Your solar panels are installed far away on a garden shed. Why are thicker electrical cables necessary?"
   }
 ]
