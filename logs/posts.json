@@ -523,5 +523,12 @@
     "mode": "evening",
     "track": "Solar PV Design and Installation",
     "question": "Your solar panels are installed far away on a garden shed. Why are thicker electrical cables necessary?"
+  },
+  {
+    "timestamp": "2026-10-31T10:29:31.576737+01:00",
+    "date": "2026-10-31",
+    "mode": "saturday",
+    "track": null,
+    "message": "*KORLINK TECHNOLOGIES*\n\n*SATURDAY NOTE*\n\n*Interpreting Diagnostic Feedback*\n\nWhen learning to program or configure systems, encountering error messages can easily feel like a setback. However, diagnostic outputs are not failures—they are precise feedback telling you exactly where logic or syntax breaks down. Experienced technical professionals do not panic when things break; they read the output carefully and use it to systematically isolate the issue. Shifting your mindset from seeing errors as roadblocks to viewing them as helpful data makes problem-solving much more efficient. As you practice this weekend, pause before making quick fixes: read the full diagnostic message and let the feedback guide your next step."
   }
 ]
