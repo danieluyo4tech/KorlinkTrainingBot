@@ -334,5 +334,19 @@
     "practical_challenge": "Observe various household appliance cords and compare how high-power devices like electric kettles or heaters use noticeably thicker cables than low-power lamps.",
     "date": "2026-10-30",
     "track": "Solar PV Design and Installation"
+  },
+  {
+    "question": "A caller claiming to be internal IT asks for the security code just sent to your phone. What should you do?",
+    "options": [
+      "Read the code aloud",
+      "Refuse and hang up",
+      "Ask them to hold",
+      "Text the code back"
+    ],
+    "correct_option": 1,
+    "explanation": "Legitimate support teams will never ask for your multi-factor authentication (MFA) codes over the phone. Attackers use phone calls, known as vishing, to manipulate you into giving up login codes so they can bypass account protections. Always hang up and verify suspicious requests directly through official internal channels.",
+    "practical_challenge": "Review the security notices or verification rules on your primary email or banking provider's website to confirm how they contact you.",
+    "date": "2026-11-02",
+    "track": "Cybersecurity"
   }
 ]
