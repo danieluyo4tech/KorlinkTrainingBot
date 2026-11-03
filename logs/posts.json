@@ -544,5 +544,12 @@
     "mode": "evening",
     "track": "Cybersecurity",
     "question": "A caller claiming to be internal IT asks for the security code just sent to your phone. What should you do?"
+  },
+  {
+    "timestamp": "2026-11-03T11:27:07.198337+01:00",
+    "date": "2026-11-03",
+    "mode": "morning",
+    "track": "Software Engineering",
+    "question": "Thousands of visitors are loading the exact same popular news article on your website, causing heavy server slowdowns."
   }
 ]

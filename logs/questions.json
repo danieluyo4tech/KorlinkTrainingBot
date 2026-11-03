@@ -348,5 +348,19 @@
     "practical_challenge": "Review the security notices or verification rules on your primary email or banking provider's website to confirm how they contact you.",
     "date": "2026-11-02",
     "track": "Cybersecurity"
+  },
+  {
+    "question": "Thousands of visitors are loading the exact same popular news article on your website, causing heavy server slowdowns.",
+    "options": [
+      "Rebuild the website",
+      "Enable data caching",
+      "Limit article length",
+      "Buy faster monitors"
+    ],
+    "correct_option": 1,
+    "explanation": "Caching stores a temporary copy of frequently requested data in fast memory. Instead of fetching the article from the main database every single time, the system serves the saved copy instantly, dramatically reducing server strain.",
+    "practical_challenge": "Open any webpage, let it load fully, and then reload it. Notice how much faster it reloads on the second attempt because your browser cached the images and pages locally.",
+    "date": "2026-11-03",
+    "track": "Software Engineering"
   }
 ]
