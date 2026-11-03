@@ -551,5 +551,12 @@
     "mode": "morning",
     "track": "Software Engineering",
     "question": "Thousands of visitors are loading the exact same popular news article on your website, causing heavy server slowdowns."
+  },
+  {
+    "timestamp": "2026-11-03T21:46:51.963359+01:00",
+    "date": "2026-11-03",
+    "mode": "evening",
+    "track": "Software Engineering",
+    "question": "Thousands of visitors are loading the exact same popular news article on your website, causing heavy server slowdowns."
   }
 ]
