@@ -362,5 +362,19 @@
     "practical_challenge": "Open any webpage, let it load fully, and then reload it. Notice how much faster it reloads on the second attempt because your browser cached the images and pages locally.",
     "date": "2026-11-03",
     "track": "Software Engineering"
+  },
+  {
+    "question": "Your smart bulb stops responding to app commands whenever guests flip the wall light switch off. What simple fix resolves this?",
+    "options": [
+      "Replace with higher-wattage bulb",
+      "Fit smart switch cover",
+      "Upgrade home internet speed",
+      "Reset smart home hub"
+    ],
+    "correct_option": 1,
+    "explanation": "Smart bulbs require continuous electrical power to stay connected to your wireless network. Installing a smart switch cover locks or covers the physical wall switch while providing a battery-powered button, allowing guests to toggle lights manually without cutting main power.",
+    "practical_challenge": "Check a smart bulb in your home to see what app error appears when its physical wall switch is switched off.",
+    "date": "2026-11-04",
+    "track": "Smart Home Automation"
   }
 ]

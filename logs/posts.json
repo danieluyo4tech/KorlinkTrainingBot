@@ -558,5 +558,12 @@
     "mode": "evening",
     "track": "Software Engineering",
     "question": "Thousands of visitors are loading the exact same popular news article on your website, causing heavy server slowdowns."
+  },
+  {
+    "timestamp": "2026-11-04T22:04:40.096338+01:00",
+    "date": "2026-11-04",
+    "mode": "evening",
+    "track": "Smart Home Automation",
+    "question": "Your smart bulb stops responding to app commands whenever guests flip the wall light switch off. What simple fix resolves this?"
   }
 ]
