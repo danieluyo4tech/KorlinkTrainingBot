@@ -572,5 +572,12 @@
     "mode": "morning",
     "track": "Network Engineering",
     "question": "Your friend across town cannot connect to your home computer using the address 192.168.1.45. Why?"
+  },
+  {
+    "timestamp": "2026-11-05T22:20:25.784647+01:00",
+    "date": "2026-11-05",
+    "mode": "evening",
+    "track": "Network Engineering",
+    "question": "Your friend across town cannot connect to your home computer using the address 192.168.1.45. Why?"
   }
 ]
