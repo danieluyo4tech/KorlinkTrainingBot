@@ -376,5 +376,19 @@
     "practical_challenge": "Check a smart bulb in your home to see what app error appears when its physical wall switch is switched off.",
     "date": "2026-11-04",
     "track": "Smart Home Automation"
+  },
+  {
+    "question": "Your friend across town cannot connect to your home computer using the address 192.168.1.45. Why?",
+    "options": [
+      "Ethernet cable is damaged",
+      "It's a private address",
+      "Wi-Fi signal is weak",
+      "DNS service is offline"
+    ],
+    "correct_option": 1,
+    "explanation": "IP addresses starting with 192.168 are private addresses used exclusively inside local home or office networks. They are not routable across the public internet. Someone outside your network needs your router's public IP address to connect to your devices.",
+    "practical_challenge": "Search 'What is my IP' in your web browser to find your public IP address, then compare it to the internal IP address shown in your device's network settings.",
+    "date": "2026-11-05",
+    "track": "Network Engineering"
   }
 ]
