@@ -579,5 +579,12 @@
     "mode": "evening",
     "track": "Network Engineering",
     "question": "Your friend across town cannot connect to your home computer using the address 192.168.1.45. Why?"
+  },
+  {
+    "timestamp": "2026-11-06T21:41:54.562839+01:00",
+    "date": "2026-11-06",
+    "mode": "evening",
+    "track": "Solar PV Design and Installation",
+    "question": "If solar panels are installed facing west instead of south, when will they generate the most power during the day?"
   }
 ]

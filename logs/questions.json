@@ -390,5 +390,19 @@
     "practical_challenge": "Search 'What is my IP' in your web browser to find your public IP address, then compare it to the internal IP address shown in your device's network settings.",
     "date": "2026-11-05",
     "track": "Network Engineering"
+  },
+  {
+    "question": "If solar panels are installed facing west instead of south, when will they generate the most power during the day?",
+    "options": [
+      "Early in the morning",
+      "Around midday",
+      "In the late afternoon",
+      "Equally throughout the day"
+    ],
+    "correct_option": 2,
+    "explanation": "Solar panels produce maximum energy when sunlight hits them straight on. While south-facing panels peak around midday, west-facing panels capture strong late-afternoon sun. This orientation is often useful for homes with high evening electricity demand.",
+    "practical_challenge": "Observe the sun's position relative to your roof during late afternoon to identify which roof pitch receives the most direct sunlight.",
+    "date": "2026-11-06",
+    "track": "Solar PV Design and Installation"
   }
 ]
