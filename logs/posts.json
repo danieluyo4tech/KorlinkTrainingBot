@@ -586,5 +586,12 @@
     "mode": "evening",
     "track": "Solar PV Design and Installation",
     "question": "If solar panels are installed facing west instead of south, when will they generate the most power during the day?"
+  },
+  {
+    "timestamp": "2026-11-07T10:51:44.477419+01:00",
+    "date": "2026-11-07",
+    "mode": "saturday",
+    "track": null,
+    "message": "*KORLINK TECHNOLOGIES*\n\n*SATURDAY NOTE*\n\n*Deconstructing Complex Problems*\n\nWhen faced with a large technical task, feeling overwhelmed is often a sign that the problem has not been broken down enough. Experienced practitioners rarely solve complex systems all at once; they methodically divide them into smaller, predictable components until each piece becomes straightforward. If an exercise or project feels daunting this weekend, resist the urge to tackle it all together. Isolate one small function or configuration, get it working, and build from there. Solving complex problems is simply the result of completing a sequence of small, manageable steps."
   }
 ]
