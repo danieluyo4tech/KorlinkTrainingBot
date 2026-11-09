@@ -404,5 +404,19 @@
     "practical_challenge": "Observe the sun's position relative to your roof during late afternoon to identify which roof pitch receives the most direct sunlight.",
     "date": "2026-11-06",
     "track": "Solar PV Design and Installation"
+  },
+  {
+    "question": "While using public Wi-Fi, your browser warns that a website's security certificate is invalid. What should you do?",
+    "options": [
+      "Ignore warning and proceed",
+      "Close the site immediately",
+      "Turn off browser safety",
+      "Refresh page repeatedly"
+    ],
+    "correct_option": 1,
+    "explanation": "An invalid certificate warning means the encrypted connection between your browser and the website cannot be trusted. On public Wi-Fi, an attacker may be intercepting your traffic to steal passwords—a risk known as a Man-in-the-Middle attack. Never bypass browser security warnings on untrusted networks.",
+    "practical_challenge": "Open your web browser, click the lock or site info icon next to the web address, and view the security status of the current connection.",
+    "date": "2026-11-09",
+    "track": "Cybersecurity"
   }
 ]
