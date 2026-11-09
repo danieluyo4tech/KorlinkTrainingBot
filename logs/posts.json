@@ -607,5 +607,12 @@
     "mode": "morning",
     "track": "Cybersecurity",
     "question": "While using public Wi-Fi, your browser warns that a website's security certificate is invalid. What should you do?"
+  },
+  {
+    "timestamp": "2026-11-10T00:41:49.512293+01:00",
+    "date": "2026-11-10",
+    "mode": "evening",
+    "track": "Software Engineering",
+    "question": "A customer clicks 'Pay Now' twice on a slow connection. How do you prevent double-charging their credit card?"
   }
 ]

@@ -418,5 +418,19 @@
     "practical_challenge": "Open your web browser, click the lock or site info icon next to the web address, and view the security status of the current connection.",
     "date": "2026-11-09",
     "track": "Cybersecurity"
+  },
+  {
+    "question": "A customer clicks 'Pay Now' twice on a slow connection. How do you prevent double-charging their credit card?",
+    "options": [
+      "Increase server speed",
+      "Use an idempotency key",
+      "Cancel the transaction",
+      "Store credit card PIN"
+    ],
+    "correct_option": 1,
+    "explanation": "An idempotency key ensures that repeating the same request multiple times produces the exact same result as sending it once. When a payment request is retried, the system recognizes the unique key and safely skips processing the duplicate transaction.",
+    "practical_challenge": "Pay attention the next time you submit an online form or payment to see if the submit button instantly disables itself after your click to prevent double submissions.",
+    "date": "2026-11-10",
+    "track": "Software Engineering"
   }
 ]
