@@ -621,5 +621,12 @@
     "mode": "morning",
     "track": "Software Engineering",
     "question": "A customer clicks 'Pay Now' twice on a slow connection. How do you prevent double-charging their credit card?"
+  },
+  {
+    "timestamp": "2026-11-10T22:11:52.571599+01:00",
+    "date": "2026-11-10",
+    "mode": "evening",
+    "track": "Software Engineering",
+    "question": "A customer clicks 'Pay Now' twice on a slow connection. How do you prevent double-charging their credit card?"
   }
 ]
