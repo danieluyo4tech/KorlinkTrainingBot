@@ -432,5 +432,19 @@
     "practical_challenge": "Pay attention the next time you submit an online form or payment to see if the submit button instantly disables itself after your click to prevent double submissions.",
     "date": "2026-11-10",
     "track": "Software Engineering"
+  },
+  {
+    "question": "Your new smart thermostat screen stays blank or keeps restarting after installation. What missing wire usually causes this?",
+    "options": [
+      "Ethernet wire",
+      "Common wire (C-wire)",
+      "Ground wire",
+      "Coaxial cable"
+    ],
+    "correct_option": 1,
+    "explanation": "Smart thermostats feature backlit displays and continuous Wi-Fi connectivity, requiring constant power. The Common wire (C-wire) delivers continuous 24-volt power from your heating and cooling system. Without it, the unit cannot stay powered on reliably.",
+    "practical_challenge": "Check your thermostat manual or pop off its front cover to inspect if a wire is connected to the terminal labeled 'C'.",
+    "date": "2026-11-11",
+    "track": "Smart Home Automation"
   }
 ]

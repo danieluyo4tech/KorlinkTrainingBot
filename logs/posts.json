@@ -628,5 +628,12 @@
     "mode": "evening",
     "track": "Software Engineering",
     "question": "A customer clicks 'Pay Now' twice on a slow connection. How do you prevent double-charging their credit card?"
+  },
+  {
+    "timestamp": "2026-11-11T22:45:03.424501+01:00",
+    "date": "2026-11-11",
+    "mode": "evening",
+    "track": "Smart Home Automation",
+    "question": "Your new smart thermostat screen stays blank or keeps restarting after installation. What missing wire usually causes this?"
   }
 ]
