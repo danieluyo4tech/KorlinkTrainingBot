@@ -446,5 +446,19 @@
     "practical_challenge": "Check your thermostat manual or pop off its front cover to inspect if a wire is connected to the terminal labeled 'C'.",
     "date": "2026-11-11",
     "track": "Smart Home Automation"
+  },
+  {
+    "question": "Your laptop can print to your office printer, but cannot open any internet websites. What network setting is likely misconfigured?",
+    "options": [
+      "Subnet Mask",
+      "Default Gateway",
+      "MAC Address",
+      "Wi-Fi Password"
+    ],
+    "correct_option": 1,
+    "explanation": "Your default gateway acts as the router's exit door for traffic leaving your local network. Devices can talk to each other locally without it, but any traffic destined for the internet must pass through the gateway to reach outside networks.",
+    "practical_challenge": "Open your phone or computer's network settings and find the IP address listed as your Router, Gateway, or Default Gateway.",
+    "date": "2026-11-12",
+    "track": "Network Engineering"
   }
 ]

@@ -635,5 +635,12 @@
     "mode": "evening",
     "track": "Smart Home Automation",
     "question": "Your new smart thermostat screen stays blank or keeps restarting after installation. What missing wire usually causes this?"
+  },
+  {
+    "timestamp": "2026-11-12T11:39:13.086119+01:00",
+    "date": "2026-11-12",
+    "mode": "morning",
+    "track": "Network Engineering",
+    "question": "Your laptop can print to your office printer, but cannot open any internet websites. What network setting is likely misconfigured?"
   }
 ]
