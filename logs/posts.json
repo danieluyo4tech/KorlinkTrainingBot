@@ -656,5 +656,12 @@
     "mode": "morning",
     "track": "Solar PV Design and Installation",
     "question": "Dust and dirt accumulate heavily on solar panels during a dry season. What impact will this have?"
+  },
+  {
+    "timestamp": "2026-11-13T22:11:21.313686+01:00",
+    "date": "2026-11-13",
+    "mode": "evening",
+    "track": "Solar PV Design and Installation",
+    "question": "Dust and dirt accumulate heavily on solar panels during a dry season. What impact will this have?"
   }
 ]
