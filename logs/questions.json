@@ -460,5 +460,19 @@
     "practical_challenge": "Open your phone or computer's network settings and find the IP address listed as your Router, Gateway, or Default Gateway.",
     "date": "2026-11-12",
     "track": "Network Engineering"
+  },
+  {
+    "question": "Dust and dirt accumulate heavily on solar panels during a dry season. What impact will this have?",
+    "options": [
+      "Completely shuts down system",
+      "Gradually lowers power output",
+      "Increases battery charging speed",
+      "Triggers an immediate short"
+    ],
+    "correct_option": 1,
+    "explanation": "Accumulated dust, dirt, and debris block sunlight from reaching the solar cells underneath, a problem called soiling. This gradually reduces power production over time. A simple rain shower or gentle rinse usually restores normal efficiency.",
+    "practical_challenge": "Observe outdoor glass surfaces around your home, such as windows, to see how ambient dust builds up over time.",
+    "date": "2026-11-13",
+    "track": "Solar PV Design and Installation"
   }
 ]

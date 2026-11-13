@@ -649,5 +649,12 @@
     "mode": "evening",
     "track": "Network Engineering",
     "question": "Your laptop can print to your office printer, but cannot open any internet websites. What network setting is likely misconfigured?"
+  },
+  {
+    "timestamp": "2026-11-13T11:29:45.017526+01:00",
+    "date": "2026-11-13",
+    "mode": "morning",
+    "track": "Solar PV Design and Installation",
+    "question": "Dust and dirt accumulate heavily on solar panels during a dry season. What impact will this have?"
   }
 ]
