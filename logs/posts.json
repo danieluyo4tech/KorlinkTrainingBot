@@ -663,5 +663,12 @@
     "mode": "evening",
     "track": "Solar PV Design and Installation",
     "question": "Dust and dirt accumulate heavily on solar panels during a dry season. What impact will this have?"
+  },
+  {
+    "timestamp": "2026-11-14T11:01:50.467675+01:00",
+    "date": "2026-11-14",
+    "mode": "saturday",
+    "track": null,
+    "message": "*KORLINK TECHNOLOGIES*\n\n*SATURDAY NOTE*\n\n*Transitioning from Tutorials to Independent Practice*\n\nIt is easy to feel proficient while following a step-by-step guide, but real technical capability develops when you work without a safety net. Passive watching introduces concepts, but active, unguided execution builds comprehension. As you practice this weekend, challenge yourself to recreate an exercise or build a basic solution without referencing the step-by-step guide. Working through the friction using your own logic and official documentation will strengthen your skills far more than following along with a completed example."
   }
 ]
