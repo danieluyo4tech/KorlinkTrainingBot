@@ -684,5 +684,12 @@
     "mode": "morning",
     "track": "Cybersecurity",
     "question": "You step away from your workstation for a quick break. What should you do first?"
+  },
+  {
+    "timestamp": "2026-11-17T00:41:12.467689+01:00",
+    "date": "2026-11-17",
+    "mode": "evening",
+    "track": "Software Engineering",
+    "question": "A user accidentally deletes an important project in your app. How can developers allow easy recovery of deleted data?"
   }
 ]

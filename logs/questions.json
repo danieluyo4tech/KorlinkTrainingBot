@@ -488,5 +488,19 @@
     "practical_challenge": "Press Windows Key + L (or Command + Control + Q on macOS) to practice quickly locking your computer screen.",
     "date": "2026-11-16",
     "track": "Cybersecurity"
+  },
+  {
+    "question": "A user accidentally deletes an important project in your app. How can developers allow easy recovery of deleted data?",
+    "options": [
+      "Hard delete permanently",
+      "Implement soft deletes",
+      "Restart database servers",
+      "Export data hourly"
+    ],
+    "correct_option": 1,
+    "explanation": "Soft deleting marks data as hidden or inactive in the database without actually erasing it. This allows instant data restoration if accidentally deleted and preserves historical records for audits.",
+    "practical_challenge": "Open your smartphone photo app or email client and check the 'Trash' or 'Recently Deleted' folder to see soft deletion in action.",
+    "date": "2026-11-17",
+    "track": "Software Engineering"
   }
 ]
