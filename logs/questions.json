@@ -474,5 +474,19 @@
     "practical_challenge": "Observe outdoor glass surfaces around your home, such as windows, to see how ambient dust builds up over time.",
     "date": "2026-11-13",
     "track": "Solar PV Design and Installation"
+  },
+  {
+    "question": "You step away from your workstation for a quick break. What should you do first?",
+    "options": [
+      "Leave your desk immediately",
+      "Lock your screen",
+      "Turn off your monitor",
+      "Close open browser tabs"
+    ],
+    "correct_option": 1,
+    "explanation": "Leaving an unlocked computer allows anyone walking by to read confidential data, access your accounts, or tamper with files. Locking your screen immediately secures your active session and requires your password or PIN to regain access.",
+    "practical_challenge": "Press Windows Key + L (or Command + Control + Q on macOS) to practice quickly locking your computer screen.",
+    "date": "2026-11-16",
+    "track": "Cybersecurity"
   }
 ]
