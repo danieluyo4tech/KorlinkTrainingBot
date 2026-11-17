@@ -698,5 +698,12 @@
     "mode": "morning",
     "track": "Software Engineering",
     "question": "A user accidentally deletes an important project in your app. How can developers allow easy recovery of deleted data?"
+  },
+  {
+    "timestamp": "2026-11-17T23:46:47.181041+01:00",
+    "date": "2026-11-17",
+    "mode": "evening",
+    "track": "Software Engineering",
+    "question": "A user accidentally deletes an important project in your app. How can developers allow easy recovery of deleted data?"
   }
 ]
