@@ -705,5 +705,12 @@
     "mode": "evening",
     "track": "Software Engineering",
     "question": "A user accidentally deletes an important project in your app. How can developers allow easy recovery of deleted data?"
+  },
+  {
+    "timestamp": "2026-11-18T12:06:12.871348+01:00",
+    "date": "2026-11-18",
+    "mode": "morning",
+    "track": "Smart Home Automation",
+    "question": "Your new Wi-Fi smart plug fails to pair during setup on your smartphone. What network adjustment usually resolves this?"
   }
 ]

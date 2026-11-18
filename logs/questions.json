@@ -502,5 +502,19 @@
     "practical_challenge": "Open your smartphone photo app or email client and check the 'Trash' or 'Recently Deleted' folder to see soft deletion in action.",
     "date": "2026-11-17",
     "track": "Software Engineering"
+  },
+  {
+    "question": "Your new Wi-Fi smart plug fails to pair during setup on your smartphone. What network adjustment usually resolves this?",
+    "options": [
+      "Upgrade internet subscription",
+      "Separate 2.4GHz Wi-Fi band",
+      "Disable router firewall",
+      "Change Wi-Fi network password"
+    ],
+    "correct_option": 1,
+    "explanation": "Most budget Wi-Fi smart devices only contain 2.4 GHz wireless chips because of lower cost and better range through walls. If your smartphone is connected to a 5 GHz band under a combined network name, setup often fails. Splitting the bands allows your phone to successfully pair the device.",
+    "practical_challenge": "Open your phone's Wi-Fi settings or home router app to check if your 2.4 GHz and 5 GHz networks share the same name.",
+    "date": "2026-11-18",
+    "track": "Smart Home Automation"
   }
 ]
