@@ -719,5 +719,12 @@
     "mode": "evening",
     "track": "Smart Home Automation",
     "question": "Your new Wi-Fi smart plug fails to pair during setup on your smartphone. What network adjustment usually resolves this?"
+  },
+  {
+    "timestamp": "2026-11-19T23:35:04.023245+01:00",
+    "date": "2026-11-19",
+    "mode": "evening",
+    "track": "Network Engineering",
+    "question": "Your Wi-Fi speed drops significantly because your neighbours' routers are using the exact same Wi-Fi channel. What should you change?"
   }
 ]
