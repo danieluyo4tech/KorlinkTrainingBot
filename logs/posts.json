@@ -733,5 +733,12 @@
     "mode": "morning",
     "track": "Solar PV Design and Installation",
     "question": "Your installer recommends solar panels rated at 5,000 watts connected to a 4,000-watt inverter. What is the benefit?"
+  },
+  {
+    "timestamp": "2026-11-20T23:07:31.203290+01:00",
+    "date": "2026-11-20",
+    "mode": "evening",
+    "track": "Solar PV Design and Installation",
+    "question": "Your installer recommends solar panels rated at 5,000 watts connected to a 4,000-watt inverter. What is the benefit?"
   }
 ]
