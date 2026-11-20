@@ -726,5 +726,12 @@
     "mode": "evening",
     "track": "Network Engineering",
     "question": "Your Wi-Fi speed drops significantly because your neighbours' routers are using the exact same Wi-Fi channel. What should you change?"
+  },
+  {
+    "timestamp": "2026-11-20T11:54:21.662027+01:00",
+    "date": "2026-11-20",
+    "mode": "morning",
+    "track": "Solar PV Design and Installation",
+    "question": "Your installer recommends solar panels rated at 5,000 watts connected to a 4,000-watt inverter. What is the benefit?"
   }
 ]

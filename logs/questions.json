@@ -530,5 +530,19 @@
     "practical_challenge": "Download a free Wi-Fi analyzer mobile app or open wireless diagnostics on your computer to see which channel your home network is using.",
     "date": "2026-11-19",
     "track": "Network Engineering"
+  },
+  {
+    "question": "Your installer recommends solar panels rated at 5,000 watts connected to a 4,000-watt inverter. What is the benefit?",
+    "options": [
+      "Prevents electrical panel overheating",
+      "Lowers cost with minimal energy loss",
+      "Converts DC into grid electricity",
+      "Extends total solar panel lifespan"
+    ],
+    "correct_option": 1,
+    "explanation": "Solar panels rarely produce their maximum rated wattage due to heat, weather, and shifting sun angles. Pairing panels with a slightly smaller inverter significantly lowers equipment costs while losing only a tiny amount of peak power on exceptionally bright afternoons.",
+    "practical_challenge": "Check the nameplate sticker on any household power strip or electronic device to locate its rated power wattage.",
+    "date": "2026-11-20",
+    "track": "Solar PV Design and Installation"
   }
 ]
